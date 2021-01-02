@@ -3,6 +3,6 @@
 namespace kalanis\kw_forms\Exceptions;
 
 
-class EntryException extends FormsException
+class RenderException extends FormsException
 {
 }

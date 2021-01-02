@@ -3,42 +3,67 @@
 namespace kalanis\kw_forms;
 
 
-use kalanis\kw_forms\Adapters\VarsAdapter;
-use kalanis\kw_forms\Adapters\FilesAdapter;
+use ArrayAccess;
 use kalanis\kw_forms\Cache\Storage;
+use kalanis\kw_forms\Controls\TWrappers;
 use kalanis\kw_storage\Interfaces\IStorage;
 use kalanis\kw_templates\AHtmlElement;
 use kalanis\kw_templates\HtmlElement\IHtmlElement;
 use kalanis\kw_templates\HtmlElement\THtmlElement;
+
 
 /**
  * Class Form
  * @package kalanis\kw_forms
  * Basic class for work with forms
  * @see \Form
+ * @see \AForm
  */
-class Form extends AForm
+class Form implements IHtmlElement
 {
     use THtmlElement;
+    use TWrappers;
 
     /** @var Controls\Factory */
     protected $controlFactory = null;
     /** @var Storage */
     protected $storage = null;
-    /** @var VarsAdapter */
+    /** @var ArrayAccess */
     protected $entries = null;
-    /** @var FilesAdapter */
+    /** @var ArrayAccess|null */
     protected $files = null;
 
     protected $isValid = true;
 
-    public function __construct(VarsAdapter $entries, ?FilesAdapter $files = null, ?IStorage $storage = null, ?string $alias = '', ?IHtmlElement $parent = null)
+    /**
+     * @var AHtmlElement
+     */
+    protected $parent;
+    protected $value;
+    protected $values;
+    protected $label;
+    protected $labels;
+
+    /** @var Controls\AControl[] */
+    protected $controls = [];
+
+    /**
+     * 1 id(for=""), 2 labelText,  3 attributy
+     * @var string
+     */
+    protected $templateLabel = '<label for="%1$s"%3$s>%2$s</label>';
+
+    public function __construct(ArrayAccess $entries, ?ArrayAccess $files = null, ?IStorage $storage = null, ?string $alias = '', ?IHtmlElement $parent = null)
     {
-        parent::__construct($alias);
+        $alias = "$alias";
+        $this->alias = $alias;
+        $this->setAttribute('name', $alias);
+
         $this->controlFactory = new Controls\Factory();
         $this->storage = new Storage($storage);
         $this->entries = $entries;
         $this->files = $files;
+        $this->alias = $alias;
         $this->storage->setAlias($alias);
 
         // defaultni method
@@ -49,69 +74,217 @@ class Form extends AForm
 
         $this->setParent($parent);
 
-        $this->_setupCsrf();
-
+        $this->setupCsrf();
     }
 
-    protected function _setupCsrf()
+    public function addControl(Controls\AControl $control): self
     {
-        /** Slouzi pro kontrolu zda byl formular odeslan */
-        $this->csrfTokenAlias = "{$this->_alias}SubmitCheck";
-        $this->controlFactory->addHidden($this->csrfTokenAlias);
-
-        $this->csrf = $this->_getCsrfLib();
-
-        $this->getCsrfControl()
-            ->value($this->csrf->getToken($this->csrfTokenAlias));
-        $this->getCsrfControl()
-            ->addRule(self::SATISFIES_CALLBACK, $this->_formProtectionErrorString, [$this->csrf, 'checkToken']);
-    }
-
-    protected function _getCsrfLib(): \Form\Protection\ICsrf
-    {
-        return new \Form\Protection\JWT(\Factory::Cookie());
+        $this->controls[$control->getAlias()] = $control;
+        return $this;
     }
 
     /**
-     * @return \Form_Controls_Hidden
+     * Merge potomku, attr atd.
+     * @param IHtmlElement $child
      */
-    public function &getCsrfControl()
+    public function merge(IHtmlElement $child): void
     {
-        return $this->_children[$this->csrfTokenAlias];
+        $this->setLabel($child->getAttribute('label'));
+        $this->setValue($child->getAttribute('value'));
+        $this->setChildren($child->getChildren());
+        $this->setAttributes($child->getAttributes());
     }
 
     /**
-     * @return \Lib\Protection\Csrf
+     * Vraci pole hodnot $value vsech potomku
+     * @return string[]
      */
-    public function getCsrf()
+    public function getValues()
     {
-        return $this->csrf;
+        $array = [];
+        foreach ($this->controls as $alias => $child) {
+            $array[$alias] = $child->getValue();
+        }
+        return $array;
     }
 
     /**
-     * Reset protection token value in form
+     * Nastavi potomkum objektu $value, !!nedefinovane hodnoty checkboxu nebudou vynechany!!
+     * <b>Pouziti</b>
+     * <code>
+     *  $form->setValues($this->context->post) // nastavi hodnoty z postu
+     *  $form->setValues($formObject) // nastavi hodnoty z jineho formu
+     * </code>
+     * @param array|Form $data
+     * @return $this
      */
-    public function resetProtectionToken()
+    public function setValues(array $data = [])
     {
-        $token = $this->csrf->getToken($this->csrfTokenAlias);
-        $this->getCsrfControl()->value($token);
+        foreach ($this->controls as $alias => $child) {
+            if ($child instanceof Controls\Checkboxes) { // checkboxy maji sva specifika
+                if (isset($data[$alias])) {
+                    $child->setValue($data[$alias]);
+                } // pokud se jedna o data z objektu a neni pro dany checkboxes hodnota nastavena, nememi se
+            } elseif ($child instanceof Controls\Checkbox) { // checkboxy maji sva specifika
+                if (isset($data[$alias])) {
+                    $child->checked(true);
+                } else {
+                    $child->checked(false);
+                }
+            } elseif ($child instanceof Controls\Submit) { // submity maji sva specifika
+                if (isset($data[$alias])) {
+                    $child->setSubmitted(true);
+                }
+            } else {
+                $child->setValue(isset($data[$alias]) ? $data[$alias] : null);
+            }
+        }
+        return $this;
     }
 
     /**
-     * Recreate protection token
+     * Nastavi value objektu, nebo potomku
+     * nebo nastavi value childu
+     * @param mixed $value
+     * @param string $alias
+     * @return $this
      */
-    public function reloadProtection()
+    public function setValue($value = null, $alias = null)
     {
-        $this->csrf->removeToken($this->csrfTokenAlias);
-        $this->getCsrfControl()->value($this->csrf->getToken($this->csrfTokenAlias));
+        if ($alias === null) {
+            if (empty ($this->controls)) {
+                $this->value = $value;
+            } else {
+                $this->setValues((array)$value);
+            }
+        } else {
+            $this->values[$alias] = $value;
+            if (isset($this->controls[$alias])) {
+                $this->controls[$alias]->setValue($value);
+            }
+        }
+        return $this;
     }
 
     /**
-     * Zrusi kontrolu na CSRF
+     * Vrati value objektu, nebo potomku
+     * nebo vrati value childu
+     * @param string $alias
+     * @return string|string[]
      */
-    public function removeProtection()
+    public function getValue($alias = null)
     {
-        $this->getCsrfControl()->removeRules();
+        if ($alias === null) {
+            if (empty ($this->controls)) {
+                if (($this instanceof Controls\Checkbox) || ($this instanceof Controls\Radio)) {
+                    if ($this->checked()) {
+                        return $this->value;
+                    } else {
+                        return null;
+                    }
+                }
+                return $this->value;
+            } else {
+                return $this->getValues();
+            }
+        } else {
+            if (isset($this->controls[$alias])) {
+                return $this->controls[$alias]->getValue();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Vrati pole labelu $label vsech potomku
+     * @return array
+     */
+    public function getLabels()
+    {
+        $array = [];
+        foreach ($this->controls as $child) {
+            $array[$child->getAlias()] = $child->getLabel();
+        }
+        return $array;
+    }
+
+    /**
+     * Nastavi potomkum objektu nove labely
+     * @param string[] $array
+     * @return $this
+     */
+    public function setLabels(array $array = [])
+    {
+        foreach ($this->controls as $child) {
+            if (isset($array[$child->getAlias()])) {
+                $child->setLabel($array[$child->getAlias()]);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * Vrati label objektu
+     * nebo vrati label childu
+     * @param string $alias
+     * @return string
+     */
+    public function getLabel($alias = null)
+    {
+        if ($alias === null) {
+            return $this->label;
+        } else {
+            if (isset($this->controls[$alias])) {
+                return $this->controls[$alias]->getLabel();
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Nastavi label objektu
+     * nebo nastavi label childu
+     * @param string $value
+     * @param string $alias
+     * @return $this
+     */
+    public function setLabel($value = null, $alias = null)
+    {
+        if ($alias === null) {
+            $this->label = $value;
+        } else {
+            $this->labels[$alias] = $value;
+            if (isset($this->controls[$alias])) {
+                $this->controls[$alias]->setLabel($value);
+            }
+        }
+        return $this;
+    }
+
+    public function setTemplate($string)
+    {
+        $this->template = $string;
+    }
+
+    /**
+     * Vyrenderuje label formularoveho prvku
+     * @param (string|array) $attributes
+     * @return string
+     */
+    public function renderLabel($attributes = array())
+    {
+        if ($this->label) {
+            return $this->wrapIt(sprintf($this->templateLabel, $this->getAttribute('id'), $this->getLabel(), $this->renderAttributes($attributes)), $this->wrappersLabel);
+        }
+        return '';
+    }
+
+    public function addCsrf(ArrayAccess $cookie): self
+    {
+        /** Check if form has been sended */
+        $this->addControl($this->controlFactory->getCsrf($this->alias, $cookie));
+        return $this;
     }
 
     /**
@@ -130,7 +303,7 @@ class Form extends AForm
      */
     public function getMethod()
     {
-        $this->getAttribute('method');
+        return $this->getAttribute('method');
     }
 
     /**
@@ -138,29 +311,29 @@ class Form extends AForm
      * @param string|array $attributes
      * @return string
      */
-    public function render($attributes = [])
+    public function render($attributes = []): string
     {
         $this->beforeRender();
 
         $this->addAttributes($attributes);
 
-        return sprintf($this->_template, $this->renderAttributes(), $this->renderErrors(), $this->renderChildren());
+        return sprintf($this->template, $this->renderAttributes(), $this->renderErrors(), $this->renderChildren());
     }
 
     /**
      * Renderuje start tag formulare a hidden elementy
      * @param string|array $attributes
-     * @param bool $noChildren
+     * @param bool $noControls
      * @return string
      */
-    public function renderStart($attributes = [], $noChildren = false)
+    public function renderStart($attributes = [], bool $noControls = false)
     {
         $this->addAttributes($attributes);
         $return = sprintf($this->templateStart, $this->renderAttributes());
-        if (false == $noChildren) {
-            foreach ($this->_children as $child) {
-                if ($child instanceof Form_Controls_Hidden) {
-                    $return .= $child->renderInput() . N;
+        if (false == $noControls) {
+            foreach ($this->controls as $child) {
+                if ($child instanceof Controls\Hidden) {
+                    $return .= $child->renderInput() . PHP_EOL;
                 }
             }
         }
@@ -212,18 +385,18 @@ class Form extends AForm
     public function renderErrors()
     {
         $errors = [];
-        foreach ($this->_children as $child) {
+        foreach ($this->controls as $child) {
             if ($child instanceof Controls\AControl) {
-                if (!empty($child->_ruleError)) {
+                if ($child->getErrors()) {
                     if (!$child->wrappersErrors()) {
                         $child->addWrapperErrors($this->wrappersError);
                     }
-                    $errors[$child->renderErrors()] = true;
+                    $errors[$child->getAlias()] = $child->renderErrors();
                 }
             }
         }
         if (!empty ($errors)) {
-            $return = $this->wrappIt(implode('', array_keys($errors)), $this->wrappersErrors);
+            $return = $this->wrapIt(implode('', array_keys($errors)), $this->wrappersErrors);
 
             return sprintf($this->templateErrors, $return);
         } else {
@@ -238,13 +411,13 @@ class Form extends AForm
     public function renderErrorsArray()
     {
         $errors = [];
-        foreach ($this->_children as $child) {
+        foreach ($this->controls as $child) {
             if ($child instanceof Controls\AControl) {
-                if (!empty($child->_ruleError)) {
+                if ($child->getErrors()) {
                     if (!$child->wrappersErrors()) {
                         $child->addWrapperErrors($this->wrappersError);
                     }
-                    $errors[$child->alias()] = $child->renderErrors();
+                    $errors[$child->getAlias()] = $child->renderErrors();
                 }
             }
         }
@@ -261,15 +434,15 @@ class Form extends AForm
     {
         $return = '';
         $hidden = '';
-        foreach ($this->_children as $alias => $child) {
+        foreach ($this->controls as $alias => $child) {
 
             if ($child instanceof AHtmlElement) {
-                if ($child instanceof Abstract_Form) {
+                if ($child instanceof AForm) {
                     if ($child->rendered()) {
                         continue;
                     }
-                    if (($child->label() === null) && isset($this->_labels[$alias])) {
-                        $child->label($this->_labels[$alias]);
+                    if (($child->getLabel() === null) && isset($this->labels[$alias])) {
+                        $child->setLabel($this->labels[$alias]);
                     }
                     if (!$child->wrappersLabel()) {
                         $child->addWrapperLabel($this->wrappersLabel);
@@ -281,38 +454,27 @@ class Form extends AForm
                         $child->addWrapper($this->wrappersChild);
                     }
                 }
-                if ($child instanceof Form) {
-                    $return .= $child->renderLabel() . $child->renderChildren() . "\n";
-                } else if ($child instanceof Form_Controls_Hidden) {
-                    $hidden .= $child->render() . "\n";
+                if ($child instanceof Controls\Hidden) {
+                    $hidden .= $child->render() . PHP_EOL;
                 } else {
-                    $return .= $child->render() . "\n";
+                    $return .= $child->render() . PHP_EOL;
                 }
             } else {
                 $return .= $child;
             }
         }
 
-        return $hidden . $this->wrappIt($return, $this->wrappersChildren);
+        return $hidden . $this->wrapIt($return, $this->wrappersChildren);
     }
 
-    /**
-     * Propoji pole Context->post a Context->files s $this->children
-     */
-    public function setPostValues()
+    public function setSentValues()
     {
-        $context = Factory::Context();
-        $var = $this->getMethod();
-        $this->setValues(($context->{$var} + $context->files));
+        $this->setValues(((array)$this->entries + (array)$this->files));
     }
 
     public function isSubmitted()
     {
-        $context = Factory::Context();
-
-        $var = $this->getMethod();
-
-        if (isset($context->{$var}[$this->csrfTokenAlias])) {
+        if (isset($this->entries[$this->csrfTokenAlias])) {
             return true;
         } else {
             return false;
@@ -326,7 +488,7 @@ class Form extends AForm
     public function process()
     {
         if ($this->isSubmitted()) {
-            $this->setPostValues();
+            $this->setSentValues();
             if ($this->validate() === true) {
                 return true;
             } else {
@@ -381,8 +543,8 @@ class Form extends AForm
     {
         $this->isValid = false;
 
-        if (isset($this->_children[$alias]) && !empty($errorText)) {
-            $this->_children[$alias]->triggerError($errorText);
+        if (isset($this->controls[$alias]) && !empty($errorText)) {
+            $this->controls[$alias]->triggerError($errorText);
         }
     }
 
@@ -390,16 +552,17 @@ class Form extends AForm
      * Vyresetuje priznak valid formulare<br />
      * a umozni tak zahajit validaci "na zelene louce"
      */
-    public final function resetValid()
+    public final function resetValid(): self
     {
         $this->isValid = true;
+        return $this;
     }
 
     /**
      * Zjisti zda je formular validni
      * @return boolean
      */
-    public final function isValid()
+    public final function isValid(): bool
     {
         return ($this->validate() && $this->isValid);
     }
@@ -409,11 +572,11 @@ class Form extends AForm
      * probiha tak ze validuje vsechny childy a sam sebe
      * @return boolean
      */
-    public function validate()
+    public function validate(): bool
     {
         $validation = true;
-        foreach ($this->_children as $child) {
-            if (($child instanceof Controls\AControl) && !$child->validate()) {
+        foreach ($this->controls as $child) {
+            if (($child instanceof Controls\AControl) && !$child->validate($child)) {
                 $validation = false;
             }
         }
@@ -425,12 +588,12 @@ class Form extends AForm
      * Nastavi layout formulare
      * @param string $layoutName
      * @return $this
-     * @throws FormsException
+     * @throws Exceptions\FormsException
      */
     public function setLayout($layoutName = '')
     {
         if (!is_string($layoutName)) {
-            throw new FormsException('Metoda setLayout vyzaduje jeden parametr typu string.');
+            throw new Exceptions\FormsException('Metoda setLayout vyzaduje jeden parametr typu string.');
         }
 
         if (($layoutName == 'inlineTable') || ($layoutName == 'tableInline')) {

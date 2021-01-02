@@ -1,6 +1,6 @@
 <?php
 
-namespace kalanis\kw_forms\Entries;
+namespace kalanis\kw_forms\Controls;
 
 
 trait TKey

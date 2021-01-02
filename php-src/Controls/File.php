@@ -1,27 +1,46 @@
 <?php
 
-namespace kalanis\kw_forms\Entries;
+namespace kalanis\kw_forms\Controls;
 
 
 use kalanis\kw_forms\Exceptions\EntryException;
-use kalanis\kw_forms\Interfaces\IRuleFactory;
-use kalanis\kw_forms\Interfaces\IValidateFile;
+use kalanis\kw_forms\Interfaces;
 use kalanis\kw_forms\Rules;
 
 
-class File extends Simple implements IValidateFile
+/**
+ * Class File
+ * @package kalanis\kw_forms\Controls
+ * Render input for sending files
+ */
+class File extends AControl implements Interfaces\IValidateFile
 {
-    /** @var IValidateFile|null */
+    protected $templateInput = '<input type="file"%2$s />';
+
+    /** @var Interfaces\IValidateFile|null */
     protected $value = null;
 
-    public function whichFactory(): IRuleFactory
+    protected function whichFactory(): Interfaces\IRuleFactory
     {
         return new Rules\File\Factory();
     }
 
-    public function setValue($value): parent
+    public function set(string $alias, string $label = ''): self
     {
-        if (!($value instanceof IValidateFile)) {
+        $this->setEntry($alias, null, $label);
+        return $this;
+    }
+
+    public function renderInput($attributes = null): string
+    {
+        $this->addAttributes($attributes);
+        $this->setAttribute('name', $this->getKey());
+        return $this->wrapIt(sprintf($this->templateInput, null, $this->renderAttributes()), $this->wrappersInput);
+    }
+
+    public function setValue($value): TValue
+    {
+        if (!($value instanceof Interfaces\IValidateFile)) {
             throw new EntryException(sprintf('Set something other than file for entry %s', $this->getKey()));
         }
         $this->value = $value;
@@ -56,6 +75,12 @@ class File extends Simple implements IValidateFile
     {
         $this->checkFile();
         return $this->value->getSize();
+    }
+
+    public function getFile(): Interfaces\IValidateFile
+    {
+        $this->checkFile();
+        return $this->value;
     }
 
     protected function checkFile(): void

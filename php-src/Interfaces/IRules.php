@@ -63,6 +63,8 @@ interface IRules
 
     /// Checks for files ///
     /* Has file been sent */
+    const FILE_EXISTS = 'fileexist';
+    /* Has file been sent */
     const FILE_SENT = 'fileout';
     /* Has file been received */
     const FILE_RECEIVED = 'filein';
@@ -92,19 +94,4 @@ interface IRules
     const IS_EU_VAT = 'euvat';
     /* Check if input is correct date in expected format */
     const IS_DATE = 'date';
-
-    /// What cannot be elsewhere ///
-    /**
-     * Specialni typ kontroly, ktery zkontroluje, zda odpovida token zaznamu ze session
-     */
-    const CSRF_CHECK_PROTECTION = 'csrf';
-
-    /**
-     * Specialni typ kontroly, ktery zkontroluje, vyplnena captcha odpovida te odeslane
-     */
-    const CHECK_CAPTCHA = 'captcha';
-
-    /** Zkontroluje, zda nebyl formular odeslan vicekrat */
-    const PROTECTION_RESEND = 'resend';
-
 }

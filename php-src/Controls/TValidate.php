@@ -1,17 +1,16 @@
 <?php
 
-namespace kalanis\kw_forms\Entries;
+namespace kalanis\kw_forms\Controls;
 
 
-use kalanis\kw_forms\Interfaces\IRuleFactory;
-use kalanis\kw_forms\Interfaces\IValidate;
+use kalanis\kw_forms\Interfaces;
 use kalanis\kw_forms\Exceptions\RuleException;
 use kalanis\kw_forms\Rules;
 
 
 trait TValidate
 {
-    /** @var IRuleFactory */
+    /** @var Interfaces\IRuleFactory */
     protected $rulesFactory = null;
     /** @var Rules\ARule[] */
     protected $rules = [];
@@ -32,6 +31,13 @@ trait TValidate
         return $this;
     }
 
+    public function removeRules(): self
+    {
+        $this->rules = [];
+        $this->errors = [];
+        return $this;
+    }
+
     protected function setFactory(): void
     {
         if (empty($this->rulesFactory)) {
@@ -41,11 +47,11 @@ trait TValidate
 
     /**
      * Set which factory will be used
-     * @return IRuleFactory
+     * @return Interfaces\IRuleFactory
      */
-    abstract protected function whichFactory(): IRuleFactory;
+    abstract protected function whichFactory(): Interfaces\IRuleFactory;
 
-    public function validate(IValidate $entry): bool
+    public function validate(Interfaces\IValidate $entry): bool
     {
         $this->errors = [];
         foreach ($this->rules as $rule) {

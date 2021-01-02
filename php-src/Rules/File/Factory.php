@@ -17,6 +17,7 @@ use kalanis\kw_forms\Rules\ARule;
 class Factory implements IRuleFactory
 {
     protected static $map = [
+        IRules::FILE_EXISTS             => '\kalanis\kw_forms\Rules\File\FileExists',
         IRules::FILE_SENT               => '\kalanis\kw_forms\Rules\File\FileSent',
         IRules::FILE_RECEIVED           => '\kalanis\kw_forms\Rules\File\FileReceived',
         IRules::FILE_MAX_SIZE           => '\kalanis\kw_forms\Rules\File\FileMaxSize',
