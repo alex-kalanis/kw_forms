@@ -10,9 +10,9 @@ namespace kalanis\kw_forms\Controls;
  */
 class Submit extends Button
 {
-    protected $templateLabel = '%2$s';
-    protected $templateInput = '<input type="submit" value="%1$s"%2$s />';
     protected $defaultAlias = 'submit';
+    protected $templateInput = '<input type="submit" value="%1$s"%2$s />';
+    protected $templateLabel = '%2$s';
 
     /**
      * Check if form was sent by this button
@@ -20,23 +20,14 @@ class Submit extends Button
      */
     protected $submitted = false;
 
-    /**
-     * Set if form has been sent by this submit button
-     * @param boolean $value
-     * @return $this
-     */
-    public function setSubmitted(bool $value): self
+    public function setValue($value): TValue
     {
-        $this->submitted = $value;
+        $this->submitted = !is_null($value);
         return $this;
     }
 
-    /**
-     * Get if form has been sent by this submit button
-     * @return boolean
-     */
-    public function getSubmitted(): bool
+    public function getValue(): string
     {
-        return $this->submitted;
+        return $this->submitted ? $this->originalValue : '' ;
     }
 }

@@ -11,7 +11,7 @@ use kalanis\kw_forms\Interfaces;
  * @package kalanis\kw_forms\Controls\Security\Timeout
  * Pass everytime, no rules triggered
  */
-class AnyTime implements Interfaces\Timeout
+class AnyTime implements Interfaces\ITimeout
 {
     public function updateExpire()
     {

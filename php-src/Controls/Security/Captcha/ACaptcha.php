@@ -5,6 +5,8 @@ namespace kalanis\kw_forms\Controls\Security\Captcha;
 
 use kalanis\kw_forms\Controls\AControl;
 use kalanis\kw_forms\Interfaces;
+use kalanis\kw_rules\Interfaces as IRules;
+use kalanis\kw_rules\TValidate;
 
 
 /**
@@ -15,17 +17,35 @@ use kalanis\kw_forms\Interfaces;
  */
 abstract class ACaptcha extends AControl
 {
-    /** @var Interfaces\Timeout|null */
+    /** @var Interfaces\ITimeout|null */
     protected $libTimeout = null;
 
-    public function validate(Interfaces\IValidate $entry): bool
+    public function addRule(string $ruleName, string $errorText, ...$args): TValidate
+    {
+        // no additional rules applicable
+        return $this;
+    }
+
+    public function addRules(iterable $rules = []): TValidate
+    {
+        // no adding external rules applicable
+        return $this;
+    }
+
+    public function removeRules(): TValidate
+    {
+        // no rules removal applicable
+        return $this;
+    }
+
+    public function validate(IRules\IValidate $entry): bool
     {
         if ($this->canPass()) {
             $this->errors = []; // isValid checks also this variable
             return true;
         }
         $result = parent::validate($entry);
-        if (($this->libTimeout instanceof Interfaces\Timeout) && $result) {
+        if (($this->libTimeout instanceof Interfaces\ITimeout) && $result) {
             $this->libTimeout->updateExpire();
         }
         return $result;
@@ -48,10 +68,10 @@ abstract class ACaptcha extends AControl
 
     protected function canPass(): bool
     {
-        return ($this->libTimeout instanceof Interfaces\Timeout && $this->libTimeout->isRunning());
+        return ($this->libTimeout instanceof Interfaces\ITimeout && $this->libTimeout->isRunning());
     }
 
-    public function setTimeout(Interfaces\Timeout $libTimeout = null): self
+    public function setTimeout(Interfaces\ITimeout $libTimeout = null): self
     {
         $this->libTimeout = $libTimeout;
         return $this;

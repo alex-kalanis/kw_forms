@@ -4,9 +4,9 @@ namespace kalanis\kw_forms;
 
 
 use ArrayAccess;
-use kalanis\kw_forms\Cache\Storage;
+use kalanis\kw_forms\Controls\AControl;
 use kalanis\kw_forms\Controls\TWrappers;
-use kalanis\kw_storage\Interfaces\IStorage;
+use kalanis\kw_forms\Interfaces\IInputs;
 use kalanis\kw_templates\AHtmlElement;
 use kalanis\kw_templates\HtmlElement\IHtmlElement;
 use kalanis\kw_templates\HtmlElement\THtmlElement;
@@ -21,60 +21,65 @@ use kalanis\kw_templates\HtmlElement\THtmlElement;
  */
 class Form implements IHtmlElement
 {
+    use Cache\TStorage;
+    use Form\TMethod;
     use THtmlElement;
     use TWrappers;
 
     /** @var Controls\Factory */
     protected $controlFactory = null;
-    /** @var Storage */
-    protected $storage = null;
-    /** @var ArrayAccess */
+    /** @var ArrayAccess|null */
     protected $entries = null;
     /** @var ArrayAccess|null */
     protected $files = null;
-
-    protected $isValid = true;
-
-    /**
-     * @var AHtmlElement
-     */
-    protected $parent;
-    protected $value;
-    protected $values;
-    protected $label;
-    protected $labels;
-
+    /** @var string Form label */
+    protected $label = '';
     /** @var Controls\AControl[] */
     protected $controls = [];
 
     /**
-     * 1 id(for=""), 2 labelText,  3 attributy
+     * Main Form template
      * @var string
+     * params: %1 attributes, %2 errors, %3 controls
+     */
+    protected $template = '%2$s<form %1$s>%3$s</form>';
+
+    protected $templateError = '';
+    /** @var string Template for error output */
+    protected $templateErrors = '<div class="errors">%s</div>';
+    /**
+     * Template of start tag
+     * @var string
+     * params: %1 attributes
+     */
+    protected $templateStart = '<form %1$s>';
+
+    /** @var string End tag template */
+    protected $templateEnd = '</form>';
+
+    /**
+     * @var string
+     * params: %1 id(for=""), %2 labelText,  %3 attributes
      */
     protected $templateLabel = '<label for="%1$s"%3$s>%2$s</label>';
 
-    public function __construct(ArrayAccess $entries, ?ArrayAccess $files = null, ?IStorage $storage = null, ?string $alias = '', ?IHtmlElement $parent = null)
+    public function __construct(string $alias = '', ?IHtmlElement $parent = null)
     {
         $alias = "$alias";
         $this->alias = $alias;
         $this->setAttribute('name', $alias);
+        $this->setMethod(IInputs::INPUT_POST);
 
         $this->controlFactory = new Controls\Factory();
-        $this->storage = new Storage($storage);
+        $this->setParent($parent);
+    }
+
+    public function setInputs(string $method = IInputs::INPUT_POST, ?ArrayAccess $entries = null, ?ArrayAccess $files = null): self
+    {
+        $this->setMethod($method);
         $this->entries = $entries;
         $this->files = $files;
-        $this->alias = $alias;
-        $this->storage->setAlias($alias);
-
-        // defaultni method
-        $this->setMethod('post');
-
-        /** Nastavi vychozi layout tabulky */
-        $this->setLayout();
-
-        $this->setParent($parent);
-
-        $this->setupCsrf();
+        return $this;
     }
 
     public function addControl(Controls\AControl $control): self
@@ -90,7 +95,6 @@ class Form implements IHtmlElement
     public function merge(IHtmlElement $child): void
     {
         $this->setLabel($child->getAttribute('label'));
-        $this->setValue($child->getAttribute('value'));
         $this->setChildren($child->getChildren());
         $this->setAttributes($child->getAttributes());
     }
@@ -121,23 +125,8 @@ class Form implements IHtmlElement
     public function setValues(array $data = [])
     {
         foreach ($this->controls as $alias => $child) {
-            if ($child instanceof Controls\Checkboxes) { // checkboxy maji sva specifika
-                if (isset($data[$alias])) {
-                    $child->setValue($data[$alias]);
-                } // pokud se jedna o data z objektu a neni pro dany checkboxes hodnota nastavena, nememi se
-            } elseif ($child instanceof Controls\Checkbox) { // checkboxy maji sva specifika
-                if (isset($data[$alias])) {
-                    $child->checked(true);
-                } else {
-                    $child->checked(false);
-                }
-            } elseif ($child instanceof Controls\Submit) { // submity maji sva specifika
-                if (isset($data[$alias])) {
-                    $child->setSubmitted(true);
-                }
-            } else {
-                $child->setValue(isset($data[$alias]) ? $data[$alias] : null);
-            }
+            $_alias = ($child instanceof AControl) ? $child->getAlias() : $alias ;
+            $child->setValue(isset($data[$_alias]) ? $data[$_alias] : null);
         }
         return $this;
     }
@@ -145,20 +134,17 @@ class Form implements IHtmlElement
     /**
      * Nastavi value objektu, nebo potomku
      * nebo nastavi value childu
-     * @param mixed $value
      * @param string $alias
+     * @param mixed $value
      * @return $this
      */
-    public function setValue($value = null, $alias = null)
+    public function setValue(string $alias, $value = null)
     {
-        if ($alias === null) {
-            if (empty ($this->controls)) {
-                $this->value = $value;
-            } else {
+        if (is_null($alias)) {
+            if (!empty($this->controls)) {
                 $this->setValues((array)$value);
             }
         } else {
-            $this->values[$alias] = $value;
             if (isset($this->controls[$alias])) {
                 $this->controls[$alias]->setValue($value);
             }
@@ -172,27 +158,13 @@ class Form implements IHtmlElement
      * @param string $alias
      * @return string|string[]
      */
-    public function getValue($alias = null)
+    public function getValue(string $alias)
     {
-        if ($alias === null) {
-            if (empty ($this->controls)) {
-                if (($this instanceof Controls\Checkbox) || ($this instanceof Controls\Radio)) {
-                    if ($this->checked()) {
-                        return $this->value;
-                    } else {
-                        return null;
-                    }
-                }
-                return $this->value;
-            } else {
-                return $this->getValues();
-            }
+        if (isset($this->controls[$alias])) {
+            $value = $this->controls[$alias]->getValue();
+            return empty($value) ? null : $value ;
         } else {
-            if (isset($this->controls[$alias])) {
-                return $this->controls[$alias]->getValue();
-            } else {
-                return null;
-            }
+            return null;
         }
     }
 
@@ -230,16 +202,14 @@ class Form implements IHtmlElement
      * @param string $alias
      * @return string
      */
-    public function getLabel($alias = null)
+    public function getLabel(?string $alias = null)
     {
-        if ($alias === null) {
+        if (is_null($alias)) {
             return $this->label;
-        } else {
-            if (isset($this->controls[$alias])) {
-                return $this->controls[$alias]->getLabel();
-            }
-            return null;
+        } elseif (isset($this->controls[$alias])) {
+            return $this->controls[$alias]->getLabel();
         }
+        return null;
     }
 
     /**
@@ -249,74 +219,83 @@ class Form implements IHtmlElement
      * @param string $alias
      * @return $this
      */
-    public function setLabel($value = null, $alias = null)
+    public function setLabel(string $value = null, ?string $alias = null)
     {
-        if ($alias === null) {
+        if (is_null($alias)) {
             $this->label = $value;
-        } else {
-            $this->labels[$alias] = $value;
-            if (isset($this->controls[$alias])) {
-                $this->controls[$alias]->setLabel($value);
-            }
+        } elseif (isset($this->controls[$alias])) {
+            $this->controls[$alias]->setLabel($value);
         }
         return $this;
     }
 
-    public function setTemplate($string)
+    /**
+     * Set sent values and process checks on form
+     * @return boolean
+     */
+    public function process(): bool
+    {
+        $this->setSentValues();
+        return $this->isValid();
+    }
+
+    /**
+     * Set files first, then entries
+     * It's necessary due setting checkboxes - files removes that setting, then normal entries set it back
+     */
+    public function setSentValues(): void
+    {
+        $this->setValues((array)$this->files);
+        $this->setValues((array)$this->entries);
+    }
+
+    /**
+     * Form validation
+     * Check each control if is valid
+     * @return boolean
+     */
+    public function isValid(): bool
+    {
+        $validation = true;
+        foreach ($this->controls as $child) {
+            if (($child instanceof Controls\AControl) && !$child->validate($child)) {
+                $validation = false;
+            }
+        }
+
+        return $validation;
+    }
+
+    public function setTemplate($string): void
     {
         $this->template = $string;
     }
 
     /**
-     * Vyrenderuje label formularoveho prvku
-     * @param (string|array) $attributes
-     * @return string
+     * Save current form data in storage
      */
-    public function renderLabel($attributes = array())
+    public function store(): void
     {
-        if ($this->label) {
-            return $this->wrapIt(sprintf($this->templateLabel, $this->getAttribute('id'), $this->getLabel(), $this->renderAttributes($attributes)), $this->wrappersLabel);
-        }
-        return '';
-    }
-
-    public function addCsrf(ArrayAccess $cookie): self
-    {
-        /** Check if form has been sended */
-        $this->addControl($this->controlFactory->getCsrf($this->alias, $cookie));
-        return $this;
+        $this->storage->store($this->getValues(), 86400); # day
     }
 
     /**
-     * Nastavi metodu formulare
-     * @param string $param
-     * @return void
+     * Load data from storage into form
      */
-    public function setMethod($param = null)
+    public function loadStored(): void
     {
-        $this->setAttribute('method', $param);
+        $this->setValues($this->storage->load());
     }
 
     /**
-     * Ziska metodu formulare
+     * Render whole form
+     * @param string|string[] $attributes
      * @return string
-     */
-    public function getMethod()
-    {
-        return $this->getAttribute('method');
-    }
-
-    /**
-     * Vyrenderuje Form
-     * @param string|array $attributes
-     * @return string
+     * @throws Exceptions\RenderException
      */
     public function render($attributes = []): string
     {
-        $this->beforeRender();
-
         $this->addAttributes($attributes);
-
         return sprintf($this->template, $this->renderAttributes(), $this->renderErrors(), $this->renderChildren());
     }
 
@@ -325,6 +304,7 @@ class Form implements IHtmlElement
      * @param string|array $attributes
      * @param bool $noControls
      * @return string
+     * @throws Exceptions\RenderException
      */
     public function renderStart($attributes = [], bool $noControls = false)
     {
@@ -342,47 +322,20 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Alias renderStart()
-     * @param string|array $attributes
-     * @return string
-     */
-    public function start($attributes = [])
-    {
-        return $this->renderStart($attributes);
-    }
-
-    /**
      * Renderuje end tag formulare
      * @return string
      */
-    public function renderEnd()
+    public function renderEnd(): string
     {
         return $this->templateEnd;
     }
 
     /**
-     * Alias renderEnd()
+     * Render all errors from controls
      * @return string
+     * @throws Exceptions\RenderException
      */
-    public function end()
-    {
-        return $this->renderEnd();
-    }
-
-    public function useAutoIds($value = null)
-    {
-        if ($value === null) {
-            return $this->useAutoIds;
-        } else if (is_bool($value)) {
-            return $this->useAutoIds = $value;
-        }
-    }
-
-    /**
-     * Renderuje errory vsech elementu Formu
-     * @return string
-     */
-    public function renderErrors()
+    public function renderErrors(): string
     {
         $errors = [];
         foreach ($this->controls as $child) {
@@ -405,8 +358,9 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Renderuje errory vsech elementu Formu a vrati jako pole indexovane aliasy inputu
+     * Get all errors from controls and return them as indexed array
      * @return string[]
+     * @throws Exceptions\RenderException
      */
     public function renderErrorsArray()
     {
@@ -426,24 +380,18 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Renderuje vsechny prvky formu
-     * doplni chybjejici labels
+     * Render all form controls, add missing wrappers
      * @return string
+     * @throws Exceptions\RenderException
      */
-    public function renderChildren()
+    public function renderChildren(): string
     {
         $return = '';
         $hidden = '';
         foreach ($this->controls as $alias => $child) {
 
             if ($child instanceof AHtmlElement) {
-                if ($child instanceof AForm) {
-                    if ($child->rendered()) {
-                        continue;
-                    }
-                    if (($child->getLabel() === null) && isset($this->labels[$alias])) {
-                        $child->setLabel($this->labels[$alias]);
-                    }
+                if ($child instanceof Controls\AControl) {
                     if (!$child->wrappersLabel()) {
                         $child->addWrapperLabel($this->wrappersLabel);
                     }
@@ -467,125 +415,8 @@ class Form implements IHtmlElement
         return $hidden . $this->wrapIt($return, $this->wrappersChildren);
     }
 
-    public function setSentValues()
-    {
-        $this->setValues(((array)$this->entries + (array)$this->files));
-    }
-
-    public function isSubmitted()
-    {
-        if (isset($this->entries[$this->csrfTokenAlias])) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     /**
-     * Zkontroluje zda je splneno odeslani formulare a zahaji kontrolu prvku formulare
-     * @return boolean
-     */
-    public function process()
-    {
-        if ($this->isSubmitted()) {
-            $this->setSentValues();
-            if ($this->validate() === true) {
-                return true;
-            } else {
-                $this->resetProtectionToken();
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Check if data is set inside storage
-     * @return bool
-     */
-    public function isStored(): bool
-    {
-        return $this->storage->isStored();
-    }
-
-    /**
-     * Save current form data in storage
-     */
-    public function store(): void
-    {
-        $this->storage->store($this->getValues(), \Config::CACHE_DAY);
-    }
-
-    /**
-     * Load data from storage into form
-     */
-    public function loadStored(): void
-    {
-        $this->setValues($this->storage->load());
-    }
-
-    /**
-     * smaze data formulare v session
-     */
-    public function deleteStored(): void
-    {
-        $this->storage->delete();
-    }
-
-    /**
-     * Nastavi globalni chybu na formulari a pripadne na jeho prvku,<br />
-     * pokud jsou vyplneny parametry
-     * @param null|string $alias
-     * @param string $errorText
-     */
-    public final function triggerError($alias = null, $errorText = '')
-    {
-        $this->isValid = false;
-
-        if (isset($this->controls[$alias]) && !empty($errorText)) {
-            $this->controls[$alias]->triggerError($errorText);
-        }
-    }
-
-    /**
-     * Vyresetuje priznak valid formulare<br />
-     * a umozni tak zahajit validaci "na zelene louce"
-     */
-    public final function resetValid(): self
-    {
-        $this->isValid = true;
-        return $this;
-    }
-
-    /**
-     * Zjisti zda je formular validni
-     * @return boolean
-     */
-    public final function isValid(): bool
-    {
-        return ($this->validate() && $this->isValid);
-    }
-
-    /**
-     * Validace formulare,<br />
-     * probiha tak ze validuje vsechny childy a sam sebe
-     * @return boolean
-     */
-    public function validate(): bool
-    {
-        $validation = true;
-        foreach ($this->controls as $child) {
-            if (($child instanceof Controls\AControl) && !$child->validate($child)) {
-                $validation = false;
-            }
-        }
-
-        return ($validation && $this->isValid);
-    }
-
-    /**
-     * Nastavi layout formulare
+     * Set form layout
      * @param string $layoutName
      * @return $this
      * @throws Exceptions\FormsException

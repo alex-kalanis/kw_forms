@@ -3,8 +3,8 @@
 namespace kalanis\kw_forms\Controls\Security\Captcha;
 
 
-use kalanis\kw_forms\Controls\TValidate;
-use kalanis\kw_forms\Interfaces\IRules;
+use kalanis\kw_rules\Interfaces\IRules;
+use kalanis\kw_rules\TValidate;
 
 /**
  * The NOCAPTCHA server URL's
@@ -23,37 +23,29 @@ define("NOCAPTCHA_API_SECURE_SERVER", "https://www.google.com/recaptcha/api/site
 class NoCaptcha extends ACaptcha
 {
     /** @var string */
-    protected $publicKey = '';
+    protected static $publicKey = '';
     /** @var string */
-    protected $privateKey = '';
+    protected static $privateKey = '';
 
-    public function set(string $alias, string $privateKey, string $publicKey, string $errorMessage): self
+    public static function init(string $privateKey, string $publicKey): void
     {
-        $this->publicKey = $publicKey;
-        $this->privateKey = $privateKey;
+        static::$publicKey = $publicKey;
+        static::$privateKey = $privateKey;
+    }
+
+    public function set(string $alias, string $errorMessage): self
+    {
         $this->setEntry($alias);
-        parent::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkNoCaptcha']);
+        TValidate::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkNoCaptcha']);
         return $this;
     }
 
     protected function checkNoCaptcha($value): bool
     {
         // entry has key: g-recaptcha-response
-        $response = file_get_contents(NOCAPTCHA_API_SECURE_SERVER . "?secret=" . $this->privateKey . "&response=" . $value);
+        $response = file_get_contents(NOCAPTCHA_API_SECURE_SERVER . "?secret=" . static::$privateKey . "&response=" . $value);
         $responseStructure = json_decode($response, true);
         return !empty($responseStructure["success"]) && $responseStructure["success"] === true;
-    }
-
-    public function addRule(string $ruleName, string $errorText, ...$args): TValidate
-    {
-        // no additional rules applicable
-        return $this;
-    }
-
-    public function removeRules(): TValidate
-    {
-        // no rules removal applicable
-        return $this;
     }
 
     public function renderInput($attributes = null): string
@@ -71,6 +63,6 @@ class NoCaptcha extends ACaptcha
     protected function getHtml(): string
     {
         return '<script src=\'' . NOCAPTCHA_API_SERVER . '\'></script>
-	<div class="g-recaptcha" data-sitekey="' . $this->publicKey. '"></div>';
+	<div class="g-recaptcha" data-sitekey="' . static::$publicKey. '"></div>';
     }
 }

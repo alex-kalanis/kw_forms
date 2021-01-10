@@ -4,8 +4,10 @@ namespace kalanis\kw_forms\Controls;
 
 
 use kalanis\kw_forms\Exceptions\RenderException;
-use kalanis\kw_forms\Interfaces;
-use kalanis\kw_forms\Rules;
+use kalanis\kw_rules\Interfaces;
+use kalanis\kw_rules\Rules;
+use kalanis\kw_rules\TValidate;
+use kalanis\kw_templates\HtmlElement\IHtmlElement;
 use kalanis\kw_templates\HtmlElement\THtmlElement;
 
 
@@ -14,11 +16,11 @@ use kalanis\kw_templates\HtmlElement\THtmlElement;
  * @package kalanis\kw_forms\Controls
  * Abstraction of control entry - which will be rendered
  */
-abstract class AControl implements Interfaces\IValidate
+abstract class AControl implements Interfaces\IValidate, IHtmlElement
 {
     use THtmlElement;
-    use TLabel;
     use TKey;
+    use TLabel;
     use TValidate;
     use TValue;
 

@@ -12,7 +12,7 @@ use kalanis\kw_forms\Interfaces;
  * @package kalanis\kw_forms\Controls\Security\Timeout
  * Remember expiration and for a preset time set it as passing
  */
-class Timeout implements Interfaces\Timeout
+class Timeout implements Interfaces\ITimeout
 {
     const CAPTCHA_TIME = 'captchaTime';
 

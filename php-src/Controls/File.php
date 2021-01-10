@@ -4,8 +4,8 @@ namespace kalanis\kw_forms\Controls;
 
 
 use kalanis\kw_forms\Exceptions\EntryException;
-use kalanis\kw_forms\Interfaces;
-use kalanis\kw_forms\Rules;
+use kalanis\kw_rules\Interfaces;
+use kalanis\kw_rules\Rules;
 
 
 /**

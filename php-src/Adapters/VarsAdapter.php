@@ -4,14 +4,16 @@ namespace kalanis\kw_forms\Adapters;
 
 
 use kalanis\kw_forms\Exceptions\FormsException;
+use kalanis\kw_forms\Interfaces\IInputs;
+
 
 class VarsAdapter extends AAdapter
 {
     public function loadEntries(string $inputType): void
     {
-        if (self::INPUT_POST == $inputType) {
+        if (IInputs::INPUT_POST == $inputType) {
             $this->vars = $this->loadVars($_POST);
-        } elseif (self::INPUT_GET == $inputType) {
+        } elseif (IInputs::INPUT_GET == $inputType) {
             $this->vars = $this->loadVars($_GET);
         } else {
             throw new FormsException(sprintf('Unknown input type - %s', $inputType));

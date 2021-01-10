@@ -14,7 +14,7 @@ class Button extends AControl
     protected $templateInput = '<input type="button" value="%1$s"%2$s />';
     protected $defaultAlias = 'button';
 
-    public function set(string $alias, ?string $label = null): self
+    public function set(string $alias, ?string $label = null, ?string $originalValue = null): self
     {
         if (is_null($label)) {
             $label = $alias;
@@ -22,7 +22,7 @@ class Button extends AControl
         } elseif (empty($label)) {
             $label = $alias;
         }
-        $this->setEntry($alias, null, $label);
+        $this->setEntry($alias, $originalValue, $label);
         return $this;
     }
 }

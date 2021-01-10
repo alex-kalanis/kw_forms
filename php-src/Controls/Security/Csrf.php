@@ -5,8 +5,9 @@ namespace kalanis\kw_forms\Controls\Security;
 
 use ArrayAccess;
 use kalanis\kw_forms\Controls\Hidden;
-use kalanis\kw_forms\Controls\TValidate;
 use kalanis\kw_forms\Interfaces;
+use kalanis\kw_rules\Interfaces as IRules;
+use kalanis\kw_rules\TValidate;
 
 
 /**
@@ -38,18 +39,31 @@ class Csrf extends Hidden
         $this->setEntry($alias);
         $this->csrfTokenAlias = "{$alias}SubmitCheck";
         $this->setValue($this->csrf->getToken($this->csrfTokenAlias));
-        parent::addRule(Interfaces\IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkToken']);
+        parent::addRule(IRules\IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkToken']);
         return $this;
     }
 
     protected function checkToken($incomingValue): bool
     {
-        return $this->csrf->checkToken(strval($incomingValue), $this->csrfTokenAlias);
+        if ($this->csrf->checkToken(strval($incomingValue), $this->csrfTokenAlias)) {
+            // token reload
+            $this->csrf->removeToken($this->csrfTokenAlias);
+            $this->setValue($this->csrf->getToken($this->csrfTokenAlias));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function addRule(string $ruleName, string $errorText, ...$args): TValidate
     {
         // no additional rules applicable
+        return $this;
+    }
+
+    public function addRules(iterable $rules = []): TValidate
+    {
+        // no rules add applicable
         return $this;
     }
 
@@ -59,20 +73,8 @@ class Csrf extends Hidden
         return $this;
     }
 
-    /**
-     * Reset protection token value in form
-     */
-    public function resetProtectionToken(): void
+    public function renderErrors(): string
     {
-        $this->setValue($this->csrf->getToken($this->csrfTokenAlias));
-    }
-
-    /**
-     * Recreate protection token
-     */
-    public function reloadProtection(): void
-    {
-        $this->csrf->removeToken($this->csrfTokenAlias);
-        $this->setValue($this->csrf->getToken($this->csrfTokenAlias));
+        return '';
     }
 }

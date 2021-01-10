@@ -4,9 +4,9 @@ namespace kalanis\kw_forms\Controls\Security\Captcha;
 
 
 use ArrayAccess;
-use kalanis\kw_forms\Controls\TValidate;
 use kalanis\kw_forms\Exceptions\RenderException;
-use kalanis\kw_forms\Interfaces\IRules;
+use kalanis\kw_rules\Interfaces\IRules;
+use kalanis\kw_rules\TValidate;
 
 
 /**
@@ -30,7 +30,7 @@ class Text extends ACaptcha
 
         $this->setEntry($alias, null, $text);
         $this->fillSession($alias, $session, $text);
-        parent::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkFillCaptcha']);
+        TValidate::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkFillCaptcha']);
         return $this;
     }
 
@@ -47,18 +47,6 @@ class Text extends ACaptcha
 
         $session->offsetSet($stringLast, ($session->offsetExists($stringNow) ? $session->offsetGet($stringNow) : null));
         $session->offsetSet($stringNow, $text);
-    }
-
-    public function addRule(string $ruleName, string $errorText, ...$args): TValidate
-    {
-        // no additional rules applicable
-        return $this;
-    }
-
-    public function removeRules(): TValidate
-    {
-        // no rules removal applicable
-        return $this;
     }
 
     /**

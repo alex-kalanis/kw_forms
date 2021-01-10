@@ -12,9 +12,6 @@ use kalanis\kw_forms\Interfaces\IValidate;
 
 abstract class AAdapter implements IValidate, ArrayAccess, Countable, Iterator
 {
-    const INPUT_POST = 'post';
-    const INPUT_GET = 'get';
-
     protected $key = null;
     protected $vars = [];
 

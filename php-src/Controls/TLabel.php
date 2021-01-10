@@ -52,7 +52,7 @@ trait TLabel
      * @return string
      * @throws RenderException
      */
-    public function renderLabel($attributes = array()): string
+    public function renderLabel($attributes = []): string
     {
         if ($this->label) {
             return $this->wrapIt(sprintf($this->templateLabel, $this->getAttribute('id'), $this->getLabel(), $this->renderAttributes($attributes)), $this->wrappersLabel);

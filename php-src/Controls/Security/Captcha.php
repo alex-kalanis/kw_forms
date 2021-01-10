@@ -3,6 +3,7 @@
 namespace kalanis\kw_forms\Controls\Security;
 
 
+use ArrayAccess;
 use kalanis\kw_forms\Controls\Factory;
 use kalanis\kw_forms\Interfaces;
 
@@ -27,10 +28,10 @@ class Captcha
     /** @var string */
     protected $captchaError;
 
-    /** @var Interfaces\Timeout */
+    /** @var Interfaces\ITimeout */
     protected $libTimeout = null;
 
-    public function __construct(Factory $factory, Interfaces\Timeout $libTimeout = null)
+    public function __construct(Factory $factory, Interfaces\ITimeout $libTimeout = null)
     {
         $this->factory = $factory;
         $this->libTimeout = $libTimeout;
@@ -38,7 +39,7 @@ class Captcha
         $this->captchaError = 'The CAPTCHA wasn\'t entered correctly. Please try it again.'; //TODO lang
     }
 
-    public function getCaptcha(int $type, \ArrayAccess $session, string $alias = 'captcha'): Captcha\ACaptcha
+    public function getCaptcha(int $type, ArrayAccess &$session, string $alias = 'captcha'): Captcha\ACaptcha
     {
         switch ($type) {
             case static::TYPE_DISABLED:
@@ -50,7 +51,7 @@ class Captcha
             case static::TYPE_COLOUR:
                 return $this->factory->getCaptchaColour($alias, $session, $this->captchaError)->setTimeout($this->libTimeout);
             default:
-                return $this->factory->getNocaptcha($alias, '', '')->setTimeout($this->libTimeout);
+                return $this->factory->getNocaptcha($alias, $this->captchaError)->setTimeout($this->libTimeout);
         }
     }
 }

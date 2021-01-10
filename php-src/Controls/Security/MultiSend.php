@@ -5,8 +5,8 @@ namespace kalanis\kw_forms\Controls\Security;
 
 use ArrayAccess;
 use kalanis\kw_forms\Controls\Hidden;
-use kalanis\kw_forms\Controls\TValidate;
-use kalanis\kw_forms\Interfaces;
+use kalanis\kw_rules\Interfaces as IRules;
+use kalanis\kw_rules\TValidate;
 
 
 /**
@@ -26,7 +26,7 @@ class MultiSend extends Hidden
         $this->setEntry($alias);
         $this->setValue(uniqid('multisend', true));
         $this->addCheckToStack($this->getValue());
-        parent::addRule(Interfaces\IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkMulti']);
+        parent::addRule(IRules\IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkMulti']);
         return $this;
     }
 
@@ -59,9 +59,20 @@ class MultiSend extends Hidden
         return $this;
     }
 
+    public function addRules(iterable $rules = []): TValidate
+    {
+        // no rules add applicable
+        return $this;
+    }
+
     public function removeRules(): TValidate
     {
         // no rules removal applicable
         return $this;
+    }
+
+    public function renderErrors(): string
+    {
+        return '';
     }
 }

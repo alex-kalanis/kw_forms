@@ -4,8 +4,8 @@ namespace kalanis\kw_forms\Controls\Security\Captcha;
 
 
 use ArrayAccess;
-use kalanis\kw_forms\Controls\TValidate;
-use kalanis\kw_forms\Interfaces\IRules;
+use kalanis\kw_rules\Interfaces\IRules;
+use kalanis\kw_rules\TValidate;
 
 
 /**

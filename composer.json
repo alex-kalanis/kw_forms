@@ -10,6 +10,7 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "alex-kalanis/kw_input": "1.0",
+    "alex-kalanis/kw_rules": "1.0",
     "alex-kalanis/kw_templates": "1.0",
     "php": ">=7.2.0"
   },

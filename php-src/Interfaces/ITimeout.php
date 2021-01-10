@@ -4,12 +4,12 @@ namespace kalanis\kw_forms\Interfaces;
 
 
 /**
- * Interface Timeout
+ * Interface ITimeout
  * @package kalanis\kw_forms\Interfaces
  *
  * Interface for info if the object can be used
  */
-interface Timeout
+interface ITimeout
 {
     /**
      * Can use?
