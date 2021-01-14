@@ -10,9 +10,9 @@ namespace kalanis\kw_forms\Controls;
  */
 class Submit extends Button
 {
-    protected $defaultAlias = 'submit';
-    protected $templateInput = '<input type="submit" value="%1$s"%2$s />';
     protected $templateLabel = '%2$s';
+    protected $templateInput = '<input type="submit" value="%1$s"%2$s />';
+    protected $defaultAlias = 'submit';
 
     /**
      * Check if form was sent by this button

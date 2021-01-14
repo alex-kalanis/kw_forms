@@ -6,7 +6,7 @@ namespace kalanis\kw_forms\Controls\Security\Captcha;
 use ArrayAccess;
 use kalanis\kw_forms\Exceptions\RenderException;
 use kalanis\kw_rules\Interfaces\IRules;
-use kalanis\kw_rules\TValidate;
+use kalanis\kw_rules\TRules;
 
 
 /**
@@ -30,7 +30,7 @@ class Text extends ACaptcha
 
         $this->setEntry($alias, null, $text);
         $this->fillSession($alias, $session, $text);
-        TValidate::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkFillCaptcha']);
+        TRules::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkFillCaptcha']);
         return $this;
     }
 

@@ -6,7 +6,7 @@ namespace kalanis\kw_forms\Controls\Security;
 use ArrayAccess;
 use kalanis\kw_forms\Controls\Hidden;
 use kalanis\kw_rules\Interfaces as IRules;
-use kalanis\kw_rules\TValidate;
+use kalanis\kw_rules\TRules;
 
 
 /**
@@ -53,25 +53,25 @@ class MultiSend extends Hidden
         return false;
     }
 
-    public function addRule(string $ruleName, string $errorText, ...$args): TValidate
+    public function addRule(string $ruleName, string $errorText, ...$args): TRules
     {
         // no additional rules applicable
         return $this;
     }
 
-    public function addRules(iterable $rules = []): TValidate
+    public function addRules(iterable $rules = []): TRules
     {
         // no rules add applicable
         return $this;
     }
 
-    public function removeRules(): TValidate
+    public function removeRules(): TRules
     {
         // no rules removal applicable
         return $this;
     }
 
-    public function renderErrors(): string
+    public function renderErrors($errors): string
     {
         return '';
     }

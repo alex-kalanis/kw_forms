@@ -38,15 +38,6 @@ class File extends AControl implements Interfaces\IValidateFile
         return $this->wrapIt(sprintf($this->templateInput, null, $this->renderAttributes()), $this->wrappersInput);
     }
 
-    public function setValue($value): TValue
-    {
-        if (!($value instanceof Interfaces\IValidateFile)) {
-            throw new EntryException(sprintf('Set something other than file for entry %s', $this->getKey()));
-        }
-        $this->value = $value;
-        return $this;
-    }
-
     public function getValue(): string
     {
         $this->checkFile();

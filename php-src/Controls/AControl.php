@@ -4,9 +4,10 @@ namespace kalanis\kw_forms\Controls;
 
 
 use kalanis\kw_forms\Exceptions\RenderException;
+use kalanis\kw_rules\Exceptions\RuleException;
 use kalanis\kw_rules\Interfaces;
 use kalanis\kw_rules\Rules;
-use kalanis\kw_rules\TValidate;
+use kalanis\kw_rules\TRules;
 use kalanis\kw_templates\HtmlElement\IHtmlElement;
 use kalanis\kw_templates\HtmlElement\THtmlElement;
 
@@ -21,8 +22,8 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement
     use THtmlElement;
     use TKey;
     use TLabel;
-    use TValidate;
     use TValue;
+    use TRules;
 
     /** @var string|null */
     protected $originalValue = null;
@@ -31,9 +32,6 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement
     protected $template = '%1$s %2$s %3$s';
     // 1 value, 2 attributes, 3 children
     protected $templateInput = '';
-
-    protected $inputRendered = false;
-    protected $errorsRendered = false;
 
     protected function whichFactory(): Interfaces\IRuleFactory
     {
@@ -74,13 +72,14 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement
 
     /**
      * Return errors over entry which happened
+     * @param RuleException[] $errors
      * @return string
      * @throws RenderException
      */
-    public function renderErrors(): string
+    public function renderErrors($errors): string
     {
         $return = '';
-        foreach ($this->errors as $error) {
+        foreach ($errors as $error) {
             $return .= $this->wrapIt(sprintf($this->templateError, $error->getMessage()), $this->wrappersError);
         }
         return empty($return) ? '' : $this->wrapIt($return, $this->wrappersErrors);

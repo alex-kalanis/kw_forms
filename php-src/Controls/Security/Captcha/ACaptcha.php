@@ -5,8 +5,7 @@ namespace kalanis\kw_forms\Controls\Security\Captcha;
 
 use kalanis\kw_forms\Controls\AControl;
 use kalanis\kw_forms\Interfaces;
-use kalanis\kw_rules\Interfaces as IRules;
-use kalanis\kw_rules\TValidate;
+use kalanis\kw_rules\TRules;
 
 
 /**
@@ -20,50 +19,46 @@ abstract class ACaptcha extends AControl
     /** @var Interfaces\ITimeout|null */
     protected $libTimeout = null;
 
-    public function addRule(string $ruleName, string $errorText, ...$args): TValidate
+    public function addRule(string $ruleName, string $errorText, ...$args): TRules
     {
         // no additional rules applicable
         return $this;
     }
 
-    public function addRules(iterable $rules = []): TValidate
+    public function addRules(iterable $rules = []): TRules
     {
         // no adding external rules applicable
         return $this;
     }
 
-    public function removeRules(): TValidate
+    public function getRules(): array
+    {
+        $ruleset = $this->canPass() ? [] : $this->rules;
+        if (($this->libTimeout instanceof Interfaces\ITimeout) && !empty($ruleset)) {
+            $this->libTimeout->updateExpire();
+        }
+        return $ruleset;
+    }
+
+    public function removeRules(): TRules
     {
         // no rules removal applicable
         return $this;
     }
 
-    public function validate(IRules\IValidate $entry): bool
-    {
-        if ($this->canPass()) {
-            $this->errors = []; // isValid checks also this variable
-            return true;
-        }
-        $result = parent::validate($entry);
-        if (($this->libTimeout instanceof Interfaces\ITimeout) && $result) {
-            $this->libTimeout->updateExpire();
-        }
-        return $result;
-    }
-
     public function renderLabel($attributes = []): string
     {
-        return ($this->canPass()) ? '' : parent::renderLabel($attributes);
+        return $this->canPass() ? '' : parent::renderLabel($attributes);
     }
 
     public function renderInput($attributes = []): string
     {
-        return ($this->canPass()) ? '' : parent::renderInput($attributes);
+        return $this->canPass() ? '' : parent::renderInput($attributes);
     }
 
-    public function renderErrors(): string
+    public function renderErrors($errors): string
     {
-        return ($this->canPass()) ? '' : parent::renderErrors();
+        return $this->canPass() ? '' : parent::renderErrors($errors);
     }
 
     protected function canPass(): bool

@@ -3,14 +3,16 @@
 namespace kalanis\kw_forms\Controls\Security\Captcha;
 
 
-use kalanis\kw_forms\Interfaces;
-
-
 /**
  * Define no captcha to render
  */
 class Disabled extends ACaptcha
 {
+    public function getRules(): array
+    {
+        return [];
+    }
+
     public function renderInput($attributes = null): string
     {
         return '';
@@ -21,13 +23,8 @@ class Disabled extends ACaptcha
         return  '';
     }
 
-    public function renderErrors(): string
+    public function renderErrors($errors): string
     {
         return '';
-    }
-
-    public function validate(Interfaces\IValidate $entry): bool
-    {
-        return true;
     }
 }

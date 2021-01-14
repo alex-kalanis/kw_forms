@@ -7,6 +7,7 @@ use ArrayAccess;
 use kalanis\kw_forms\Controls\AControl;
 use kalanis\kw_forms\Controls\TWrappers;
 use kalanis\kw_forms\Interfaces\IInputs;
+use kalanis\kw_rules\TValidate;
 use kalanis\kw_templates\AHtmlElement;
 use kalanis\kw_templates\HtmlElement\IHtmlElement;
 use kalanis\kw_templates\HtmlElement\THtmlElement;
@@ -24,6 +25,7 @@ class Form implements IHtmlElement
     use Cache\TStorage;
     use Form\TMethod;
     use THtmlElement;
+    use TValidate;
     use TWrappers;
 
     /** @var Controls\Factory */
@@ -258,8 +260,8 @@ class Form implements IHtmlElement
     {
         $validation = true;
         foreach ($this->controls as $child) {
-            if (($child instanceof Controls\AControl) && !$child->validate($child)) {
-                $validation = false;
+            if ($child instanceof Controls\AControl) {
+                $validation &= $this->validate($child);
             }
         }
 
@@ -337,17 +339,7 @@ class Form implements IHtmlElement
      */
     public function renderErrors(): string
     {
-        $errors = [];
-        foreach ($this->controls as $child) {
-            if ($child instanceof Controls\AControl) {
-                if ($child->getErrors()) {
-                    if (!$child->wrappersErrors()) {
-                        $child->addWrapperErrors($this->wrappersError);
-                    }
-                    $errors[$child->getAlias()] = $child->renderErrors();
-                }
-            }
-        }
+        $errors = $this->renderErrorsArray();
         if (!empty ($errors)) {
             $return = $this->wrapIt(implode('', array_keys($errors)), $this->wrappersErrors);
 
@@ -367,11 +359,12 @@ class Form implements IHtmlElement
         $errors = [];
         foreach ($this->controls as $child) {
             if ($child instanceof Controls\AControl) {
-                if ($child->getErrors()) {
+                $this->validate($child);
+                if ($this->getErrors()) {
                     if (!$child->wrappersErrors()) {
                         $child->addWrapperErrors($this->wrappersError);
                     }
-                    $errors[$child->getAlias()] = $child->renderErrors();
+                    $errors[$child->getAlias()] = $child->renderErrors($this->getErrors());
                 }
             }
         }
@@ -419,14 +412,9 @@ class Form implements IHtmlElement
      * Set form layout
      * @param string $layoutName
      * @return $this
-     * @throws Exceptions\FormsException
      */
-    public function setLayout($layoutName = '')
+    public function setLayout(string $layoutName = '')
     {
-        if (!is_string($layoutName)) {
-            throw new Exceptions\FormsException('Metoda setLayout vyzaduje jeden parametr typu string.');
-        }
-
         if (($layoutName == 'inlineTable') || ($layoutName == 'tableInline')) {
             $this->resetWrappers();
             $this->addWrapperChildren('tr')

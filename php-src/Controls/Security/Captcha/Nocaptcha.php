@@ -4,7 +4,7 @@ namespace kalanis\kw_forms\Controls\Security\Captcha;
 
 
 use kalanis\kw_rules\Interfaces\IRules;
-use kalanis\kw_rules\TValidate;
+use kalanis\kw_rules\TRules;
 
 /**
  * The NOCAPTCHA server URL's
@@ -36,7 +36,7 @@ class NoCaptcha extends ACaptcha
     public function set(string $alias, string $errorMessage): self
     {
         $this->setEntry($alias);
-        TValidate::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkNoCaptcha']);
+        TRules::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkNoCaptcha']);
         return $this;
     }
 
@@ -50,7 +50,7 @@ class NoCaptcha extends ACaptcha
 
     public function renderInput($attributes = null): string
     {
-        return ($this->canPass() || $this->inputRendered) ? '' : $this->getHtml();
+        return $this->canPass() ? '' : $this->getHtml();
     }
 
     /**
@@ -62,7 +62,7 @@ class NoCaptcha extends ACaptcha
      */
     protected function getHtml(): string
     {
-        return '<script src=\'' . NOCAPTCHA_API_SERVER . '\'></script>
+        return '<script src="' . NOCAPTCHA_API_SERVER . '"></script>
 	<div class="g-recaptcha" data-sitekey="' . static::$publicKey. '"></div>';
     }
 }
