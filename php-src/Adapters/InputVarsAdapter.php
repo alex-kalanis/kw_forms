@@ -27,6 +27,7 @@ class InputVarsAdapter extends VarsAdapter
         } else {
             throw new FormsException(sprintf('Unknown input type - %s', $inputType));
         }
+        $this->inputType = $inputType;
     }
 
     public function getValue()

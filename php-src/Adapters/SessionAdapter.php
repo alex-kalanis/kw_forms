@@ -16,4 +16,9 @@ class SessionAdapter extends VarsAdapter
         $_SESSION = $this->loadVars($_SESSION);
         $this->vars = &$_SESSION;
     }
+
+    public function getSource(): string
+    {
+        return static::SOURCE_SESSION;
+    }
 }

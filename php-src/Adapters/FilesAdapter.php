@@ -4,20 +4,14 @@ namespace kalanis\kw_forms\Adapters;
 
 
 use kalanis\kw_forms\Exceptions\FormsException;
-use kalanis\kw_rules\Interfaces;
-use kalanis\kw_rules\Rules;
+use kalanis\kw_input\Interfaces\IFileEntry;
 
 
-class FilesAdapter extends AAdapter implements Interfaces\IValidateFile
+class FilesAdapter extends AAdapter implements IFileEntry
 {
     public function loadEntries(string $inputType): void
     {
         $this->vars = $this->loadVars($_FILES);
-    }
-
-    protected function whichFactory(): Interfaces\IRuleFactory
-    {
-        return new Rules\File\Factory();
     }
 
     protected function loadVars(&$array): array
@@ -81,5 +75,10 @@ class FilesAdapter extends AAdapter implements Interfaces\IValidateFile
     public function getSize(): int
     {
         return $this->current()['size'];
+    }
+
+    public function getSource(): string
+    {
+        return static::SOURCE_FILES;
     }
 }

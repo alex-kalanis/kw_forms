@@ -59,4 +59,9 @@ class CookieAdapter extends VarsAdapter
         setcookie($offset, '', (time() - 3600), static::$path, static::$domain);
         unset($this->vars[$offset]);
     }
+
+    public function getSource(): string
+    {
+        return static::SOURCE_COOKIE;
+    }
 }

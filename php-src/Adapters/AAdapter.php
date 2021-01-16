@@ -7,16 +7,13 @@ use ArrayAccess;
 use Countable;
 use Iterator;
 use kalanis\kw_forms\Exceptions\FormsException;
-use kalanis\kw_rules\Interfaces\IValidate;
-use kalanis\kw_rules\TRules;
+use kalanis\kw_input\Interfaces\IEntry;
 
 
-abstract class AAdapter implements IValidate, ArrayAccess, Countable, Iterator
+abstract class AAdapter implements ArrayAccess, Countable, Iterator, IEntry
 {
     protected $key = null;
     protected $vars = [];
-
-    use TRules;
 
     /**
      * @param string $inputType

@@ -9,6 +9,8 @@ use kalanis\kw_forms\Interfaces\IInputs;
 
 class VarsAdapter extends AAdapter
 {
+    protected $inputType = '';
+
     public function loadEntries(string $inputType): void
     {
         if (IInputs::INPUT_POST == $inputType) {
@@ -18,6 +20,7 @@ class VarsAdapter extends AAdapter
         } else {
             throw new FormsException(sprintf('Unknown input type - %s', $inputType));
         }
+        $this->inputType = $inputType;
     }
 
     protected function loadVars(&$array): array
@@ -27,5 +30,10 @@ class VarsAdapter extends AAdapter
             $result[$this->removeNullBytes($postedKey)] = $this->removeNullBytes($posted);
         }
         return $result;
+    }
+
+    public function getSource(): string
+    {
+        return $this->inputType;
     }
 }

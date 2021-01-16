@@ -22,10 +22,11 @@ class Factory
         'check' => '\kalanis\kw_forms\Controls\Checkbox',
         'checkbox' => '\kalanis\kw_forms\Controls\Checkbox',
         'checkboxswitch' => '\kalanis\kw_forms\Controls\CheckboxSwitch',
-        'select' => 'Select',
-        'selectbox' => 'Selectbox',
-//        'radio' => 'Radio',
-//        'radiobutton' => 'Radio',
+//        'select' => '\kalanis\kw_forms\Controls\Select',
+//        'selectbox' => '\kalanis\kw_forms\Controls\Select',
+//        'radio' => '\kalanis\kw_forms\Controls\Radio',
+//        'radioset' => '\kalanis\kw_forms\Controls\RadioSet',
+//        'radiobutton' => '\kalanis\kw_forms\Controls\Radio',
         'hidden' => '\kalanis\kw_forms\Controls\Hidden',
         'date' => '\kalanis\kw_forms\Controls\DatePicker',
         'datetime' => '\kalanis\kw_forms\Controls\DateTimePicker',
@@ -71,7 +72,7 @@ class Factory
      * @param array|string $attributes
      * @return Input
      */
-    public function getInput(string $alias, ?string $label = null, $value = null, $attributes = [])
+    public function getInput(string $alias, string $label = '', $value = null, $attributes = [])
     {
         $input = new Input();
         $input->set($alias, $value, $label)->addAttributes($attributes);
@@ -86,7 +87,7 @@ class Factory
      * @param array|string $attributes
      * @return Text
      */
-    public function getText(string $alias, ?string $label = null, $value = null, $attributes = [])
+    public function getText(string $alias, string $label = '', $value = null, $attributes = [])
     {
         $text = new Text();
         $text->set($alias, $value, $label)->addAttributes($attributes);
@@ -101,7 +102,7 @@ class Factory
      * @param array|string $attributes
      * @return Email
      */
-    public function getEmail(string $alias, ?string $label = null, $value = null, $attributes = [])
+    public function getEmail(string $alias, string $label = '', $value = null, $attributes = [])
     {
         $mail = new Email();
         $mail->set($alias, $value, $label)->addAttributes($attributes);
@@ -115,7 +116,7 @@ class Factory
      * @param array|string $attributes
      * @return Password
      */
-    public function getPassword(string $alias, ?string $label = null, $attributes = [])
+    public function getPassword(string $alias, string $label = '', $attributes = [])
     {
         $pass = new Password();
         $pass->set($alias, $label)->addAttributes($attributes);
@@ -143,7 +144,7 @@ class Factory
      * @param string[] $attributes
      * @return DatePicker
      */
-    public function getDatePicker(string $alias, ?string $label = null, $value = null, $attributes = [])
+    public function getDatePicker(string $alias, string $label = '', $value = null, $attributes = [])
     {
         $date = new DatePicker();
         $date->set($alias, $value, $label)->addAttributes($attributes);
@@ -157,7 +158,7 @@ class Factory
      * @param string[] $attributes
      * @return DateTimePicker
      */
-    public function getDateTimePicker(string $alias, ?string $label = null, $value = null, $attributes = [])
+    public function getDateTimePicker(string $alias, string $label = '', $value = null, $attributes = [])
     {
         $date = new DateTimePicker();
         $date->set($alias, $value, $label)->addAttributes($attributes);
@@ -171,7 +172,7 @@ class Factory
      * @param string[] $attributes
      * @return DateRange
      */
-    public function getDateRange(string $alias, ?string $label = null, $value = null, $attributes = [])
+    public function getDateRange(string $alias, string $label = '', $value = null, $attributes = [])
     {
         $date = new DateRange();
         $date->set($alias, $value, $label)->addAttributes($attributes);
@@ -184,7 +185,7 @@ class Factory
      * @param string|null $value
      * @return Description
      */
-    public function getDescription(string $alias, ?string $label = null, $value = null)
+    public function getDescription(string $alias, string $label = '', $value = null)
     {
         $desc = new Description();
         $desc->setEntry($alias, $value, $label);
@@ -199,7 +200,7 @@ class Factory
      * @param array|string $attributes
      * @return Html
      */
-    public function getHtml(string $alias, ?string $label = null, $value = null, $attributes = [])
+    public function getHtml(string $alias, string $label = '', $value = null, $attributes = [])
     {
         $html = new Html();
         $html->setEntry($alias, $value, $label)->addAttributes($attributes);
@@ -214,7 +215,7 @@ class Factory
      * @param array|string $attributes
      * @return Textarea
      */
-    public function getTextarea(string $alias, ?string $label = null, $value = null, $attributes = [])
+    public function getTextarea(string $alias, string $label = '', $value = null, $attributes = [])
     {
         $text = new Textarea();
         $text->setEntry($alias, $value, $label)->addAttributes($attributes);
@@ -225,14 +226,15 @@ class Factory
      * Prida do Formu select
      * @param string $alias
      * @param string $label
-     * @param array|string $value
+     * @param string[]|string $value
      * @param array|string $children
      * @param array|string $attributes
-     * @return \Form_Controls_Select
+     * @return Select
      */
-    public function getSelect(string $alias, ?string $label = null, $value = null, $children = [], $attributes = [])
+    public function getSelect(string $alias, string $label = '', $value = null, $children = [], $attributes = [])
     {
-        $select = new \Form_Controls_Select($alias, $value, $label, $children);
+        $select = new Select();
+        $select->set($alias, $value, $label, $children);
         $select->addAttributes($attributes);
         return $select;
     }
@@ -244,11 +246,12 @@ class Factory
      * @param string $value
      * @param array $children
      * @param array $attributes
-     * @return \Form_Controls_RadioSet
+     * @return RadioSet
      */
-    public function getRadios(string $alias, ?string $label = null, $value = null, $children = [], $attributes = [])
+    public function getRadios(string $alias, string $label = '', $value = null, $children = [], $attributes = [])
     {
-        $radio = new \Form_Controls_RadioSet($alias, $value, $label, $children);
+        $radio = new RadioSet();
+        $radio->set($alias, $value, $label, $children);
         $radio->addAttributes($attributes);
         return $radio;
     }
@@ -262,7 +265,7 @@ class Factory
      * @param array|string $attributes
      * @return Checkbox
      */
-    public function getCheckbox(string $alias, ?string $label = '', $checked = null, $value = '1', $attributes = [])
+    public function getCheckbox(string $alias, string $label = '', $checked = null, $value = '1', $attributes = [])
     {
         $check = new Checkbox();
         $check->set($alias, $value, $label);
@@ -280,7 +283,7 @@ class Factory
      * @param array|string $attributes
      * @return CheckboxSwitch
      */
-    public function getCheckboxSwitch(string $alias, ?string $label = null, $checked = null, $value = 1, $attributes = [])
+    public function getCheckboxSwitch(string $alias, string $label = '', $checked = null, $value = 1, $attributes = [])
     {
         $switch = new CheckboxSwitch();
         $switch->set($alias, $value, $label);
@@ -298,7 +301,7 @@ class Factory
      * @param array|string $attributes
      * @return Checkboxes
      */
-    public function getCheckboxes(string $alias, ?string $label = null, $checked = [], array $children = [], $attributes = [])
+    public function getCheckboxes(string $alias, string $label = '', $checked = [], array $children = [], $attributes = [])
     {
         $check = new Checkboxes();
         $check->set($alias, $checked, $label, $children);
@@ -313,7 +316,7 @@ class Factory
      * @param array|string $attributes
      * @return File
      */
-    public function getFile(string $alias, ?string $label = null, $attributes = [])
+    public function getFile(string $alias, string $label = '', $attributes = [])
     {
         $file = new File();
         $file->set($alias, $label);
@@ -329,7 +332,7 @@ class Factory
      * @param string[]|string $attributes
      * @return Files
      */
-    public function getFiles(string $alias, ?string $label = null, iterable $inputs = [], $attributes = [])
+    public function getFiles(string $alias, string $label = '', iterable $inputs = [], $attributes = [])
     {
         $file = new Files();
         $file->set($alias, $inputs, $label, $attributes);
@@ -343,7 +346,7 @@ class Factory
      * @param array|string $attributes
      * @return Button
      */
-    public function getButton(string $alias, ?string $label = null, $attributes = [])
+    public function getButton(string $alias, string $label = '', $attributes = [])
     {
         $button = new Button();
         $button->set($alias, $label)->addAttributes($attributes);
@@ -357,7 +360,7 @@ class Factory
      * @param array|string $attributes
      * @return Reset
      */
-    public function getReset(string $alias, ?string $label = null, $attributes = [])
+    public function getReset(string $alias, string $label = '', $attributes = [])
     {
         $reset = new Reset();
         $reset->set($alias, $label)->addAttributes($attributes);
@@ -371,7 +374,7 @@ class Factory
      * @param array|string $attributes
      * @return Submit
      */
-    public function getSubmit(string $alias, ?string $label = null, $attributes = [])
+    public function getSubmit(string $alias, string $label = '', $attributes = [])
     {
         $submit = new Submit();
         $submit->set($alias, $label, '1')->addAttributes($attributes);
