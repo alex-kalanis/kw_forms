@@ -18,8 +18,10 @@ class Factory
         'password' => '\kalanis\kw_forms\Controls\Password',
         'phone' => '\kalanis\kw_forms\Controls\Telephone',
         'telephone' => '\kalanis\kw_forms\Controls\Telephone',
-        'check' => 'Checkbox',
-        'checkbox' => 'Checkbox',
+        'chk' => '\kalanis\kw_forms\Controls\Checkbox',
+        'check' => '\kalanis\kw_forms\Controls\Checkbox',
+        'checkbox' => '\kalanis\kw_forms\Controls\Checkbox',
+        'checkboxswitch' => '\kalanis\kw_forms\Controls\CheckboxSwitch',
         'select' => 'Select',
         'selectbox' => 'Selectbox',
 //        'radio' => 'Radio',
@@ -252,57 +254,60 @@ class Factory
     }
 
     /**
-     * Prida do Formu input typu checkbox
+     * Get form input type checkbox
      * @param string $alias
      * @param string $label
      * @param boolean $checked
      * @param string|int $value
      * @param array|string $attributes
-     * @return \Form_Controls_Checkbox
+     * @return Checkbox
      */
-    public function getCheckbox(string $alias, ?string $label = null, $checked = null, $value = 1, $attributes = [])
+    public function getCheckbox(string $alias, ?string $label = '', $checked = null, $value = '1', $attributes = [])
     {
-        $check = new \Form_Controls_Checkbox($alias, $value, $label);
-        $check->checked($checked);
+        $check = new Checkbox();
+        $check->set($alias, $value, $label);
+        $check->setValue(strval($checked));
         $check->addAttributes($attributes);
         return $check;
     }
 
     /**
-     * Prida do Formu input typu checkbox switch
+     * Get form input type checkbox switch
      * @param string $alias
      * @param string $label
      * @param boolean $checked
      * @param string|int $value
      * @param array|string $attributes
-     * @return \Form_Controls_Checkbox_Switch
+     * @return CheckboxSwitch
      */
     public function getCheckboxSwitch(string $alias, ?string $label = null, $checked = null, $value = 1, $attributes = [])
     {
-        $switch = new \Form_Controls_Checkbox_Switch($alias, $value, $label);
-        $switch->checked($checked);
+        $switch = new CheckboxSwitch();
+        $switch->set($alias, $value, $label);
+        $switch->setValue(strval($checked));
         $switch->addAttributes($attributes);
         return $switch;
     }
 
     /**
-     * Prida do Formu skupinu checkboxu
+     * Get group of checkboxes
      * @param string $alias
      * @param array|string $label
      * @param array|string $checked
      * @param array $children
      * @param array|string $attributes
-     * @return \Form_Controls_Checkboxes
+     * @return Checkboxes
      */
     public function getCheckboxes(string $alias, ?string $label = null, $checked = [], array $children = [], $attributes = [])
     {
-        $check = new \Form_Controls_Checkboxes($alias, $checked, $label, $children);
+        $check = new Checkboxes();
+        $check->set($alias, $checked, $label, $children);
         $check->addAttributes($attributes);
         return $check;
     }
 
     /**
-     * Prida do Formu input typu file
+     * Get form input type file
      * @param string $alias
      * @param string $label
      * @param array|string $attributes
@@ -317,17 +322,17 @@ class Factory
     }
 
     /**
-     * Prida do Formu skupinu file inputu
+     * Get form group of inputs type file
      * @param string $alias
      * @param array|string $label
-     * @param array $children
-     * @param array|string $attributes
-     * @return \Form_Controls_Files
+     * @param iterable $inputs
+     * @param string[]|string $attributes
+     * @return Files
      */
-    public function getFiles(string $alias, ?string $label = null, $children = [], $attributes = [])
+    public function getFiles(string $alias, ?string $label = null, iterable $inputs = [], $attributes = [])
     {
-        $file = new \Form_Controls_Files($alias, null, $label, $children);
-        $file->addAttributes($attributes);
+        $file = new Files();
+        $file->set($alias, $inputs, $label, $attributes);
         return $file;
     }
 
@@ -369,7 +374,7 @@ class Factory
     public function getSubmit(string $alias, ?string $label = null, $attributes = [])
     {
         $submit = new Submit();
-        $submit->set($alias, $label)->addAttributes($attributes);
+        $submit->set($alias, $label, '1')->addAttributes($attributes);
         return $submit;
     }
 
@@ -381,7 +386,7 @@ class Factory
      * @param array|string $attributes
      * @return Security\Csrf
      */
-    public function getCsrf(string $alias, ArrayAccess $cookie, string $errorMessage, $attributes = [])
+    public function getCsrf(string $alias, ArrayAccess &$cookie, string $errorMessage, $attributes = [])
     {
         $submit = new Security\Csrf();
         $submit->setHidden($alias, $cookie, $errorMessage)->addAttributes($attributes);
@@ -445,15 +450,13 @@ class Factory
     /**
      * Add captcha check via service ReCaptcha-NoCaptcha
      * @param string $alias
-     * @param string $publicKey
-     * @param string $privateKey
      * @param string $errorMessage
      * @return Security\Captcha\Nocaptcha
      */
-    public function getNocaptcha(string $alias, string $publicKey, string $privateKey, string $errorMessage = 'The NoCAPTCHA wasn\'t entered correctly. Please try it again.')
+    public function getNocaptcha(string $alias, string $errorMessage = 'The NoCAPTCHA wasn\'t entered correctly. Please try it again.')
     {
         $recaptcha = new Security\Captcha\Nocaptcha();
-        $recaptcha->set($alias, $privateKey, $publicKey, $errorMessage);
+        $recaptcha->set($alias, $errorMessage);
         return $recaptcha;
     }
 }

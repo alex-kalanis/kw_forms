@@ -21,7 +21,7 @@ trait TLabel
     protected $label = null;
 
     /**
-     * 1 id(for=""), 2 labelText,  3 attributy
+     * 1 id(for=""), 2 labelText,  3 attributes
      * @var string
      */
     protected $templateLabel = '<label for="%1$s"%3$s>%2$s</label>';

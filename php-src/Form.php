@@ -7,7 +7,8 @@ use ArrayAccess;
 use kalanis\kw_forms\Controls\AControl;
 use kalanis\kw_forms\Controls\TWrappers;
 use kalanis\kw_forms\Interfaces\IInputs;
-use kalanis\kw_rules\TValidate;
+use kalanis\kw_rules\Exceptions\RuleException;
+use kalanis\kw_rules\Validate;
 use kalanis\kw_templates\AHtmlElement;
 use kalanis\kw_templates\HtmlElement\IHtmlElement;
 use kalanis\kw_templates\HtmlElement\THtmlElement;
@@ -17,19 +18,18 @@ use kalanis\kw_templates\HtmlElement\THtmlElement;
  * Class Form
  * @package kalanis\kw_forms
  * Basic class for work with forms
- * @see \Form
- * @see \AForm
  */
 class Form implements IHtmlElement
 {
     use Cache\TStorage;
     use Form\TMethod;
     use THtmlElement;
-    use TValidate;
     use TWrappers;
 
     /** @var Controls\Factory */
     protected $controlFactory = null;
+    /** @var Validate */
+    protected $validate = null;
     /** @var ArrayAccess|null */
     protected $entries = null;
     /** @var ArrayAccess|null */
@@ -38,6 +38,8 @@ class Form implements IHtmlElement
     protected $label = '';
     /** @var Controls\AControl[] */
     protected $controls = [];
+    /** @var RuleException[][] */
+    protected $errors = [];
 
     /**
      * Main Form template
@@ -49,21 +51,12 @@ class Form implements IHtmlElement
     protected $templateError = '';
     /** @var string Template for error output */
     protected $templateErrors = '<div class="errors">%s</div>';
-    /**
-     * Template of start tag
-     * @var string
-     * params: %1 attributes
-     */
-    protected $templateStart = '<form %1$s>';
-
-    /** @var string End tag template */
-    protected $templateEnd = '</form>';
 
     /**
      * @var string
-     * params: %1 id(for=""), %2 labelText,  %3 attributes
+     * params: %1 labelText, %2 content
      */
-    protected $templateLabel = '<label for="%1$s"%3$s>%2$s</label>';
+    protected $templateLabel = '<fieldset><legend>%1$s</legend>%2$s</fieldset>';
 
     public function __construct(string $alias = '', ?IHtmlElement $parent = null)
     {
@@ -73,6 +66,7 @@ class Form implements IHtmlElement
         $this->setMethod(IInputs::INPUT_POST);
 
         $this->controlFactory = new Controls\Factory();
+        $this->validate = new Validate();
         $this->setParent($parent);
     }
 
@@ -84,6 +78,11 @@ class Form implements IHtmlElement
         return $this;
     }
 
+    public function getControlFactory(): Controls\Factory
+    {
+        return $this->controlFactory;
+    }
+
     public function addControl(Controls\AControl $control): self
     {
         $this->controls[$control->getAlias()] = $control;
@@ -91,7 +90,7 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Merge potomku, attr atd.
+     * Merge children, attr etc.
      * @param IHtmlElement $child
      */
     public function merge(IHtmlElement $child): void
@@ -102,7 +101,7 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Vraci pole hodnot $value vsech potomku
+     * Get values of all children
      * @return string[]
      */
     public function getValues()
@@ -115,13 +114,13 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Nastavi potomkum objektu $value, !!nedefinovane hodnoty checkboxu nebudou vynechany!!
-     * <b>Pouziti</b>
+     * Set values to all children, !!undefined values will be set too!!
+     * <b>Usage</b>
      * <code>
-     *  $form->setValues($this->context->post) // nastavi hodnoty z postu
-     *  $form->setValues($formObject) // nastavi hodnoty z jineho formu
+     *  $form->setValues($this->context->post) // set values from Post
+     *  $form->setValues($mapperObject) // set values from other source
      * </code>
-     * @param array|Form $data
+     * @param string[] $data
      * @return $this
      */
     public function setValues(array $data = [])
@@ -134,8 +133,7 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Nastavi value objektu, nebo potomku
-     * nebo nastavi value childu
+     * Set value of object or child
      * @param string $alias
      * @param mixed $value
      * @return $this
@@ -155,8 +153,7 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Vrati value objektu, nebo potomku
-     * nebo vrati value childu
+     * Get value of object or child
      * @param string $alias
      * @return string|string[]
      */
@@ -171,7 +168,7 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Vrati pole labelu $label vsech potomku
+     * Get labels of all children
      * @return array
      */
     public function getLabels()
@@ -184,7 +181,7 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Nastavi potomkum objektu nove labely
+     * Set labels to all children
      * @param string[] $array
      * @return $this
      */
@@ -199,10 +196,9 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Vrati label objektu
-     * nebo vrati label childu
+     * Get object or child label
      * @param string $alias
-     * @return string
+     * @return string|null
      */
     public function getLabel(?string $alias = null)
     {
@@ -215,8 +211,7 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Nastavi label objektu
-     * nebo nastavi label childu
+     * Set object or child label
      * @param string $value
      * @param string $alias
      * @return $this
@@ -258,10 +253,12 @@ class Form implements IHtmlElement
      */
     public function isValid(): bool
     {
+        $this->errors = [];
         $validation = true;
         foreach ($this->controls as $child) {
             if ($child instanceof Controls\AControl) {
-                $validation &= $this->validate($child);
+                $validation &= $this->validate->validate($child);
+                $this->errors[$child->getKey()] = $this->validate->getErrors();
             }
         }
 
@@ -302,37 +299,6 @@ class Form implements IHtmlElement
     }
 
     /**
-     * Renderuje start tag formulare a hidden elementy
-     * @param string|array $attributes
-     * @param bool $noControls
-     * @return string
-     * @throws Exceptions\RenderException
-     */
-    public function renderStart($attributes = [], bool $noControls = false)
-    {
-        $this->addAttributes($attributes);
-        $return = sprintf($this->templateStart, $this->renderAttributes());
-        if (false == $noControls) {
-            foreach ($this->controls as $child) {
-                if ($child instanceof Controls\Hidden) {
-                    $return .= $child->renderInput() . PHP_EOL;
-                }
-            }
-        }
-
-        return $return;
-    }
-
-    /**
-     * Renderuje end tag formulare
-     * @return string
-     */
-    public function renderEnd(): string
-    {
-        return $this->templateEnd;
-    }
-
-    /**
      * Render all errors from controls
      * @return string
      * @throws Exceptions\RenderException
@@ -359,12 +325,11 @@ class Form implements IHtmlElement
         $errors = [];
         foreach ($this->controls as $child) {
             if ($child instanceof Controls\AControl) {
-                $this->validate($child);
-                if ($this->getErrors()) {
+                if (isset($this->errors[$child->getKey()])) {
                     if (!$child->wrappersErrors()) {
                         $child->addWrapperErrors($this->wrappersError);
                     }
-                    $errors[$child->getAlias()] = $child->renderErrors($this->getErrors());
+                    $errors[$child->getAlias()] = $child->renderErrors($this->errors[$child->getKey()]);
                 }
             }
         }

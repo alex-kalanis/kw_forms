@@ -3,7 +3,7 @@
   "name": "kw_forms",
   "description": "HTML Forms for KWCMS",
   "source": "https://github.com/alex-kalanis/kw_forms",
-  "license": "BSD 3-Clause",
+  "license": "BSD-3-Clause",
   "require": {
     "alex-kalanis/kw_input": "dev-master",
     "alex-kalanis/kw_rules": "dev-master",

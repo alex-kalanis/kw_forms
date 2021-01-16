@@ -1,24 +1,27 @@
 {
   "name": "alex-kalanis/kw_forms",
   "description": "HTML Forms for KWCMS",
-  "keywords": [],
+  "keywords": [
+    "form",
+    "forms"
+  ],
   "license": "BSD-3-Clause",
-  "type": "project",
+  "type": "library",
   "require": {
     "ext-fileinfo": "*",
     "ext-gd": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "alex-kalanis/kw_input": "1.0",
-    "alex-kalanis/kw_rules": "2.0",
-    "alex-kalanis/kw_templates": "1.0",
+    "alex-kalanis/kw_input": ">=1.0",
+    "alex-kalanis/kw_rules": ">=2.0",
+    "alex-kalanis/kw_templates": ">=1.0",
     "php": ">=7.2.0"
   },
   "suggest": {
     "firebase/php-jwt": "PHP package for JWT"
   },
   "require-dev": {
-    "phpunit/phpunit": "~7.2"
+    "phpunit/phpunit": ">=7.2"
   },
   "autoload": {
     "psr-4": {
