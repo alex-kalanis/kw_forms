@@ -8,13 +8,12 @@ trait TValue
     /** @var string */
     protected $value = '';
 
-    public function setValue($value): self
+    public function setValue($value): void
     {
         $this->value = $value;
-        return $this;
     }
 
-    public function getValue(): string
+    public function getValue()
     {
         return $this->value;
     }

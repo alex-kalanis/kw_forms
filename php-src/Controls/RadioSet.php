@@ -4,17 +4,22 @@ namespace kalanis\kw_forms\Controls;
 
 
 /**
- * Trida definice formularoveho prvku RadioSet
+ * RadioSet definition - add group of radios into your form
  *
- * <b>Pouziti:</b>
+ * <b>Usage:</b>
  * <code>
- * $radios[] = new Form_Controls_Radio(0, 'yes', 'NO');
- * $radios[] = new Form_Controls_Radio(1, 'no', 'YES');
+ * $radio1 = new Controls\Radio();
+ * $radio1->set(0, 'yes', 'NO');
+ * $radios[] = $radio1;
+ * $radio2 = new Controls\Radio();
+ * $radio2->set(1, 'no', 'YES');
+ * $radios[] = $radio2;
  *
- * $radio = new Form_Controls_RadioSet('alias', 1, null, $radios);
- * echo $radio->value() // no
+ * $radio = new Controls\RadioSet();
+ * $radio->set('alias', 1, null, $radios);
+ * echo $radio->getValue() // no
  *
- * $form->addRadioSet('alias')->addOption(111, 'yes')->addOption(222, 'no');
+ * $form->addRadios('accessKey')->addOption(111, 'yes')->addOption(222, 'no');
  *
  */
 class RadioSet extends AControl
@@ -22,84 +27,66 @@ class RadioSet extends AControl
     protected $templateInput = '%3$s';
 
     /**
-     * Vytvori element formularoveho prvku RadioSet wrapper pro jednotlive radio inputy
-     * @param string $alias
+     * Add group of elements of form entries Radio
+     * @param string $key
      * @param mixed $value
      * @param mixed $label
      * @param array $children
-     */
-    public function set(string $alias, $value = null, string $label = '', array $children = array())
-    {
-        if (!empty($children)) {
-            foreach ($children as $key => $child) {
-                if ($child instanceof Radio) {
-                    $this->addChild($child);
-                } else if (is_string($child)) {
-                    $this->addOption($key, $child);
-                }
-            }
-        }
-        $this->setEntry($alias, $value, $label);
-    }
-
-    /**
-     * Prida radio option do setu
-     * @param string $value
-     * @param string $label
-     * @param boolean $selected
-     */
-    public function addOption($value, $label, $selected = false)
-    {
-        $this->addChild(new Radio($value, $value, $label, $selected));
-
-        return $this;
-    }
-
-    /**
-     * Prida radio option do setu
-     * @param string $value
-     * @param string $label
-     * @param boolean $selected
-     */
-    public function addRadio($value, $label, $selected = false)
-    {
-        return $this->addOption($value, $label, $selected);
-    }
-
-    /**
-     * Nastavi potomkum objektu $checked, !!NEdefinovane hodnoty NEbudou vynechany!!
-     * @param array $array
      * @return $this
      */
-    public function setValues($array = array())
+    public function set(string $key, $value = null, string $label = '', iterable $children = [])
     {
-        $value = (string) Other::getFirst($array);
-        foreach ($this->children as $alias => $child) {
-            if (($child instanceof Radio)) {
-                if ("$alias" == "$value") {
-                    $child->checked(true);
-                } else {
-                    $child->checked(false);
-                }
+        $this->setEntry($key, '', $label);
+        foreach ($children as $alias => $child) {
+            if ($child instanceof Radio) {
+                $child->setParent($this);
+                $this->addChild($child);
+            } elseif (is_string($child)) {
+                $this->addOption($key, $alias, $child, strval(intval(strval($value) == $alias)));
             }
         }
         return $this;
     }
 
     /**
-     * Vraci hodnotu zvoleneho radia ze setu
-     * @return string
+     * Add radio option into current set
+     * @param string $alias
+     * @param string $value
+     * @param string $label
+     * @param string $selected
+     * @return $this
      */
-    public function getValues()
+    public function addOption(string $alias, $value, string $label = '', string $selected = '')
     {
-        foreach ($this->children as $value => $child) {
-            if ($child instanceof Radio) {
-                if ($child->checked()) {
-                    return $value;
-                }
-            }
-        }
-        return false;
+        $radio = new Radio();
+        $this->addChild($radio->set($alias, $value, $label, $selected));
+        return $this;
     }
 
+    /**
+     * Set checked for selected alias; rest will be unchecked
+     * @param string $value
+     */
+    public function setValue($value): void
+    {
+        foreach ($this->children as $child) {
+            if ($child instanceof Radio) {
+                $child->setValue($child->getOriginalValue() == strval($value));
+            }
+        }
+    }
+
+    /**
+     * Returns value of selected radio from set
+     * @return string
+     */
+    public function getValue()
+    {
+        foreach ($this->children as $child) {
+            if (($child instanceof Radio) && $child->getValue()) {
+                return $child->getOriginalValue();
+            }
+        }
+        return '';
+    }
 }

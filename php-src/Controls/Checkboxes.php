@@ -4,7 +4,7 @@ namespace kalanis\kw_forms\Controls;
 
 
 use kalanis\kw_forms\Exceptions\RenderException;
-use kalanis\kw_templates\AHtmlElement;
+use kalanis\kw_forms\Interfaces\IMultiValue;
 
 
 /**
@@ -14,10 +14,9 @@ use kalanis\kw_templates\AHtmlElement;
  * <code>
  * // render form for set 2 values, second will be empty
  * $form = new Form();
- * $checkboxes = $form->getControlFactory()->getCheckboxes('fotos', 'Choose files');
- * $checkboxes->addChild($checkboxes->getCheckbox('file1', 'File 1'));
- * $checkboxes->addChild($checkboxes->getCheckbox('file2', 'File 2', true));
- * $form->addControl($checkboxes);
+ * $checkboxes = $form->addCheckboxes('fotos', 'Choose files');
+ * $checkboxes->addCheckbox('file1', 'File 1'));
+ * $checkboxes->addCheckbox('file2', 'File 2', true));
  * echo $form;
  *
  * // render form for setting 5 values, first two will be set
@@ -25,12 +24,11 @@ use kalanis\kw_templates\AHtmlElement;
  * for($i=1;$i<6;$i++) {
  *     $files[] = $form->getControlFactory()->getCheckbox('', 1, 'File '.$i);
  * }
- * $checkboxes = $form->getControlFactory()->getCheckboxes('fotos', 'Select files', ['0', 1], $files);
- * $form->addControl($checkboxes);
+ * $checkboxes = $form->addCheckboxes('fotos', 'Select files', ['0', 1], $files);
  * echo $form;
  * </code>
  */
-class Checkboxes extends AControl
+class Checkboxes extends AControl implements IMultiValue
 {
 
     public $templateLabel = '<label>%2$s</label>';
@@ -42,42 +40,41 @@ class Checkboxes extends AControl
      * @param string[]|bool[] $value
      * @param string|null $label
      * @param string[]|Checkbox[] $children
+     * @return $this
      */
-    public function set(string $alias, iterable $value = [], ?string $label = null, array $children = array())
+    public function set(string $alias, iterable $value = [], ?string $label = null, iterable $children = array())
     {
         $this->alias = $alias;
         $this->setLabel($label);
 
-        if (is_array($children)) {
-            foreach ($children as $childValue => $childLabel) {
-                if ($childLabel instanceof Checkbox) {
-                    $this->addChild($childLabel, $childValue);
-                } else {
-                    $this->addChild($this->getCheckbox($childValue, $childLabel));
-                }
+        foreach ($children as $childLabel => $childValue) {
+            if ($childValue instanceof Checkbox) {
+                $this->addChild($childValue, $childLabel);
+            } else {
+                $this->addCheckbox(strval($childLabel), strval($childValue), $childValue);
             }
         }
 
         if (!empty($value)) {
             $this->setValues((array) $value);
         }
+        return $this;
     }
 
     /**
      * Create single Checkbox element
-     * @param string $value
+     * @param string $alias
      * @param string $label
+     * @param string $value
      * @param boolean $checked
-     * @param string|string[] $attributes
      * @return Checkbox
      */
-    public function getCheckbox($value, $label = null, $checked = null, $attributes = array())
+    public function addCheckbox(string $alias, string $label, $value, $checked = null)
     {
         $checkbox = new Checkbox();
-        $checkbox->set("$value", "$value", $label);
-        $checkbox->addAttributes($attributes);
-        $checkbox->setParent($this);
+        $checkbox->set($alias, $value, $label);
         $checkbox->setValue(strval($checked));
+        $this->addChild($checkbox);
         return $checkbox;
     }
 
@@ -85,14 +82,12 @@ class Checkboxes extends AControl
      * Get statuses of all children
      * @return array
      */
-    public function getValues()
+    public function getValues(): array
     {
         $array = array();
-        foreach ($this->children as $alias => $child) {
+        foreach ($this->children as $child) {
             if ($child instanceof Checkbox) {
-                if (!empty($child->getValue())) {
-                    $array[] = $alias;
-                }
+                $array[$child->getKey()] = $child->getValue();
             }
         }
         return $array;
@@ -102,19 +97,19 @@ class Checkboxes extends AControl
      * Set values to all children
      * !! UNDEFINED values will be SET too !!
      * @param string[]|array $array
-     * @return AControl
      */
-    public function setValues($array = array())
+    public function setValues(array $array): void
     {
-        foreach ($array as &$val) {
-            $val = "$val";
-        }
-        foreach ($this->children as $alias => $child) {
+        foreach ($this->children as $child) {
             if ($child instanceof Checkbox) {
-                $child->setValue(in_array("$alias", $array));
+                $child->setValue(isset($array[$child->getKey()]) ? $array[$child->getKey()] : '');
             }
         }
-        return $this;
+    }
+
+    public function renderInput($attributes = null): string
+    {
+        return $this->wrapIt(sprintf($this->templateInput, '', '', $this->renderChildren()), $this->wrappersInput);
     }
 
     /**
@@ -125,21 +120,13 @@ class Checkboxes extends AControl
     public function renderChildren(): string
     {
         $return = '';
-        foreach ($this->children as $alias => $child) {
-            if ($child instanceof AHtmlElement) {
-                if ($child instanceof AControl) {
-                    if (!empty($this->getAttribute('name'))) {
-                        $child->setAttribute('name', $this->getAttribute('name') . '[]');
-                        $child->setAttribute('id', $this->getAlias() . '_' . $alias);
-                    }
-                }
-
-                $return .= $this->wrapIt($child->render(), $this->wrappersChild) . "\n";
-            } else {
-                $return .= $this->wrapIt($child, $this->wrappersChild) . "\n";
+        foreach ($this->children as $child) {
+            if ($child instanceof AControl) {
+                $child->setAttribute('id', $this->getAlias() . '_' . $child->getKey());
             }
+
+            $return .= $this->wrapIt($child->render(), $this->wrappersChild) . PHP_EOL;
         }
         return $this->wrapIt($return, $this->wrappersChildren);
     }
-
 }

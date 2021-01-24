@@ -3,13 +3,13 @@
 namespace kalanis\kw_forms;
 
 
-use ArrayAccess;
+use kalanis\kw_forms\Adapters\AAdapter;
+use kalanis\kw_forms\Adapters\FilesAdapter;
 use kalanis\kw_forms\Controls\AControl;
 use kalanis\kw_forms\Controls\TWrappers;
-use kalanis\kw_forms\Interfaces\IInputs;
+use kalanis\kw_input\Interfaces\IEntry;
 use kalanis\kw_rules\Exceptions\RuleException;
 use kalanis\kw_rules\Validate;
-use kalanis\kw_templates\AHtmlElement;
 use kalanis\kw_templates\HtmlElement\IHtmlElement;
 use kalanis\kw_templates\HtmlElement\THtmlElement;
 
@@ -22,6 +22,7 @@ use kalanis\kw_templates\HtmlElement\THtmlElement;
 class Form implements IHtmlElement
 {
     use Cache\TStorage;
+    use Form\TControl;
     use Form\TMethod;
     use THtmlElement;
     use TWrappers;
@@ -30,10 +31,10 @@ class Form implements IHtmlElement
     protected $controlFactory = null;
     /** @var Validate */
     protected $validate = null;
-    /** @var ArrayAccess|null */
-    protected $entries = null;
-    /** @var ArrayAccess|null */
-    protected $files = null;
+    /** @var AAdapter|array */
+    protected $entries = [];
+    /** @var FilesAdapter|array */
+    protected $files = [];
     /** @var string Form label */
     protected $label = '';
     /** @var Controls\AControl[] */
@@ -46,9 +47,7 @@ class Form implements IHtmlElement
      * @var string
      * params: %1 attributes, %2 errors, %3 controls
      */
-    protected $template = '%2$s<form %1$s>%3$s</form>';
 
-    protected $templateError = '';
     /** @var string Template for error output */
     protected $templateErrors = '<div class="errors">%s</div>';
 
@@ -60,19 +59,20 @@ class Form implements IHtmlElement
 
     public function __construct(string $alias = '', ?IHtmlElement $parent = null)
     {
-        $alias = "$alias";
-        $this->alias = $alias;
-        $this->setAttribute('name', $alias);
-        $this->setMethod(IInputs::INPUT_POST);
+        $this->alias = strval($alias);
+        $this->setAttribute('name', $this->alias);
+        $this->setMethod(IEntry::SOURCE_POST);
+        $this->setTemplate('%2$s<form %1$s>%3$s</form>');
 
+        $this->templateError = '';
         $this->controlFactory = new Controls\Factory();
         $this->validate = new Validate();
         $this->setParent($parent);
     }
 
-    public function setInputs(string $method = IInputs::INPUT_POST, ?ArrayAccess $entries = null, ?ArrayAccess $files = null): self
+    public function setInputs(AAdapter $entries, ?FilesAdapter $files = null): self
     {
-        $this->setMethod($method);
+        $this->setMethod($entries->getSource());
         $this->entries = $entries;
         $this->files = $files;
         return $this;
@@ -83,19 +83,21 @@ class Form implements IHtmlElement
         return $this->controlFactory;
     }
 
-    public function addControl(Controls\AControl $control): self
+    public function addControl(Controls\AControl $control): void
     {
-        $this->controls[$control->getAlias()] = $control;
-        return $this;
+        $this->controls[$control->getKey()] = $control;
     }
 
     /**
      * Merge children, attr etc.
      * @param IHtmlElement $child
+     * @codeCoverageIgnore merge with what?
      */
     public function merge(IHtmlElement $child): void
     {
-        $this->setLabel($child->getAttribute('label'));
+        if (method_exists($child, 'getLabel')) {
+            $this->setLabel($child->getLabel());
+        }
         $this->setChildren($child->getChildren());
         $this->setAttributes($child->getAttributes());
     }
@@ -107,8 +109,13 @@ class Form implements IHtmlElement
     public function getValues()
     {
         $array = [];
-        foreach ($this->controls as $alias => $child) {
-            $array[$alias] = $child->getValue();
+        foreach ($this->controls as $key => $child) {
+            if ($child instanceof Interfaces\IMultiValue) {
+                $array += $child->getValues();
+            } else {
+                $_alias = ($child instanceof AControl) ? $child->getKey() : $key ;
+                $array[$_alias] = $child->getValue();
+            }
         }
         return $array;
     }
@@ -125,46 +132,44 @@ class Form implements IHtmlElement
      */
     public function setValues(array $data = [])
     {
-        foreach ($this->controls as $alias => $child) {
-            $_alias = ($child instanceof AControl) ? $child->getAlias() : $alias ;
-            $child->setValue(isset($data[$_alias]) ? $data[$_alias] : null);
+        foreach ($this->controls as $key => $child) {
+            if ($child instanceof Interfaces\IMultiValue) {
+                $child->setValues($data);
+            } else {
+                $_alias = ($child instanceof AControl) ? $child->getKey() : $key ;
+                $child->setValue(isset($data[$_alias]) ? $data[$_alias] : null);
+            }
         }
         return $this;
     }
 
     /**
      * Set value of object or child
-     * @param string $alias
+     * @param string $key
      * @param mixed $value
-     * @return $this
      */
-    public function setValue(string $alias, $value = null)
+    public function setValue(string $key, $value = null): void
     {
-        if (is_null($alias)) {
-            if (!empty($this->controls)) {
-                $this->setValues((array)$value);
-            }
-        } else {
-            if (isset($this->controls[$alias])) {
-                $this->controls[$alias]->setValue($value);
+        foreach ($this->controls as $control) {
+            if ($control->getKey() == $key) {
+                $control->setValue($value);
             }
         }
-        return $this;
     }
 
     /**
      * Get value of object or child
-     * @param string $alias
-     * @return string|string[]
+     * @param string $key
+     * @return string|string[]|null
      */
-    public function getValue(string $alias)
+    public function getValue(string $key)
     {
-        if (isset($this->controls[$alias])) {
-            $value = $this->controls[$alias]->getValue();
-            return empty($value) ? null : $value ;
-        } else {
-            return null;
+        foreach ($this->controls as $control) {
+            if ($control->getKey() == $key) {
+                return $control->getValue();
+            }
         }
+        return null;
     }
 
     /**
@@ -175,7 +180,7 @@ class Form implements IHtmlElement
     {
         $array = [];
         foreach ($this->controls as $child) {
-            $array[$child->getAlias()] = $child->getLabel();
+            $array[$child->getKey()] = $child->getLabel();
         }
         return $array;
     }
@@ -188,8 +193,8 @@ class Form implements IHtmlElement
     public function setLabels(array $array = [])
     {
         foreach ($this->controls as $child) {
-            if (isset($array[$child->getAlias()])) {
-                $child->setLabel($array[$child->getAlias()]);
+            if (isset($array[$child->getKey()])) {
+                $child->setLabel($array[$child->getKey()]);
             }
         }
         return $this;
@@ -197,15 +202,19 @@ class Form implements IHtmlElement
 
     /**
      * Get object or child label
-     * @param string $alias
+     * @param string $key
      * @return string|null
      */
-    public function getLabel(?string $alias = null)
+    public function getLabel(?string $key = null)
     {
-        if (is_null($alias)) {
+        if (is_null($key)) {
             return $this->label;
-        } elseif (isset($this->controls[$alias])) {
-            return $this->controls[$alias]->getLabel();
+        } else {
+            foreach ($this->controls as $control) {
+                if ($control->getKey() == $key) {
+                    return $control->getLabel();
+                }
+            }
         }
         return null;
     }
@@ -213,15 +222,19 @@ class Form implements IHtmlElement
     /**
      * Set object or child label
      * @param string $value
-     * @param string $alias
+     * @param string $key
      * @return $this
      */
-    public function setLabel(string $value = null, ?string $alias = null)
+    public function setLabel(?string $value = null, ?string $key = null)
     {
-        if (is_null($alias)) {
+        if (is_null($key)) {
             $this->label = $value;
-        } elseif (isset($this->controls[$alias])) {
-            $this->controls[$alias]->setLabel($value);
+        } else {
+            foreach ($this->controls as $control) {
+                if ($control->getKey() == $key) {
+                    $control->setLabel($value);
+                }
+            }
         }
         return $this;
     }
@@ -242,8 +255,8 @@ class Form implements IHtmlElement
      */
     public function setSentValues(): void
     {
-        $this->setValues((array)$this->files);
-        $this->setValues((array)$this->entries);
+        if ($this->files) $this->setValues(iterator_to_array($this->files));
+        if ($this->entries) $this->setValues(iterator_to_array($this->entries));
     }
 
     /**
@@ -258,7 +271,7 @@ class Form implements IHtmlElement
         foreach ($this->controls as $child) {
             if ($child instanceof Controls\AControl) {
                 $validation &= $this->validate->validate($child);
-                $this->errors[$child->getKey()] = $this->validate->getErrors();
+                $this->errors += $this->validate->getErrors();
             }
         }
 
@@ -329,7 +342,7 @@ class Form implements IHtmlElement
                     if (!$child->wrappersErrors()) {
                         $child->addWrapperErrors($this->wrappersError);
                     }
-                    $errors[$child->getAlias()] = $child->renderErrors($this->errors[$child->getKey()]);
+                    $errors[$child->getKey()] = $child->renderErrors($this->errors[$child->getKey()]);
                 }
             }
         }
@@ -346,9 +359,9 @@ class Form implements IHtmlElement
     {
         $return = '';
         $hidden = '';
-        foreach ($this->controls as $alias => $child) {
+        foreach ($this->controls as $child) {
 
-            if ($child instanceof AHtmlElement) {
+            if ($child instanceof IHtmlElement) {
                 if ($child instanceof Controls\AControl) {
                     if (!$child->wrappersLabel()) {
                         $child->addWrapperLabel($this->wrappersLabel);
@@ -366,7 +379,10 @@ class Form implements IHtmlElement
                     $return .= $child->render() . PHP_EOL;
                 }
             } else {
-                $return .= $child;
+                // @codeCoverageIgnoreStart
+                // How to make this one? Only by extending.
+                $return .= strval($child);
+                // @codeCoverageIgnoreEnd
             }
         }
 
@@ -383,18 +399,18 @@ class Form implements IHtmlElement
         if (($layoutName == 'inlineTable') || ($layoutName == 'tableInline')) {
             $this->resetWrappers();
             $this->addWrapperChildren('tr')
-                ->addWrapperChildren('table', 'class="form"')
+                ->addWrapperChildren('table', ['class' => "form"])
                 ->addWrapperLabel('td')
                 ->addWrapperInput('td')
-                ->addWrapperErrors('div', 'class="errors"')
+                ->addWrapperErrors('div', ['class' => "errors"])
                 ->addWrapperError('div');
         } elseif ($layoutName == 'table') {
             $this->resetWrappers();
-            $this->addWrapperChildren('table', 'class="form"')
+            $this->addWrapperChildren('table', ['class' => "form"])
                 ->addWrapperChild('tr')
                 ->addWrapperLabel('td')
                 ->addWrapperInput('td')
-                ->addWrapperErrors('div', 'class="errors"')
+                ->addWrapperErrors('div', ['class' => "errors"])
                 ->addWrapperError('div');
         }
 

@@ -5,8 +5,8 @@ namespace kalanis\kw_forms\Controls;
 
 class DateRange extends AControl
 {
-    public $templateLabel = '<label>%2$s</label>';
-    public $templateInput = '%3$s';
+    protected $templateLabel = '<label>%2$s</label>';
+    protected $templateInput = '%3$s';
 
     public function set(string $alias, ?string $value = null, string $label = ''): self
     {

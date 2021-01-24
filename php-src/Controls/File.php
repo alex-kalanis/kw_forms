@@ -4,6 +4,7 @@ namespace kalanis\kw_forms\Controls;
 
 
 use kalanis\kw_forms\Exceptions\EntryException;
+use kalanis\kw_input\Interfaces\IFileEntry;
 use kalanis\kw_rules\Interfaces;
 use kalanis\kw_rules\Rules;
 
@@ -12,12 +13,13 @@ use kalanis\kw_rules\Rules;
  * Class File
  * @package kalanis\kw_forms\Controls
  * Render input for sending files
+ * Implementing IValidateFile because kw_rules are really independent
  */
 class File extends AControl implements Interfaces\IValidateFile
 {
     protected $templateInput = '<input type="file"%2$s />';
 
-    /** @var Interfaces\IValidateFile|null */
+    /** @var IFileEntry|null */
     protected $value = null;
 
     protected function whichFactory(): Interfaces\IRuleFactory
@@ -25,9 +27,9 @@ class File extends AControl implements Interfaces\IValidateFile
         return new Rules\File\Factory();
     }
 
-    public function set(string $alias, string $label = ''): self
+    public function set(string $key, string $label = ''): self
     {
-        $this->setEntry($alias, null, $label);
+        $this->setEntry($key, null, $label);
         return $this;
     }
 
@@ -38,7 +40,14 @@ class File extends AControl implements Interfaces\IValidateFile
         return $this->wrapIt(sprintf($this->templateInput, null, $this->renderAttributes()), $this->wrappersInput);
     }
 
-    public function getValue(): string
+    public function setValue($value): void
+    {
+        if ($value instanceof IFileEntry) {
+            $this->value = $value;
+        }
+    }
+
+    public function getValue()
     {
         $this->checkFile();
         return $this->value->getValue();
@@ -68,7 +77,7 @@ class File extends AControl implements Interfaces\IValidateFile
         return $this->value->getSize();
     }
 
-    public function getFile(): Interfaces\IValidateFile
+    public function getFile(): IFileEntry
     {
         $this->checkFile();
         return $this->value;

@@ -6,6 +6,11 @@ namespace kalanis\kw_forms\Interfaces;
 use ArrayAccess;
 
 
+/**
+ * Interface ICsrf
+ * @package kalanis\kw_forms\Interfaces
+ * Check tokens for cross-site
+ */
 interface ICsrf
 {
     /**
@@ -15,17 +20,20 @@ interface ICsrf
     public function init(ArrayAccess &$cookie, int $expire = 3600);
 
     /**
+     * Remove known token
      * @param string $codeName
      */
     public function removeToken(string $codeName): void;
 
     /**
+     * Get token
      * @param string $codeName
      * @return string
      */
     public function getToken(string $codeName): string;
 
     /**
+     * Check if token is valid
      * @param string $token
      * @param string $codeName
      * @return bool
@@ -33,6 +41,7 @@ interface ICsrf
     public function checkToken(string $token, string $codeName): bool;
 
     /**
+     * Get token expire time
      * @return int
      */
     public function getExpire(): int;

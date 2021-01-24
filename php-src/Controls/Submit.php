@@ -20,14 +20,20 @@ class Submit extends Button
      */
     protected $submitted = false;
 
-    public function setValue($value): TValue
+    public function setValue($value): void
     {
         $this->submitted = !is_null($value);
-        return $this;
     }
 
-    public function getValue(): string
+    public function getValue()
     {
         return $this->submitted ? $this->originalValue : '' ;
+    }
+
+    public function renderInput($attributes = null): string
+    {
+        $this->addAttributes($attributes);
+        $this->setAttribute('name', $this->getKey());
+        return $this->wrapIt(sprintf($this->templateInput, strval($this->getValue()), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
     }
 }

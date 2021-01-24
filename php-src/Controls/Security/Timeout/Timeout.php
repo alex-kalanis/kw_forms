@@ -4,7 +4,7 @@ namespace kalanis\kw_forms\Controls\Security\Timeout;
 
 
 use ArrayAccess;
-use kalanis\kw_forms\Interfaces;
+use kalanis\kw_forms\Interfaces\ITimeout;
 
 
 /**
@@ -12,7 +12,7 @@ use kalanis\kw_forms\Interfaces;
  * @package kalanis\kw_forms\Controls\Security\Timeout
  * Remember expiration and for a preset time set it as passing
  */
-class Timeout implements Interfaces\ITimeout
+class Timeout implements ITimeout
 {
     const CAPTCHA_TIME = 'captchaTime';
 
@@ -27,7 +27,9 @@ class Timeout implements Interfaces\ITimeout
     {
         $this->session = $session;
         $this->timeout = $timeout;
-        $this->time = (int)$this->session->offsetGet(static::CAPTCHA_TIME);
+        $this->time = ($this->session->offsetExists(static::CAPTCHA_TIME))
+            ? (int)$this->session->offsetGet(static::CAPTCHA_TIME)
+            : 0 ;
     }
 
     public function updateExpire()

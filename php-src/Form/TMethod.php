@@ -3,8 +3,7 @@
 namespace kalanis\kw_forms\Form;
 
 
-use kalanis\kw_forms\Interfaces\IInputs;
-use kalanis\kw_templates\HtmlElement\TAttributes;
+use kalanis\kw_input\Interfaces\IEntry;
 
 
 /**
@@ -14,8 +13,6 @@ use kalanis\kw_templates\HtmlElement\TAttributes;
  */
 trait TMethod
 {
-    use TAttributes;
-
     /**
      * Set transfer method of form
      * @param string $param
@@ -23,7 +20,7 @@ trait TMethod
      */
     public function setMethod(string $param)
     {
-        if (in_array($param, [IInputs::INPUT_GET, IInputs::INPUT_POST])) {
+        if (in_array($param, [IEntry::SOURCE_GET, IEntry::SOURCE_POST])) {
             $this->setAttribute('method', $param);
         }
     }
@@ -36,4 +33,10 @@ trait TMethod
     {
         return $this->getAttribute('method');
     }
+
+    abstract public function setAttribute(string $name, string $value): void;
+
+    abstract public function removeAttribute(string $name): void;
+
+    abstract public function getAttribute(string $name): ?string;
 }

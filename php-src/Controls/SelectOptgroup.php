@@ -3,9 +3,6 @@
 namespace kalanis\kw_forms\Controls;
 
 
-use kalanis\kw_forms\Exceptions\RenderException;
-
-
 /**
  * Class SelectOptgroup
  * @package kalanis\kw_forms\Controls
@@ -13,47 +10,67 @@ use kalanis\kw_forms\Exceptions\RenderException;
  */
 class SelectOptgroup extends AControl
 {
-    protected $templateLabel = '<optgroup label="%2$s">';
-    protected $templateInput = '%3$s</optgroup>';
+    private static $uniqid = 0;
+    protected $templateLabel = '';
+    protected $templateInput = '<optgroup label="%1$s">%3$s</optgroup>';
 
     /**
-     * Vytvori element formularoveho prvku Optgroup
+     * Create element Optgroup
      * @param string $alias
-     * @param mixed $value
      * @param mixed $label
      * @param array $children
+     * @return $this
      */
-    public function set(string $alias, $value = null, string $label = '', array $children = [])
+    public function set(string $alias, string $label = '', iterable $children = [])
     {
-        $this->setEntry($alias, $value, $label);
+        $this->setEntry(sprintf('%s_%s', $alias, self::$uniqid), '', $label);
+        foreach ($children as $childAlias => $child) {
+            if ($child instanceof SelectOption) {
+                $this->addChild($child, $childAlias);
+            } else {
+                $this->addOption(strval($childAlias), $childAlias, strval($child));
+            }
+        }
+        self::$uniqid++;
+        return $this;
     }
 
-    public function getValues()
+    public function addOption(string $alias, $value, string $label = '')
     {
-        return $this->values;
+        $option = new SelectOption();
+        $option->setEntry($alias, $value, $label);
+        $this->addChild($option, $alias);
+        return $option;
     }
 
-    /**
-     * Clear wrappers, there should be none around <optgroup>
-     * @param string[]|string $attributes
-     * @return string
-     * @throws RenderException
-     */
-    public function renderLabel($attributes = null): string
+    public function setValue($value): void
     {
-        $this->resetWrappers();
-        return parent::renderLabel($attributes);
+        foreach ($this->children as $child) {
+            if ($child instanceof SelectOption) {
+                $child->setValue($value);
+            }
+        }
     }
 
-    /**
-     * Clear wrappers, there should be none around <optgroup>
-     * @param string[]|string $attributes
-     * @return string
-     * @throws RenderException
-     */
+    public function getValue()
+    {
+        foreach ($this->children as $child) {
+            if ($child instanceof SelectOption) {
+                if (!empty($child->getValue())) {
+                    return $child->getValue();
+                }
+            }
+        }
+        return '';
+    }
+
     public function renderInput($attributes = null): string
     {
-        $this->resetWrappers();
-        return parent::renderInput($attributes);
+        return $this->wrapIt(sprintf($this->templateInput, $this->getLabel(), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
+    }
+
+    public function renderErrors($errors): string
+    {
+        return '';
     }
 }

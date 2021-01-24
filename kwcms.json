@@ -7,6 +7,7 @@
   "require": {
     "alex-kalanis/kw_input": "dev-master",
     "alex-kalanis/kw_rules": "dev-master",
+    "alex-kalanis/kw_storage": "dev-master",
     "alex-kalanis/kw_templates": "dev-master",
     "php": ">=7.2.0"
   },

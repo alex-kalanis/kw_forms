@@ -5,7 +5,6 @@ namespace kalanis\kw_forms\Controls\Security\Captcha;
 
 use ArrayAccess;
 use kalanis\kw_rules\Interfaces\IRules;
-use kalanis\kw_rules\TRules;
 
 
 /**
@@ -13,12 +12,11 @@ use kalanis\kw_rules\TRules;
  * @package kalanis\kw_forms\Controls\Security\Captcha
  * Numerical operation solving captcha
  */
-class Numerical extends Text
+class Numerical extends AGraphical
 {
     public function set(string $alias, ArrayAccess &$session, string $errorMessage, string $font = '/usr/share/fonts/truetype/freefont/FreeMono.ttf'): parent
     {
         $this->font = $font;
-        $this->session = $session;
 
         $num1 = mt_rand(0, 9);
         $num2 = mt_rand(0, 9);
@@ -26,14 +24,19 @@ class Numerical extends Text
 
         $this->setEntry($alias, null, $text);
         $this->fillSession($alias, $session, strval($num1 + $num2));
-        TRules::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkFillCaptcha']);
+        parent::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkFillCaptcha']);
         return $this;
     }
 
-    protected function checkFillCaptcha($value): bool
+    public function addRule(string $ruleName, string $errorText, ...$args): void
     {
-        $formName = $this->alias . '_last';
-        return (intval($this->session->offsetGet($formName)) == intval($value));
+        // no additional rules applicable
+    }
+
+    public function checkFillCaptcha($value): bool
+    {
+        $formName = $this->getKey() . '_last';
+        return $this->session->offsetExists($formName) && (intval($this->session->offsetGet($formName)) == intval($value));
     }
 
     public function renderLabel($attributes = null): string

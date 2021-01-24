@@ -4,46 +4,37 @@ namespace kalanis\kw_forms\Controls\Security\Captcha;
 
 
 use kalanis\kw_forms\Controls\AControl;
-use kalanis\kw_forms\Interfaces;
-use kalanis\kw_rules\TRules;
+use kalanis\kw_forms\Interfaces\ITimeout;
 
 
 /**
  * Class ACaptcha
  * @package kalanis\kw_forms\Controls\Security\Captcha
  * Class that define any Captcha
- * You can also pass child captcha by preset timer
+ * You can also pass captcha by preset timer
  */
 abstract class ACaptcha extends AControl
 {
-    /** @var Interfaces\ITimeout|null */
+    /** @var ITimeout|null */
     protected $libTimeout = null;
 
-    public function addRule(string $ruleName, string $errorText, ...$args): TRules
-    {
-        // no additional rules applicable
-        return $this;
-    }
-
-    public function addRules(iterable $rules = []): TRules
+    public function addRules(iterable $rules = []): void
     {
         // no adding external rules applicable
-        return $this;
     }
 
     public function getRules(): array
     {
         $ruleset = $this->canPass() ? [] : $this->rules;
-        if (($this->libTimeout instanceof Interfaces\ITimeout) && !empty($ruleset)) {
+        if (($this->libTimeout instanceof ITimeout) && !empty($ruleset)) {
             $this->libTimeout->updateExpire();
         }
         return $ruleset;
     }
 
-    public function removeRules(): TRules
+    public function removeRules(): void
     {
         // no rules removal applicable
-        return $this;
     }
 
     public function renderLabel($attributes = []): string
@@ -63,10 +54,10 @@ abstract class ACaptcha extends AControl
 
     protected function canPass(): bool
     {
-        return ($this->libTimeout instanceof Interfaces\ITimeout && $this->libTimeout->isRunning());
+        return ($this->libTimeout instanceof ITimeout && $this->libTimeout->isRunning());
     }
 
-    public function setTimeout(Interfaces\ITimeout $libTimeout = null): self
+    public function setTimeout(?ITimeout $libTimeout = null): self
     {
         $this->libTimeout = $libTimeout;
         return $this;

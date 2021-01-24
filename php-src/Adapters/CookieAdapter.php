@@ -8,6 +8,8 @@ namespace kalanis\kw_forms\Adapters;
  * @package kalanis\kw_forms\Adapters
  * Accessing _COOKIES via ArrayAccess
  * Also set them into the headers
+ * @codeCoverageIgnore because accessing outer resources
+ * "Cannot modify header information - headers already sent"
  */
 class CookieAdapter extends VarsAdapter
 {

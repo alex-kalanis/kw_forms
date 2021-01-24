@@ -8,6 +8,11 @@ use kalanis\kw_input\Interfaces\IEntry;
 use kalanis\kw_input\Interfaces\IInputs;
 
 
+/**
+ * Class InputFilesAdapter
+ * @package kalanis\kw_forms\Adapters
+ * @codeCoverageIgnore accessing remote libraries
+ */
 class InputFilesAdapter extends FilesAdapter
 {
     protected $inputs = null;
@@ -28,30 +33,5 @@ class InputFilesAdapter extends FilesAdapter
             return $this->offsetGet($this->key);
         }
         throw new FormsException(sprintf('Unknown offset %s', $this->key));
-    }
-
-    public function getValue()
-    {
-        return $this->current()->getValue();
-    }
-
-    public function getMimeType(): string
-    {
-        return $this->current()->getMimeType();
-    }
-
-    public function getTempName(): string
-    {
-        return $this->current()->getTempName();
-    }
-
-    public function getError(): int
-    {
-        return $this->current()->getError();
-    }
-
-    public function getSize(): int
-    {
-        return $this->current()->getSize();
     }
 }

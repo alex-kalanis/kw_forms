@@ -4,88 +4,55 @@ namespace kalanis\kw_forms\Controls;
 
 
 /**
- * Trida definice formularoveho prvku Radio
+ * Class Radio
+ * @package kalanis\kw_forms\Controls
+ * Render input for selecting by radio checkbox
  */
 class Radio extends AControl
 {
-    public $template = '%2$s %1$s';
+    use TChecked;
+
     public $templateInput = '<input type="radio" value="%1$s"%2$s />';
 
-    /**
-     * Vytvori element formularoveho prvku Radio
-     *
-     * @param string $alias
-     * @param string $value
-     * @param string $label
-     * @param type   $checked
-     */
-    public function set(string $alias, $value = null, string $label = '', $checked = null)
+    public function set(string $alias, $value = null, string $label = '', $checked = '')
     {
         $this->setEntry($alias, $value, $label);
-        $this->checked($checked);
+        $this->setChecked($checked);
+        $this->setAttribute('id', $this->getKey());
+        return $this;
     }
 
-    /**
-     * @param array $inputAttrs
-     * @param array $labelAttrs
-     * @return string
-     */
-    public function render($inputAttrs = array(), $labelAttrs = array()): string
+    protected function fillTemplate(): string
     {
-        if ($this->parent instanceof RadioSet) {
-            $this->name($this->parent->name());
-            $this->id($this->parent->alias() . '_' . $this->value);
-        }
-        return parent::render($inputAttrs, $labelAttrs);
+        return '%2$s %1$s';
     }
 
-    /**
-     * @param null $attributes
-     * @return string
-     */
-    function renderInput($attributes = null): string
+    public function getOriginalValue()
     {
-        if ($this->parent instanceof RadioSet) {
-            $this->name($this->parent->name());
-            $this->id($this->parent->alias() . '_' . $this->value);
-        }
-        return parent::renderInput($attributes);
+        return $this->originalValue;
     }
 
-    /**
-     * @param array $attributes
-     * @return string
-     */
-    public function renderLabel($attributes = array()): string
+    public function renderInput($attributes = null): string
     {
-        if ($this->parent instanceof RadioSet) {
-            $this->name($this->parent->name());
-            $this->id($this->parent->alias() . '_' . $this->value);
+        $this->fillParent();
+        $this->addAttributes($attributes);
+        if (!($this->parent instanceof RadioSet)) {
+            $this->setAttribute('name', $this->getKey());
         }
+        return $this->wrapIt(sprintf($this->templateInput, strval($this->getOriginalValue()), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
+    }
+
+    public function renderLabel($attributes = []): string
+    {
+        $this->fillParent();
         return parent::renderLabel($attributes);
     }
 
-    /**
-     * nastavi nebo zjisti stav checked
-     * @param type $value
-     * @return $this
-     */
-    public function checked($value = null)
+    protected function fillParent(): void
     {
-        if ($value === null) {
-            $value = $this->attr('checked');
-            if ($value == 'checked') {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            if ($value && ("$value" !== 'none')) {
-                $this->attr('checked', 'checked');
-            } else {
-                unset($this->attributes['checked']);
-            }
+        if ($this->parent instanceof RadioSet) {
+            $this->setAttribute('name', $this->parent->getAttribute('name'));
+            $this->setAttribute('id', $this->parent->getKey() . '_' . strval($this->getOriginalValue()));
         }
-        return $this;
     }
 }

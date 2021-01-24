@@ -3,45 +3,39 @@
 namespace kalanis\kw_forms\Controls;
 
 
-use kalanis\kw_rules\Interfaces;
-use kalanis\kw_rules\Rules;
-use kalanis\kw_templates\HtmlElement\IHtmlElement;
+use kalanis\kw_forms\Exceptions\RenderException;
+use kalanis\kw_forms\Interfaces\IMultiValue;
 
 
 /**
- * Trida definice formularoveho prvku Files skupina File inputu
+ * Definition of form controls Group of Files
  *
- * <b>Priklady pouziti</b>
+ * <b>Examples</b>
  * <code>
- * // vyrenderuje form pro nahrani 5ti souboru
- * $form = Factory::Form();
- * $form->addFiles('fotky', 'Vyberte soubory', 5);
+ * // render form for upload 5 files
+ * $form = new Form();
+ * $form->addFiles('fotos', 'Select files', 5);
  * echo $form;
  *
- * // vyrenderuje form pro nahrani 5ti souboru s definovanymi labely
- * $labels = array('Soubor 1','Soubor 2','Soubor 3','Soubor 4','Soubor 5');
- * $form = Factory::Form();
- * $form->addFiles('fotky', $labels, 5)->label('Vyberte soubory');
+ * // render form for upload 5 files with defined labels
+ * $labels = array('file 1','file 2','file 3','file 4','file 5');
+ * $form = new Form();
+ * $form->addFiles('fotos', $labels, 5)->setLabel('Select files');
  * echo $form;
  *
- * // vyrenderuje form pro nahrani 5ti souboru s definovanymi labely
- * $form = Factory::Form();
+ * // render form for upload 5 files with defined labels
+ * $form = new Form();
  * for($i=1;$i<6;$i++) {
- *     $files[] = new Form_Controls_File(null, null, 'Soubor '.$i);
+ *     $files[] = new Controls\File(null, null, 'File '.$i);
  * }
- * $form->addFiles('fotky', 'Vyberte soubory', $files);
+ * $form->addFiles('fotos', 'Select files', $files);
  * echo $form;
  * </code>
  */
-class Files extends AControl
+class Files extends AControl implements IMultiValue
 {
     protected $templateLabel = '<label>%2$s</label>';
     protected $templateInput = '%3$s';
-
-    protected function whichFactory(): Interfaces\IRuleFactory
-    {
-        return new Rules\File\Factory();
-    }
 
     public function set(string $alias, iterable $items = [], string $label = '', $attributes = []): self
     {
@@ -57,72 +51,54 @@ class Files extends AControl
     /**
      * Add File input
      * @param string $label
-     * @param string $alias
+     * @param string $key
      * @param string|string[] $attributes
      */
-    public function addFile(string $alias, string $label = '', $attributes = [])
+    public function addFile(string $key, string $label = '', $attributes = [])
     {
         $formFile = new File();
-        $formFile->set($alias, $label)->setAttributes($attributes);
-        $formFile->setParent($this);
+        $formFile->set($key, $label)->setAttributes($attributes);
         $this->addChild($formFile);
     }
 
-//    /**
-//     * Set values to children, !! Undefined values will be filed too !!
-//     * @param array $array
-//     * @return Files
-//     * @throws \kalanis\kw_forms\Exceptions\EntryException
-//     */
-//    public function setValues($array = array()) {
-//        foreach ($this->children as $alias => $child) {
-//            if ($child instanceof File) {
-//                $value = array();
-//                $value['name'] = isset($array['name'][$alias]) ? $array['name'][$alias] : '';
-//                $value['type'] = isset($array['type'][$alias]) ? $array['type'][$alias] : '';
-//                $value['tmp_name'] = isset($array['tmp_name'][$alias]) ? $array['tmp_name'][$alias] : '';
-//                $value['error'] = isset($array['error'][$alias]) ? $array['error'][$alias] : UPLOAD_ERR_NO_FILE;
-//                $value['size'] = isset($array['size'][$alias]) ? $array['size'][$alias] : 0;
-//                $child->setValue($value);
-//            }
-//        }
-//        return $this;
-//    }
+    public function setValues(array $array = []): void
+    {
+        foreach ($this->children as $child) {
+            if ($child instanceof File) {
+                $key = $child->getKey();
+                if (isset($array[$key])) {
+                    $child->setValue($array[$key]);
+                }
+            }
+        }
+    }
+
+    public function getValues(): array
+    {
+        $result = [];
+        foreach ($this->children as $child) {
+            if ($child instanceof File) {
+                $result[$child->getKey()] = $child->getFile();
+            }
+        }
+        return $result;
+    }
 
     /**
      * Render all sub-controls and wrap it all
      * @return string
-     * @throws \kalanis\kw_forms\Exceptions\RenderException
+     * @throws RenderException
      */
-    public function renderChildren()
+    public function renderChildren(): string
     {
         $return = '';
         foreach ($this->children as $alias => $child) {
-            if ($child instanceof IHtmlElement) {
-                if ($child instanceof AControl) {
-                    $child->setAttribute('name', $child->getKey());
-                    $child->setAttribute('id', $this->getAlias() . '_' . $alias);
-                }
-
-                $return .= $this->wrapIt($child->render(), $this->wrappersChild) . "\n";
-            } else {
-                $return .= $this->wrapIt($child, $this->wrappersChild) . "\n";
+            if ($child instanceof AControl) {
+                $child->setAttribute('id', $this->getAlias() . '_' . $alias);
             }
+
+            $return .= $this->wrapIt($child->render(), $this->wrappersChild) . PHP_EOL;
         }
         return $this->wrapIt($return, $this->wrappersChildren);
-    }
-
-    public function validate(Interfaces\IValidate $entry): bool
-    {
-        $valid = true;
-        foreach ($this->children as $child) {
-            if ($child instanceof AControl) {
-                $child->removeRules();
-                $child->addRules($this->getRules());
-                $valid &= $child->validate($child);
-            }
-        }
-
-        return $valid;
     }
 }

@@ -24,7 +24,7 @@ trait TStorage
      */
     public function isStored(): bool
     {
-        return $this->storage->isStored();
+        return $this->storage ? $this->storage->isStored() : false ;
     }
 
     /**
@@ -32,7 +32,9 @@ trait TStorage
      */
     public function deleteStored(): void
     {
-        $this->storage->delete();
+        if ($this->storage) {
+            $this->storage->delete();
+        }
     }
 
     abstract public function getAlias(): ?string;

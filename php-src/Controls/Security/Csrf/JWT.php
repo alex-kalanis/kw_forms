@@ -12,6 +12,7 @@ use kalanis\kw_forms\JWT\Token;
  * Class JWT
  * Secure forms by JWT token
  * @package kalanis\kw_forms\Controls\Security\Csrf
+ * @codeCoverageIgnore dependent on remote library
  */
 class JWT implements ICsrf
 {
@@ -34,21 +35,11 @@ class JWT implements ICsrf
         $this->expire = $expire;
     }
 
-    /**
-     * Smaze token
-     * @param string $codeName
-     */
     public function removeToken(string $codeName): void
     {
         unset($this->tokens[$codeName]);
     }
 
-    /**
-     * Vrati novy token
-     *
-     * @param string $codeName
-     * @return string|false
-     */
     public function getToken(string $codeName): string
     {
         if (!isset($this->tokens[$codeName])) {
@@ -57,20 +48,11 @@ class JWT implements ICsrf
         return $this->tokens[$codeName];
     }
 
-    /**
-     * @return int
-     */
     public function getExpire(): int
     {
         return $this->expire;
     }
 
-    /**
-     * Overi token
-     * @param string $token
-     * @param string $codeName
-     * @return bool
-     */
     public function checkToken(string $token, string $codeName): bool
     {
         $data = Token::decodeJWTToken($token);

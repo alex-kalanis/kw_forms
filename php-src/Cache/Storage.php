@@ -59,7 +59,7 @@ class Storage
             return [];
         }
         $values = $this->storage->load($this->key->fromSharedKey(''));
-        $data = unserialize($values);
+        $data = @unserialize($values);
         if (false === $data) {
             return [];
         }

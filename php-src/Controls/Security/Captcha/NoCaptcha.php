@@ -4,7 +4,6 @@ namespace kalanis\kw_forms\Controls\Security\Captcha;
 
 
 use kalanis\kw_rules\Interfaces\IRules;
-use kalanis\kw_rules\TRules;
 
 /**
  * The NOCAPTCHA server URL's
@@ -36,11 +35,16 @@ class NoCaptcha extends ACaptcha
     public function set(string $alias, string $errorMessage): self
     {
         $this->setEntry($alias);
-        TRules::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkNoCaptcha']);
+        parent::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkNoCaptcha']);
         return $this;
     }
 
-    protected function checkNoCaptcha($value): bool
+    public function addRule(string $ruleName, string $errorText, ...$args): void
+    {
+        // no additional rules applicable
+    }
+
+    public function checkNoCaptcha($value): bool
     {
         // entry has key: g-recaptcha-response
         $response = file_get_contents(NOCAPTCHA_API_SECURE_SERVER . "?secret=" . static::$privateKey . "&response=" . $value);

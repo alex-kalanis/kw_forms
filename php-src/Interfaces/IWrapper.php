@@ -19,7 +19,7 @@ interface IWrapper extends ITemplateError
      * @param mixed $attributes
      * @return $this
      */
-    public function addWrapper($wrapper, $attributes = null);
+    public function addWrapper($wrapper, array $attributes = []);
 
     /**
      * Prida wrapper pro jednotlive potomky ( v metode renderChild() )
@@ -27,7 +27,7 @@ interface IWrapper extends ITemplateError
      * @param mixed $attributes
      * @return $this
      */
-    public function addWrapperChild($wrapper, $attributes = null);
+    public function addWrapperChild($wrapper, array $attributes = []);
 
     /**
      * Prida wrapper pro labely ( v metode renderLabel() )
@@ -35,7 +35,7 @@ interface IWrapper extends ITemplateError
      * @param mixed $attributes
      * @return $this
      */
-    public function addWrapperLabel($wrapper, $attributes = null);
+    public function addWrapperLabel($wrapper, array $attributes = []);
 
     /**
      * Prida wrapper pro inputy ( v metode renderInput() )
@@ -43,7 +43,7 @@ interface IWrapper extends ITemplateError
      * @param mixed $attributes
      * @return $this
      */
-    public function addWrapperInput($wrapper, $attributes = null);
+    public function addWrapperInput($wrapper, array $attributes = []);
 
     /**
      * Prida wrapper pro obsah potomku ( v metode renderChildren() )
@@ -51,7 +51,7 @@ interface IWrapper extends ITemplateError
      * @param mixed $attributes
      * @return $this
      */
-    public function addWrapperChildren($wrapper, $attributes = null);
+    public function addWrapperChildren($wrapper, array $attributes = []);
 
     /**
      * Prida wrapper pro obsah chybove zpravy ( v metode renderErrors() )
@@ -59,7 +59,7 @@ interface IWrapper extends ITemplateError
      * @param string|array $attributes
      * @return $this
      */
-    public function addWrapperError($wrapper, $attributes = null);
+    public function addWrapperError($wrapper, array $attributes = []);
 
     /**
      * Prida wrapper pro obsah chybove zpravy ( v metode renderErrors() )
@@ -67,5 +67,5 @@ interface IWrapper extends ITemplateError
      * @param string|array $attributes
      * @return $this
      */
-    public function addWrapperErrors($wrapper, $attributes = null);
+    public function addWrapperErrors($wrapper, array $attributes = []);
 }

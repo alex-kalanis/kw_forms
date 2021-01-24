@@ -5,9 +5,8 @@ namespace kalanis\kw_forms\Controls\Security;
 
 use ArrayAccess;
 use kalanis\kw_forms\Controls\Hidden;
-use kalanis\kw_forms\Interfaces;
-use kalanis\kw_rules\Interfaces as IRules;
-use kalanis\kw_rules\TRules;
+use kalanis\kw_forms\Interfaces\ICsrf;
+use kalanis\kw_rules\Interfaces\IRules;
 
 
 /**
@@ -15,10 +14,11 @@ use kalanis\kw_rules\TRules;
  * @package kalanis\kw_forms\Controls\Security
  * Hidden entry which adds CSRF check
  * Must be child of hidden due necessity of pre-setting position in render
+ * This one set another value to compare, on the other way multisend sets nothing
  */
 class Csrf extends Hidden
 {
-    /** @var Interfaces\ICsrf */
+    /** @var ICsrf */
     protected $csrf = null;
     /** @var string */
     protected $csrfTokenAlias = '';
@@ -28,7 +28,11 @@ class Csrf extends Hidden
         $this->csrf = $this->getCsrfLib();
     }
 
-    protected function getCsrfLib(): Interfaces\ICsrf
+    /**
+     * @return ICsrf
+     * @codeCoverageIgnore link adapter remote resource
+     */
+    protected function getCsrfLib(): ICsrf
     {
         return new Csrf\JWT();
     }
@@ -39,11 +43,11 @@ class Csrf extends Hidden
         $this->setEntry($alias);
         $this->csrfTokenAlias = "{$alias}SubmitCheck";
         $this->setValue($this->csrf->getToken($this->csrfTokenAlias));
-        parent::addRule(IRules\IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkToken']);
+        parent::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkToken']);
         return $this;
     }
 
-    protected function checkToken($incomingValue): bool
+    public function checkToken($incomingValue): bool
     {
         if ($this->csrf->checkToken(strval($incomingValue), $this->csrfTokenAlias)) {
             // token reload
@@ -55,22 +59,19 @@ class Csrf extends Hidden
         }
     }
 
-    public function addRule(string $ruleName, string $errorText, ...$args): TRules
+    public function addRule(string $ruleName, string $errorText, ...$args): void
     {
         // no additional rules applicable
-        return $this;
     }
 
-    public function addRules(iterable $rules = []): TRules
+    public function addRules(iterable $rules = []): void
     {
         // no rules add applicable
-        return $this;
     }
 
-    public function removeRules(): TRules
+    public function removeRules(): void
     {
         // no rules removal applicable
-        return $this;
     }
 
     public function renderErrors($errors): string

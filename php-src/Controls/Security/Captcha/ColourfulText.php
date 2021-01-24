@@ -5,7 +5,6 @@ namespace kalanis\kw_forms\Controls\Security\Captcha;
 
 use ArrayAccess;
 use kalanis\kw_rules\Interfaces\IRules;
-use kalanis\kw_rules\TRules;
 
 
 /**
@@ -13,24 +12,28 @@ use kalanis\kw_rules\TRules;
  * @package kalanis\kw_forms\Controls\Security\Captcha
  * "Colourful" fill variant of captcha
  */
-class ColourfulText extends Text
+class ColourfulText extends AGraphical
 {
     public function set(string $alias, ArrayAccess &$session, string $errorMessage, string $font = '/usr/share/fonts/truetype/freefont/freesans.ttf'): parent
     {
         $this->font = $font;
-        $this->session = $session;
         $text = $this->generateRandomString(6);
 
         $this->setEntry($alias, null, $text);
         $this->fillSession($alias, $session, $text);
-        TRules::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkFillCaptcha']);
+        parent::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkFillCaptcha']);
         return $this;
     }
 
-    protected function checkFillCaptcha($value): bool
+    public function addRule(string $ruleName, string $errorText, ...$args): void
     {
-        $formName = $this->alias . '_last';
-        return (strval($this->session->offsetGet($formName)) == strval($value));
+        // no additional rules applicable
+    }
+
+    public function checkFillCaptcha($value): bool
+    {
+        $formName = $this->getKey() . '_last';
+        return $this->session->offsetExists($formName) && (strval($this->session->offsetGet($formName)) == strval($value));
     }
 
     protected function getImage(string $text): string

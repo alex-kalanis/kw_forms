@@ -19,8 +19,11 @@ class Button extends AControl
         if (is_null($label)) {
             $label = $alias;
             $alias = $this->defaultAlias;
-        } elseif (empty($label)) {
+        } elseif ('' == $label) {
             $label = $alias;
+        }
+        if (empty($originalValue)) {
+            $originalValue = $label;
         }
         $this->setEntry($alias, $originalValue, $label);
         return $this;

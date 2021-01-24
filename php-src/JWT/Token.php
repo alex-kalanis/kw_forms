@@ -3,6 +3,12 @@
 namespace kalanis\kw_forms\JWT;
 
 
+/**
+ * Class Token
+ * @package kalanis\kw_forms\JWT
+ * Javascript Web Token - class for setting and make checks
+ * @codeCoverageIgnore dependency on remote library
+ */
 class Token
 {
     /** @var string */

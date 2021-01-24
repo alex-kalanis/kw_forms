@@ -3,9 +3,8 @@
 namespace kalanis\kw_forms\Controls;
 
 
-use \kalanis\kw_forms\Exceptions\RenderException;
-use \kalanis\kw_forms\Interfaces\IWrapper;
-use \kalanis\kw_templates\HtmlElement;
+use kalanis\kw_forms\Exceptions\RenderException;
+use kalanis\kw_templates\HtmlElement;
 
 
 /**
@@ -63,7 +62,7 @@ trait TWrappers
      * @param HtmlElement\IHtmlElement|HtmlElement\IHtmlElement[]|string|string[] $wrapper
      * @param mixed $attributes
      */
-    protected function addWrapperToStack($stack, $wrapper, $attributes = null): void
+    protected function addWrapperToStack(&$stack, $wrapper, array $attributes = []): void
     {
         if (is_array($wrapper)) {
             foreach ($wrapper as $_wrapper) {
@@ -88,7 +87,7 @@ trait TWrappers
      * @return $this
      * @see AControl::render
      */
-    public function addWrapper($wrapper, $attributes = null): self
+    public function addWrapper($wrapper, array $attributes = []): self
     {
         $this->addWrapperToStack($this->wrappers, $wrapper, $attributes);
         return $this;
@@ -101,7 +100,7 @@ trait TWrappers
      * @return $this
      * @see AControl::renderChild
      */
-    public function addWrapperChild($wrapper, $attributes = null): self
+    public function addWrapperChild($wrapper, array $attributes = []): self
     {
         $this->addWrapperToStack($this->wrappersChild, $wrapper, $attributes);
         return $this;
@@ -114,7 +113,7 @@ trait TWrappers
      * @return $this
      * @see AControl::renderLabel
      */
-    public function addWrapperLabel($wrapper, $attributes = null): self
+    public function addWrapperLabel($wrapper, array $attributes = []): self
     {
         $this->addWrapperToStack($this->wrappersLabel, $wrapper, $attributes);
         return $this;
@@ -127,7 +126,7 @@ trait TWrappers
      * @return $this
      * @see AControl::renderInput
      */
-    public function addWrapperInput($wrapper, $attributes = null): self
+    public function addWrapperInput($wrapper, array $attributes = []): self
     {
         $this->addWrapperToStack($this->wrappersInput, $wrapper, $attributes);
         return $this;
@@ -140,7 +139,7 @@ trait TWrappers
      * @return $this
      * @see AControl::renderChildren
      */
-    public function addWrapperChildren($wrapper, $attributes = null): self
+    public function addWrapperChildren($wrapper, array $attributes = []): self
     {
         $this->addWrapperToStack($this->wrappersChildren, $wrapper, $attributes);
         return $this;
@@ -153,7 +152,7 @@ trait TWrappers
      * @return $this
      * @see AControl::renderErrors
      */
-    public function addWrapperError($wrapper, $attributes = null): self
+    public function addWrapperError($wrapper, array $attributes = []): self
     {
         $this->addWrapperToStack($this->wrappersError, $wrapper, $attributes);
         return $this;
@@ -166,43 +165,10 @@ trait TWrappers
      * @return $this
      * @see AControl::renderErrors
      */
-    public function addWrapperErrors($wrapper, $attributes = null): self
+    public function addWrapperErrors($wrapper, array $attributes = []): self
     {
         $this->addWrapperToStack($this->wrappersErrors, $wrapper, $attributes);
         return $this;
-    }
-
-    /**
-     * Inherit properties into newly added children
-     * @param mixed $child
-     */
-    public function inherit($child): void
-    {
-        if ($child instanceof IWrapper) {
-            if (!empty($this->wrappersChild)) {
-                $child->addWrapper($this->wrappersChild);
-            }
-
-            if (!empty($this->wrappersErrors)) {
-                $child->addWrapperErrors($this->wrappersErrors);
-            }
-
-            if (!empty($this->wrappersError)) {
-                $child->addWrapperError($this->wrappersError);
-            }
-
-            if (!empty($this->wrappersInput)) {
-                $child->addWrapperInput($this->wrappersInput);
-            }
-
-            if (!empty($this->wrappersLabel)) {
-                $child->addWrapperLabel($this->wrappersLabel);
-            }
-
-            if (!empty($this->templateError)) {
-                $child->setTemplateError($this->templateError);
-            }
-        }
     }
 
     public function wrappers(): array
