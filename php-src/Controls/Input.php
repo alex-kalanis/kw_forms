@@ -18,6 +18,7 @@ class Input extends AControl
     {
         $this->setEntry($alias, $value, $label);
         $this->setAttribute('type', $type);
+        $this->setAttribute('id', $this->getKey());
         return $this;
     }
 }

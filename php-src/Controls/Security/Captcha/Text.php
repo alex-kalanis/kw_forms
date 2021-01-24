@@ -21,6 +21,7 @@ class Text extends AGraphical
 
         $this->setEntry($alias, null, $text);
         $this->fillSession($alias, $session, $text);
+        $this->setAttribute('id', $this->getKey());
         parent::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkFillCaptcha']);
         return $this;
     }

@@ -81,16 +81,18 @@ class FormTest extends CommonTestClass
     public function testProcessing(): void
     {
         $form = new Form('test');
-        $form->setInputs(new \Adapter());
         $form->addHidden('dez', 'shade');
         $form->addText('foo', 'first')->addRule(IRules::IS_FILLED, 'content filled');
         $form->addText('bar', 'second');
         $last = $form->addText('baz', 'third');
-        $this->assertTrue($form->process());
+        $this->assertFalse($form->process('baz'));
+
+        $form->setInputs(new \Adapter());
+        $this->assertTrue($form->process('baz'));
         $this->assertEmpty($form->renderErrors());
 
         $last->addRule(IRules::IS_NUMERIC, 'must be a number');
-        $this->assertFalse($form->process());
+        $this->assertFalse($form->process('baz'));
 
         $this->assertNotEmpty($form->render());
     }

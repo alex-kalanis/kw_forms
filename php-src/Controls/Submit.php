@@ -22,7 +22,7 @@ class Submit extends Button
 
     public function setValue($value): void
     {
-        $this->submitted = !is_null($value);
+        $this->submitted = !empty($value);
     }
 
     public function getValue()
@@ -34,6 +34,6 @@ class Submit extends Button
     {
         $this->addAttributes($attributes);
         $this->setAttribute('name', $this->getKey());
-        return $this->wrapIt(sprintf($this->templateInput, strval($this->getValue()), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
+        return $this->wrapIt(sprintf($this->templateInput, strval($this->originalValue), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
     }
 }

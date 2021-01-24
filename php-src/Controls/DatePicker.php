@@ -13,6 +13,7 @@ class DatePicker extends AControl
     {
         $this->setEntry($alias, $originalValue, $label);
         $this->setAttribute('class', $this->dateClass);
+        $this->setAttribute('id', $this->getKey());
         return $this;
     }
 

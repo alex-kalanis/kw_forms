@@ -30,6 +30,7 @@ class File extends AControl implements Interfaces\IValidateFile
     public function set(string $key, string $label = ''): self
     {
         $this->setEntry($key, null, $label);
+        $this->setAttribute('id', $this->getKey());
         return $this;
     }
 

@@ -15,9 +15,9 @@ class FilesTest extends CommonTestClass
     {
         $input = new Controls\File();
         $input->set('myown', 'original');
-        $this->assertEquals('<input type="file" name="myown" />', $input->renderInput());
+        $this->assertEquals('<input type="file" id="myown" name="myown" />', $input->renderInput());
         $input->setValue('jhgfd');
-        $this->assertEquals('<input type="file" name="myown" />', $input->renderInput());
+        $this->assertEquals('<input type="file" id="myown" name="myown" />', $input->renderInput());
     }
 
     public function testFiles(): void
@@ -73,7 +73,7 @@ class FilesTest extends CommonTestClass
         $input->set('files', 'posted');
         $input->setValue($adapter->current());
 
-        $this->assertEquals('<input type="file" name="files" />', $input->renderInput());
+        $this->assertEquals('<input type="file" id="files" name="files" />', $input->renderInput());
         $this->assertEquals('facepalm.jpg', $input->getValue());
         $this->assertEquals('image/jpeg', $input->getMimeType());
         $this->assertEquals('/tmp/php3zU3t5', $input->getTempName());

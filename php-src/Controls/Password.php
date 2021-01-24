@@ -15,6 +15,7 @@ class Password extends AControl
     public function set(string $alias, string $label = ''): self
     {
         $this->setEntry($alias, null, $label);
+        $this->setAttribute('id', $this->getKey());
         return $this;
     }
 }

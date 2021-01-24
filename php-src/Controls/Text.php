@@ -15,6 +15,7 @@ class Text extends AControl
     public function set(string $alias, ?string $value = null, string $label = ''): self
     {
         $this->setEntry($alias, $value, $label);
+        $this->setAttribute('id', $this->getKey());
         return $this;
     }
 }

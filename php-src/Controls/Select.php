@@ -36,6 +36,7 @@ class Select extends AControl
         }
         $this->setEntry($alias, '', $label);
         $this->setValue($value);
+        $this->setAttribute('id', $this->getKey());
         return $this;
     }
 

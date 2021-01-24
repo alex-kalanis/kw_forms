@@ -24,6 +24,7 @@ class Numerical extends AGraphical
 
         $this->setEntry($alias, null, $text);
         $this->fillSession($alias, $session, strval($num1 + $num2));
+        $this->setAttribute('id', $this->getKey());
         parent::addRule(IRules::SATISFIES_CALLBACK, $errorMessage, [$this, 'checkFillCaptcha']);
         return $this;
     }

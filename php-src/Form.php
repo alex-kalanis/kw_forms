@@ -241,12 +241,22 @@ class Form implements IHtmlElement
 
     /**
      * Set sent values and process checks on form
+     * @param string|null $checkKey
      * @return boolean
      */
-    public function process(): bool
+    public function process(?string $checkKey = null): bool
     {
-        $this->setSentValues();
-        return $this->isValid();
+        if ($this->isSubmitted($checkKey)) {
+            $this->setSentValues();
+            return $this->isValid();
+        } else {
+            return false;
+        }
+    }
+
+    public function isSubmitted(?string $checkKey = null): bool
+    {
+        return ($checkKey && $this->entries && $this->entries->offsetExists($checkKey));
     }
 
     /**

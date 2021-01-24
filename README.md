@@ -11,13 +11,7 @@ This is the mixed package - contains sever-side implementation in Python and PHP
 ```
 {
     "require": {
-        "alex-kalanis/kw_forms": "dev-master"
-    },
-    "repositories": [
-        {
-            "type": "http",
-            "url":  "https://github.com/alex-kalanis/kw_forms.git"
-        }
+        "alex-kalanis/kw_forms": "1.0"
     }
 }
 ```
@@ -31,7 +25,7 @@ familiar with composer)
 1.) Use your autoloader (if not already done via Composer autoloader)
 
 2.) Connect the "kw_forms" into your app. When it came necessary
-you can extends every library to comply your use-case; mainly your init ad reading.
+you can extends every library to comply your use-case; mainly set your inputs.
 
 # Python Installation
 
@@ -46,5 +40,4 @@ into your "setup.py":
 # Python Usage
 
 1.) Connect the "kw_forms\forms" into your app. When it came necessary
-you can extends every library to comply your use-case; mainly your storage and
-processing.
+you can extends every library to comply your use-case; mainly set your inputs.

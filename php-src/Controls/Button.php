@@ -26,6 +26,7 @@ class Button extends AControl
             $originalValue = $label;
         }
         $this->setEntry($alias, $originalValue, $label);
+        $this->setAttribute('id', $this->getKey());
         return $this;
     }
 }

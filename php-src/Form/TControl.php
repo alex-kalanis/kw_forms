@@ -178,7 +178,7 @@ trait TControl
     public function addTextarea(string $alias, string $label = '', $value = null, $attributes = [])
     {
         $text = new Controls\Textarea();
-        $text->setEntry($alias, $value, $label)->addAttributes($attributes);
+        $text->set($alias, $value, $label)->addAttributes($attributes);
         $this->addControl($text);
         return $text;
     }
@@ -357,7 +357,7 @@ trait TControl
     public function addSubmit(string $alias, string $label = '', $attributes = [])
     {
         $submit = new Controls\Submit();
-        $submit->set($alias, $label, '1')->addAttributes($attributes);
+        $submit->set($alias, $label, $label)->addAttributes($attributes);
         $this->addControl($submit);
         return $submit;
     }

@@ -71,7 +71,7 @@ class SelectTest extends CommonTestClass
 
         $this->assertEquals('', $input->getValue());
         $this->assertEquals(
-  '<select  name="myown"> <optgroup label="choose me"> <option value="foo">first</option> ' . PHP_EOL
+  '<select  id="myown" name="myown"> <optgroup label="choose me"> <option value="foo">first</option> ' . PHP_EOL
 . ' <option value="bar">second</option> ' . PHP_EOL
 . ' <option value="baz">third</option> </optgroup> ' . PHP_EOL
 . ' <optgroup label="choose another"> <option value="fss">fifth</option> ' . PHP_EOL
@@ -81,7 +81,7 @@ class SelectTest extends CommonTestClass
         $input->setValue('dfg');
         $this->assertEquals('dfg', $input->getValue());
         $this->assertEquals(
-  '<select  name="myown"> <optgroup label="choose me"> <option value="foo">first</option> ' . PHP_EOL
+  '<select  id="myown" name="myown"> <optgroup label="choose me"> <option value="foo">first</option> ' . PHP_EOL
 . ' <option value="bar">second</option> ' . PHP_EOL
 . ' <option value="baz">third</option> </optgroup> ' . PHP_EOL
 . ' <optgroup label="choose another"> <option value="fss">fifth</option> ' . PHP_EOL
@@ -91,7 +91,7 @@ class SelectTest extends CommonTestClass
         $input->setValue('1');
         $this->assertEquals('1', $input->getValue());
         $this->assertEquals(
-  '<select  name="myown"> <optgroup label="choose me"> <option value="foo">first</option> ' . PHP_EOL
+  '<select  id="myown" name="myown"> <optgroup label="choose me"> <option value="foo">first</option> ' . PHP_EOL
 . ' <option value="bar">second</option> ' . PHP_EOL
 . ' <option value="baz">third</option> </optgroup> ' . PHP_EOL
 . ' <optgroup label="choose another"> <option value="fss">fifth</option> ' . PHP_EOL
@@ -118,7 +118,7 @@ class SelectTest extends CommonTestClass
 
         $this->assertEquals('', $input->getValue());
         $this->assertEquals(
-            '<select  size="4" name="myown"> <option value="foo">first</option> ' . PHP_EOL
+            '<select  size="4" id="myown" name="myown"> <option value="foo">first</option> ' . PHP_EOL
             . ' <option value="bar">second</option> ' . PHP_EOL
             . ' <option value="baz">third</option> ' . PHP_EOL
             . ' <option value="1">fourth</option> ' . PHP_EOL
@@ -126,7 +126,7 @@ class SelectTest extends CommonTestClass
         $input->setValue('baz');
         $this->assertEquals('baz', $input->getValue());
         $this->assertEquals(
-            '<select  size="4" name="myown"> <option value="foo">first</option> ' . PHP_EOL
+            '<select  size="4" id="myown" name="myown"> <option value="foo">first</option> ' . PHP_EOL
             . ' <option value="bar">second</option> ' . PHP_EOL
             . ' <option value="baz" selected="selected">third</option> ' . PHP_EOL
             . ' <option value="1">fourth</option> ' . PHP_EOL
@@ -134,7 +134,7 @@ class SelectTest extends CommonTestClass
         $input->setValue('1');
         $this->assertEquals('1', $input->getValue());
         $this->assertEquals(
-            '<select  size="4" name="myown"> <option value="foo">first</option> ' . PHP_EOL
+            '<select  size="4" id="myown" name="myown"> <option value="foo">first</option> ' . PHP_EOL
             . ' <option value="bar">second</option> ' . PHP_EOL
             . ' <option value="baz">third</option> ' . PHP_EOL
             . ' <option value="1" selected="selected">fourth</option> ' . PHP_EOL
@@ -142,7 +142,7 @@ class SelectTest extends CommonTestClass
         $input->setValues(['foo', 'srr']);
         $this->assertEquals('foo', $input->getValue());
         $this->assertEquals(
-            '<select  size="4" name="myown"> <option value="foo" selected="selected">first</option> ' . PHP_EOL
+            '<select  size="4" id="myown" name="myown"> <option value="foo" selected="selected">first</option> ' . PHP_EOL
             . ' <option value="bar">second</option> ' . PHP_EOL
             . ' <option value="baz">third</option> ' . PHP_EOL
             . ' <option value="1">fourth</option> ' . PHP_EOL

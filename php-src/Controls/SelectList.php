@@ -39,6 +39,7 @@ class SelectList extends AControl implements IMultiValue
         if ($size) {
             $this->setSize($size);
         }
+        $this->setAttribute('id', $this->getKey());
         return $this;
     }
 
