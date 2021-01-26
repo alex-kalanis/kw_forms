@@ -26,7 +26,7 @@ class AdaptersTest extends CommonTestClass
         $adapter->loadEntries($inputType);
         $this->assertNotEmpty($adapter->getSource());
         if ($canCount) {
-            $this->assertEquals(4, $adapter->count());
+            $this->assertEquals(8, $adapter->count());
             $this->assertEquals('aff', $adapter->offsetGet('foo'));
         }
         if ($canThrough) {
@@ -58,6 +58,10 @@ class AdaptersTest extends CommonTestClass
             'bar' => 'poa',
             'baz' => 'cdd',
             'sgg' => 'arr',
+            'sd#,\'srs' => 'ggsd<$=',
+            'dsr.!>sd' => 'zfd?-"',
+            'dg-[]' => 'dc^&#~\\€`~°',
+            'dg[]' => '<?php =!@#dc^&#~',
         ];
         return [
             [new \Adapter(), '', true, true, true, true ],

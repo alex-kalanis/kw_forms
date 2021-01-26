@@ -46,6 +46,6 @@ class DatePicker extends AControl
             $value = $this->value;
         }
         $this->setAttribute('name', $this->getKey());
-        return $this->wrapIt(sprintf($this->templateInput, strval($value), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
+        return $this->wrapIt(sprintf($this->templateInput, $this->escaped(strval($value)), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
     }
 }

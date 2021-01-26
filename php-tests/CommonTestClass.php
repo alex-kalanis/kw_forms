@@ -152,6 +152,10 @@ class Adapter extends AAdapter
         'bar' => 'poa',
         'baz' => 'cdd',
         'sgg' => 'arr',
+        'sdsrs' => 'ggsd<$=#,\'',
+        'dsrsd' => 'zfd?-.!>"',
+        'dg-[]' => 'dc^&#~\\€`~°',
+        'dg[]' => '<?php =!@#dc^&#~',
     ];
 
     public function loadEntries(string $inputType): void

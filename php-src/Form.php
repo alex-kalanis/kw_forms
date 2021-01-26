@@ -318,7 +318,9 @@ class Form implements IHtmlElement
     public function render($attributes = []): string
     {
         $this->addAttributes($attributes);
-        return sprintf($this->template, $this->renderAttributes(), $this->renderErrors(), $this->renderChildren());
+        $label = $this->getLabel();
+        $content = empty($label) ? $this->renderChildren() : sprintf($this->templateLabel, $label, $this->renderChildren());
+        return sprintf($this->template, $this->renderAttributes(), $this->renderErrors(), $content);
     }
 
     /**

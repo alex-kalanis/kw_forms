@@ -41,7 +41,7 @@ abstract class AGraphical extends ACaptcha
         if ($this->canPass()) {
             return '';
         }
-        return $this->wrapIt(sprintf($this->templateLabel, $this->getAttribute('id'), $this->getImage($this->getLabel()), $this->renderAttributes($attributes)), $this->wrappersLabel);
+        return $this->wrapIt(sprintf($this->templateLabel, $this->getAttribute('id'), $this->getImage(strval($this->getLabel())), $this->renderAttributes($attributes)), $this->wrappersLabel);
     }
 
     protected function getImage(string $text): string

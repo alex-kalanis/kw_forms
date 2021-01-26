@@ -66,7 +66,7 @@ class SelectOptgroup extends AControl
 
     public function renderInput($attributes = null): string
     {
-        return $this->wrapIt(sprintf($this->templateInput, $this->getLabel(), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
+        return $this->wrapIt(sprintf($this->templateInput, $this->escaped(strval($this->getLabel())), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
     }
 
     public function renderErrors($errors): string

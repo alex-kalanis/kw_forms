@@ -27,7 +27,7 @@ class SelectOption extends AControl
 
     public function renderInput($attributes = null): string
     {
-        return $this->wrapIt(sprintf($this->templateInput, strval($this->originalValue), $this->renderAttributes(), $this->getLabel()), $this->wrappersInput);
+        return $this->wrapIt(sprintf($this->templateInput, $this->escaped(strval($this->originalValue)), $this->renderAttributes(), $this->escaped($this->getLabel())), $this->wrappersInput);
     }
 
     public function renderErrors($errors): string

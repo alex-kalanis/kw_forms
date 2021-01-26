@@ -34,6 +34,13 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
     // 1 value, 2 attributes, 3 children
     protected $templateInput = '';
 
+    protected static $escapeOutput = true;
+
+    public static function escapeOutput($can = null): void
+    {
+        static::$escapeOutput = !empty($can);
+    }
+
     protected function whichFactory(): Interfaces\IRuleFactory
     {
         return new Rules\Factory();
@@ -82,7 +89,7 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
     public function renderLabel($attributes = []): string
     {
         if ($this->label) {
-            return $this->wrapIt(sprintf($this->templateLabel, $this->getAttribute('id'), $this->getLabel(), $this->renderAttributes($attributes)), $this->wrappersLabel);
+            return $this->wrapIt(sprintf($this->templateLabel, $this->getAttribute('id'), $this->escaped(strval($this->getLabel())), $this->renderAttributes($attributes)), $this->wrappersLabel);
         }
         return '';
     }
@@ -102,7 +109,7 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
             $value = $this->originalValue;
         }
         $this->setAttribute('name', $this->getKey());
-        return $this->wrapIt(sprintf($this->templateInput, strval($value), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
+        return $this->wrapIt(sprintf($this->templateInput, $this->escaped(strval($value)), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
     }
 
     /**
@@ -115,7 +122,7 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
     {
         $return = '';
         foreach ($errors as $error) {
-            $return .= $this->wrapIt(sprintf($this->templateError, $error->getMessage()), $this->wrappersError);
+            $return .= $this->wrapIt(sprintf($this->templateError, $this->escaped($error->getMessage())), $this->wrappersError);
         }
         return empty($return) ? '' : $this->wrapIt($return, $this->wrappersErrors);
     }
@@ -150,5 +157,10 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
             }
         }
         return $child;
+    }
+
+    protected function escaped(string $content): string
+    {
+        return static::$escapeOutput ? htmlspecialchars($content, ENT_QUOTES | ENT_HTML5, 'UTF-8', false) : $content ;
     }
 }

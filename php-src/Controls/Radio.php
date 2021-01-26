@@ -39,7 +39,7 @@ class Radio extends AControl
         if (!($this->parent instanceof RadioSet)) {
             $this->setAttribute('name', $this->getKey());
         }
-        return $this->wrapIt(sprintf($this->templateInput, strval($this->getOriginalValue()), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
+        return $this->wrapIt(sprintf($this->templateInput, $this->escaped(strval($this->getOriginalValue())), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
     }
 
     public function renderLabel($attributes = []): string
