@@ -21,6 +21,7 @@ class FormTest extends CommonTestClass
 
         $this->assertInstanceOf('\kalanis\kw_forms\Controls\Factory', $form->getControlFactory());
         $form->addControl($form->getControlFactory()->getControl('html')->setEntry('html', 'testing input'));
+        $this->assertEmpty($form->getControl('baz'));
     }
 
     public function testStorage(): void
@@ -95,6 +96,8 @@ class FormTest extends CommonTestClass
         $this->assertFalse($form->process('baz'));
 
         $this->assertNotEmpty($form->render());
+        $this->assertNotEmpty($form->renderStart());
+        $this->assertNotEmpty($form->renderEnd());
     }
 
     public function testLayout(): void

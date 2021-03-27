@@ -50,6 +50,17 @@ class Form implements IHtmlElement
 
     /** @var string Template for error output */
     protected $templateErrors = '<div class="errors">%s</div>';
+    /**
+     * Start tag template - for rendering just inside something
+     * @var string
+     * params: %1 attributes
+     */
+    protected $templateStart = '<form %1$s>';
+    /**
+     * End tag template
+     * @var string
+     */
+    protected $templateEnd = '</form>';
 
     /**
      * @var string
@@ -86,6 +97,23 @@ class Form implements IHtmlElement
     public function addControl(Controls\AControl $control): void
     {
         $this->controls[$control->getKey()] = $control;
+    }
+
+    /**
+     * Get control
+     * @param string $key
+     * @return AControl|null
+     */
+    public function getControl(string $key): ?AControl
+    {
+        foreach ($this->controls as $control) {
+            if ($control instanceof Controls\AControl) {
+                if ($control->getKey() == $key) {
+                    return $control;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -150,10 +178,9 @@ class Form implements IHtmlElement
      */
     public function setValue(string $key, $value = null): void
     {
-        foreach ($this->controls as $control) {
-            if ($control->getKey() == $key) {
-                $control->setValue($value);
-            }
+        $control = $this->getControl($key);
+        if ($control) {
+            $control->setValue($value);
         }
     }
 
@@ -164,12 +191,8 @@ class Form implements IHtmlElement
      */
     public function getValue(string $key)
     {
-        foreach ($this->controls as $control) {
-            if ($control->getKey() == $key) {
-                return $control->getValue();
-            }
-        }
-        return null;
+        $control = $this->getControl($key);
+        return $control ? $control->getValue() : null ;
     }
 
     /**
@@ -210,10 +233,9 @@ class Form implements IHtmlElement
         if (is_null($key)) {
             return $this->label;
         } else {
-            foreach ($this->controls as $control) {
-                if ($control->getKey() == $key) {
-                    return $control->getLabel();
-                }
+            $control = $this->getControl($key);
+            if ($control) {
+                return $control->getLabel();
             }
         }
         return null;
@@ -230,10 +252,9 @@ class Form implements IHtmlElement
         if (is_null($key)) {
             $this->label = $value;
         } else {
-            foreach ($this->controls as $control) {
-                if ($control->getKey() == $key) {
-                    $control->setLabel($value);
-                }
+            $control = $this->getControl($key);
+            if ($control) {
+                $control->setLabel($value);
             }
         }
         return $this;
@@ -427,5 +448,36 @@ class Form implements IHtmlElement
         }
 
         return $this;
+    }
+
+    /**
+     * Render Start tag and hidden attributes
+     * @param array $attributes
+     * @param bool $noChildren
+     * @return string
+     * @throws Exceptions\RenderException
+     */
+    public function renderStart($attributes = [], bool $noChildren = false): string
+    {
+        $this->addAttributes($attributes);
+        $return = sprintf($this->templateStart, $this->renderAttributes());
+        if (!$noChildren) {
+            foreach ($this->controls as $control) {
+                if ($control instanceof Controls\Hidden) {
+                    $return .= $control->renderInput() . PHP_EOL;
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * Render End tag
+     * @return string
+     */
+    public function renderEnd(): string
+    {
+        return $this->templateEnd;
     }
 }
