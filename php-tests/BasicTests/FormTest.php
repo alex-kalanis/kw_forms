@@ -89,11 +89,16 @@ class FormTest extends CommonTestClass
         $this->assertFalse($form->process('baz'));
 
         $form->setInputs(new \Adapter());
-        $this->assertTrue($form->process('baz'));
+        $this->assertFalse($form->process());
         $this->assertEmpty($form->renderErrors());
 
+        $form->addSubmit('sgg', 'ijn');
+        $form->setInputs(new \Adapter());
+        $this->assertTrue($form->process());
+        $this->assertTrue($form->process('baz'));
+
         $last->addRule(IRules::IS_NUMERIC, 'must be a number');
-        $this->assertFalse($form->process('baz'));
+        $this->assertFalse($form->process());
 
         $this->assertNotEmpty($form->render());
         $this->assertNotEmpty($form->renderStart());

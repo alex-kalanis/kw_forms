@@ -12,6 +12,7 @@ class BlogForm extends Form
 {
     public function set(): self
     {
+        $this->setMethod(VarsAdapter::SOURCE_POST);
         $this->addTextarea('content', 'Your message')
             ->addRule(IRules::IS_NOT_EMPTY, 'Must be filled');
         $this->addSubmit('save', 'Save');
@@ -20,13 +21,11 @@ class BlogForm extends Form
 }
 
 
-$inputs = new VarsAdapter();
-$inputs->loadEntries(VarsAdapter::SOURCE_POST);
 $blog = new BlogForm('blog');
 $blog->set();
-$blog->setInputs($inputs);
+$blog->setInputs(new VarsAdapter());
 
-if ($blog->process('save')) {
+if ($blog->process()) {
     $blog->getValues();
     // process things from form
 }

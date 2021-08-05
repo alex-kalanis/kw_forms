@@ -11,5 +11,5 @@ namespace kalanis\kw_forms\Controls;
 class Reset extends Button
 {
     protected $templateInput = '<input type="reset" value="%1$s"%2$s />';
-    protected $defaultAlias = 'reset';
+    protected $originalValue = 'reset';
 }

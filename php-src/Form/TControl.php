@@ -357,7 +357,7 @@ trait TControl
     public function addSubmit(string $alias, string $label = '', $attributes = [])
     {
         $submit = new Controls\Submit();
-        $submit->set($alias, $label, $label)->addAttributes($attributes);
+        $submit->set($alias, $label)->addAttributes($attributes);
         $this->addControl($submit);
         return $submit;
     }

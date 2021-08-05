@@ -81,9 +81,15 @@ class Form implements IHtmlElement
         $this->setParent($parent);
     }
 
+    /**
+     * @param AAdapter $entries
+     * @param FilesAdapter|null $files
+     * @return $this
+     * @throws Exceptions\FormsException
+     */
     public function setInputs(AAdapter $entries, ?FilesAdapter $files = null): self
     {
-        $this->setMethod($entries->getSource());
+        $entries->loadEntries($this->getMethod());
         $this->entries = $entries;
         $this->files = $files;
         return $this;
@@ -267,8 +273,8 @@ class Form implements IHtmlElement
      */
     public function process(?string $checkKey = null): bool
     {
+        $this->setSentValues();
         if ($this->isSubmitted($checkKey)) {
-            $this->setSentValues();
             return $this->isValid();
         } else {
             return false;
@@ -277,7 +283,22 @@ class Form implements IHtmlElement
 
     public function isSubmitted(?string $checkKey = null): bool
     {
-        return ($checkKey && $this->entries && $this->entries->offsetExists($checkKey));
+        if (empty($this->entries)) {
+            return false;
+        }
+
+        // any predefined submitted key
+        if ($checkKey && $this->entries->offsetExists($checkKey)) {
+            return true;
+        }
+
+        // lookup for submit button
+        foreach ($this->controls as $control) {
+            if ($control instanceof Controls\Submit && !empty($control->getValue())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

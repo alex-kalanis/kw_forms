@@ -13,6 +13,7 @@ class UploadForm extends Form
 {
     public function set(): self
     {
+        $this->setMethod(VarsAdapter::SOURCE_POST);
         $this->addFile('file', 'Uploaded file')
             ->addRule(IRules::FILE_RECEIVED, 'Must be send');
         $this->addSubmit('upload', 'Upload');
@@ -21,13 +22,11 @@ class UploadForm extends Form
 }
 
 
-$inputs = new VarsAdapter();
-$inputs->loadEntries(VarsAdapter::SOURCE_POST);
 $upload = new UploadForm('upload');
 $upload->set();
-$upload->setInputs($inputs, new FilesAdapter());
+$upload->setInputs(new VarsAdapter(), new FilesAdapter());
 
-if ($upload->process('upload')) {
+if ($upload->process()) {
     $upload->getValues();
     // process things from form
 }

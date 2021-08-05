@@ -13,6 +13,7 @@ class LoginForm extends Form
 {
     public function set(\ArrayAccess $cookie): self
     {
+        $this->setMethod(VarsAdapter::SOURCE_POST);
         $this->addText('user', 'User name')
             ->addRule(IRules::IS_NOT_EMPTY, 'Must be filled');
         $pass = $this->addPassword('pass', 'Password');
@@ -25,13 +26,11 @@ class LoginForm extends Form
 }
 
 
-$inputs = new VarsAdapter();
-$inputs->loadEntries(VarsAdapter::SOURCE_POST);
 $login = new LoginForm('login');
 $login->set(new CookieAdapter());
-$login->setInputs($inputs);
+$login->setInputs(new VarsAdapter());
 
-if ($login->process('login')) {
+if ($login->process()) {
     $login->getValues();
     // process things from form
 }

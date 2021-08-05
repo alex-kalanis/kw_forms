@@ -12,20 +12,18 @@ class Button extends AControl
 {
     protected $templateLabel = '';
     protected $templateInput = '<input type="button" value="%1$s"%2$s />';
-    protected $defaultAlias = 'button';
+    protected $originalValue = 'button';
 
-    public function set(string $alias, ?string $label = null, ?string $originalValue = null): self
+    public function set(string $alias, string $title = ''): self
     {
-        if (is_null($label)) {
-            $label = $alias;
-            $alias = $this->defaultAlias;
-        } elseif ('' == $label) {
-            $label = $alias;
+        if (empty($title) && !empty($alias)) {
+            $title = $alias;
         }
-        if (empty($originalValue)) {
-            $originalValue = $label;
+        $title = empty($title) ? $this->originalValue : $title ;
+        if (empty($alias)) {
+            $alias = $title;
         }
-        $this->setEntry($alias, $originalValue, $label);
+        $this->setEntry($alias, $title, $title);
         $this->setAttribute('id', $this->getKey());
         return $this;
     }
