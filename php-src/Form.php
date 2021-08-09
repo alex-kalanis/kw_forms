@@ -90,6 +90,9 @@ class Form implements IHtmlElement
     public function setInputs(AAdapter $entries, ?FilesAdapter $files = null): self
     {
         $entries->loadEntries($this->getMethod());
+        if ($files) {
+            $files->loadEntries($this->getMethod());
+        }
         $this->entries = $entries;
         $this->files = $files;
         return $this;

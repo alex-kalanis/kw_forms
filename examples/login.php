@@ -3,7 +3,7 @@
 namespace kalanis\kw_forms\examples;
 
 
-use kalanis\kw_forms\Adapters\CookieAdapter;
+use kalanis\kw_input\Simplified\CookieAdapter;
 use kalanis\kw_forms\Adapters\VarsAdapter;
 use kalanis\kw_forms\Form;
 use kalanis\kw_rules\Interfaces\IRules;

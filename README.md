@@ -11,7 +11,7 @@ This is the mixed package - contains sever-side implementation in Python and PHP
 ```
 {
     "require": {
-        "alex-kalanis/kw_forms": "1.0"
+        "alex-kalanis/kw_forms": "2.0"
     }
 }
 ```
