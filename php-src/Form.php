@@ -318,7 +318,11 @@ class Form implements IHtmlElement
     {
         $result = [];
         foreach ($adapter as $key => $entry) {
-            $result[$key] = is_object($entry) ? $entry->getValue() : $entry ;
+            $result[$key] = is_object($entry)
+                ? ( method_exists($entry, 'getValue')
+                    ? $entry->getValue()
+                    : strval($entry) )
+                : $entry ;
         }
         return $result;
     }
