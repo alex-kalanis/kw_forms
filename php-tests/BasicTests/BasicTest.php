@@ -90,4 +90,9 @@ class Control
     {
         // nothing need to be implemented
     }
+
+    public function setAttribute(string $name, string $value): void
+    {
+        // nothing need to be implemented
+    }
 }
