@@ -160,6 +160,9 @@ class Adapter extends AAdapter
 
     public function loadEntries(string $inputType): void
     {
+        $entry = new \kalanis\kw_input\Entries\Entry();
+        $entry->setEntry(\kalanis\kw_input\Interfaces\IEntry::SOURCE_EXTERNAL, 'xggxgx', 'lkjhdf');
+        $this->vars['xggxgx'] = $entry;
     }
 
     public function getSource(): string

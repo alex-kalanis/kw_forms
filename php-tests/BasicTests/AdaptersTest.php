@@ -26,7 +26,7 @@ class AdaptersTest extends CommonTestClass
         $adapter->loadEntries($inputType);
         $this->assertNotEmpty($adapter->getSource());
         if ($canCount) {
-            $this->assertEquals(8, $adapter->count());
+            $this->assertEquals(9, $adapter->count());
             $this->assertEquals('aff', $adapter->offsetGet('foo'));
         }
         if ($canThrough) {
@@ -53,6 +53,8 @@ class AdaptersTest extends CommonTestClass
 
     public function adapterProvider(): array
     {
+        $entry = new \kalanis\kw_input\Entries\Entry();
+        $entry->setEntry(\kalanis\kw_input\Interfaces\IEntry::SOURCE_EXTERNAL, 'xggxgx', 'lkjhdf');
         $_GET = [
             'foo' => 'aff',
             'bar' => 'poa',
@@ -62,6 +64,7 @@ class AdaptersTest extends CommonTestClass
             'dsr.!>sd' => 'zfd?-"',
             'dg-[]' => 'dc^&#~\\€`~°',
             'dg[]' => '<?php =!@#dc^&#~',
+            'xggxgx' => $entry,
         ];
         return [
             [new \Adapter(), '', true, true, true, true ],
