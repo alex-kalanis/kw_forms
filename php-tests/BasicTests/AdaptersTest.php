@@ -97,6 +97,8 @@ class AdaptersTest extends CommonTestClass
         $this->assertEquals(IEntry::SOURCE_FILES, $adapter->current()->getSource());
         $adapter->next();
         $adapter->next();
+        $adapter->next();
+        $adapter->next();
         $this->expectException(FormsException::class);
         $adapter->getValue(); // not exists
     }

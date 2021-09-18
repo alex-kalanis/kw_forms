@@ -17,6 +17,7 @@ class BoxTest extends CommonTestClass
         $this->assertEquals('<label for="' . $id . '">check me</label>', $input->renderLabel());
         $this->assertEquals('<input type="checkbox" value="original" id="' . $id . '" name="myown" />', $input->renderInput());
         $input->setValue('jhgfd');
+        $this->assertEquals('original', $input->getOriginalValue());
         $this->assertEquals('<input type="checkbox" value="original" id="' . $id . '" name="myown" checked="checked" />', $input->renderInput());
     }
 

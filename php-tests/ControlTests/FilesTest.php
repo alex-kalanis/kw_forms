@@ -54,6 +54,21 @@ class FilesTest extends CommonTestClass
 . '<label for="download_1">two</label> <input type="file" id="download_1" name="download[file2]" /> ' . PHP_EOL, $input->renderInput());
     }
 
+    public function testFiles4(): void
+    {
+        $adapter = new \Files();
+        $adapter->loadEntries('');
+        $adapter->rewind();
+
+        $input = new Controls\Files();
+        $input->set('numbered', ['one', 'two'], 'Upload files');
+        $input->setValues(iterator_to_array($adapter));
+
+        $this->assertEquals(
+  '<label for="numbered_0">one</label> <input type="file" id="numbered_0" name="numbered[]" /> ' . PHP_EOL
+. '<label for="numbered_1">two</label> <input type="file" id="numbered_1" name="numbered[]" /> ' . PHP_EOL, $input->renderInput());
+    }
+
     public function testFileUnknown(): void
     {
         $input = new Controls\File();

@@ -213,6 +213,28 @@ class Files extends FilesAdapter
                     'file2' => 3075,
                 ],
             ],
+            'numbered' => [ // multiple upload
+                'name' => [
+                    0 => 'MyFile.txt',
+                    1 => 'MyFile.jpg',
+                ],
+                'type' => [
+                    0 => 'text/plain',
+                    1 => 'image/jpeg',
+                ],
+                'tmp_name' => [
+                    0 => '/tmp/php/phpgj46fg',
+                    1 => '/tmp/php/php7s4ag4',
+                ],
+                'error' => [
+                    0 => UPLOAD_ERR_CANT_WRITE,
+                    1 => UPLOAD_ERR_PARTIAL,
+                ],
+                'size' => [
+                    0 => 816,
+                    1 => 3075,
+                ],
+            ],
         ];
     }
 

@@ -87,6 +87,7 @@ class FormTest extends CommonTestClass
         $form->addText('bar', 'second');
         $last = $form->addText('baz', 'third');
         $this->assertFalse($form->process('baz'));
+        $this->assertEmpty($form->renderControlErrors('baz'));
 
         $form->setInputs(new \Adapter());
         $this->assertFalse($form->process());
@@ -99,6 +100,7 @@ class FormTest extends CommonTestClass
 
         $last->addRule(IRules::IS_NUMERIC, 'must be a number');
         $this->assertFalse($form->process());
+        $this->assertEquals('must be a number', $form->renderControlErrors('baz'));
 
         $this->assertNotEmpty($form->render());
         $this->assertNotEmpty($form->renderStart());
