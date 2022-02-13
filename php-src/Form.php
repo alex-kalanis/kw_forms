@@ -10,7 +10,7 @@ use kalanis\kw_forms\Controls\TWrappers;
 use kalanis\kw_input\Interfaces\IEntry;
 use kalanis\kw_rules\Exceptions\RuleException;
 use kalanis\kw_rules\Validate;
-use kalanis\kw_templates\HtmlElement\IHtmlElement;
+use kalanis\kw_templates\Interfaces\IHtmlElement;
 use kalanis\kw_templates\HtmlElement\THtmlElement;
 
 
@@ -430,24 +430,11 @@ class Form implements IHtmlElement
      */
     public function renderControlErrors(string $key): string
     {
-        $errors = $this->getControlErrors($key);
-        if (empty($errors)) {
-            return '';
-        }
-        return $this->getControl($key)->renderErrors($errors);
-    }
-
-    /**
-     * @param string $key
-     * @return RuleException[]
-     */
-    public function getControlErrors(string $key): array
-    {
         $control = $this->getControl($key);
         if (isset($this->errors[$control->getKey()])) {
-            return $this->errors[$control->getKey()];
+            return $control->renderErrors($this->errors[$control->getKey()]);
         }
-        return [];
+        return '';
     }
 
     /**

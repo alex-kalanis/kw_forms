@@ -10,7 +10,7 @@ use kalanis\kw_forms\Exceptions\RenderException;
 use kalanis\kw_forms\Interfaces;
 use kalanis\kw_rules\Interfaces\IRules;
 use kalanis\kw_rules\Validate;
-use kalanis\kw_templates\HtmlElement\IHtmlElement;
+use kalanis\kw_templates\Interfaces\IHtmlElement;
 use kalanis\kw_templates\HtmlElement\TAttributes;
 use kalanis\kw_templates\HtmlElement\THtmlElement;
 
