@@ -86,7 +86,7 @@ class Control
 {
     use TControl;
 
-    public function addControl(Controls\AControl $control): void
+    public function addControlDefaultKey(Controls\AControl $control): void
     {
         // nothing need to be implemented
     }

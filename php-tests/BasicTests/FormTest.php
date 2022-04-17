@@ -20,7 +20,7 @@ class FormTest extends CommonTestClass
         $form->setInputs($inputs, $files);
 
         $this->assertInstanceOf('\kalanis\kw_forms\Controls\Factory', $form->getControlFactory());
-        $form->addControl($form->getControlFactory()->getControl('html')->setEntry('html', 'testing input'));
+        $form->addControlDefaultKey($form->getControlFactory()->getControl('html')->setEntry('html', 'testing input'));
         $this->assertEmpty($form->getControl('baz'));
     }
 
