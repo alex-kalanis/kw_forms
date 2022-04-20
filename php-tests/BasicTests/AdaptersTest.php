@@ -68,6 +68,7 @@ class AdaptersTest extends CommonTestClass
         ];
         return [
             [new \Adapter(), '', true, true, true, true ],
+            [new Adapters\ArrayAdapter($_GET), IEntry::SOURCE_GET, true, true, true, true ],
             [new Adapters\VarsAdapter(), IEntry::SOURCE_GET, true, false, true, true ],
             [new Adapters\VarsAdapter(), IEntry::SOURCE_POST, false, false, false, true ],
             [new Adapters\SessionAdapter(), '', false, false, false, true ],
@@ -75,14 +76,46 @@ class AdaptersTest extends CommonTestClass
         ];
     }
 
-    public function testAdapterDie()
+    /**
+     * Because it's necessary to test constructor
+     * @throws FormsException
+     */
+    public function testArrayAdapter(): void
+    {
+        $this->testAdapter(
+            new Adapters\ArrayAdapter([
+                'foo' => 'aff',
+                'bar' => 'poa',
+                'baz' => 'cdd',
+                'sgg' => 'arr',
+                'sd#,\'srs' => 'ggsd<$=',
+                'dsr.!>sd' => 'zfd?-"',
+                'dg-[]' => 'dc^&#~\\€`~°',
+                'dg[]' => '<?php =!@#dc^&#~',
+                'xggxgx' => 'free',
+            ]),
+            IEntry::SOURCE_GET,
+            true,
+            true,
+            true,
+            true
+        );
+    }
+
+    /**
+     * @throws FormsException
+     */
+    public function testAdapterDie(): void
     {
         $adapter = new Adapters\VarsAdapter();
         $this->expectException(FormsException::class);
         $adapter->loadEntries('unknown_one');
     }
 
-    public function testAdapterFile()
+    /**
+     * @throws FormsException
+     */
+    public function testAdapterFile(): void
     {
         $adapter = new \Files();
         $adapter->loadEntries('');
