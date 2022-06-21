@@ -12,12 +12,13 @@ use kalanis\kw_input\Interfaces\IEntry;
 
 abstract class AAdapter implements ArrayAccess, Countable, Iterator, IEntry
 {
+    /** @var string|null */
     protected $key = null;
+    /** @var array<string, string|int|float|null> */
     protected $vars = [];
 
     /**
      * @param string $inputType
-     * @return void
      * @throws FormsException
      */
     abstract public function loadEntries(string $inputType): void;
@@ -27,6 +28,9 @@ abstract class AAdapter implements ArrayAccess, Countable, Iterator, IEntry
         return $this->key;
     }
 
+    /**
+     * @return mixed|string|null
+     */
     public function getValue()
     {
         return $this->current();
@@ -87,8 +91,8 @@ abstract class AAdapter implements ArrayAccess, Countable, Iterator, IEntry
         return count($this->vars);
     }
 
-    protected function removeNullBytes($string, $nullTo = '')
+    protected function removeNullBytes($string, $nullTo = ''): string
     {
-        return str_replace(chr(0), $nullTo, $string);
+        return strval(str_replace(chr(0), $nullTo, $string));
     }
 }

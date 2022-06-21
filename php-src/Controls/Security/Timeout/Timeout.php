@@ -28,22 +28,22 @@ class Timeout implements ITimeout
         $this->session = $session;
         $this->timeout = $timeout;
         $this->time = ($this->session->offsetExists(static::CAPTCHA_TIME))
-            ? (int)$this->session->offsetGet(static::CAPTCHA_TIME)
+            ? (int) $this->session->offsetGet(static::CAPTCHA_TIME)
             : 0 ;
     }
 
-    public function updateExpire()
+    public function updateExpire(): void
     {
         $this->time = time() + $this->timeout; // when it begins
         $this->session->offsetSet(static::CAPTCHA_TIME, $this->time); // set into session
     }
 
-    public function isRunning()
+    public function isRunning(): bool
     {
         return ($this->timeLeft() > 0);
     }
 
-    public function timeLeft()
+    public function timeLeft(): int
     {
         return $this->time - time();
     }

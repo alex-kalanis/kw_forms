@@ -4,6 +4,7 @@ namespace kalanis\kw_forms\Cache;
 
 
 use kalanis\kw_storage\Interfaces\IStorage;
+use kalanis\kw_storage\StorageException;
 
 
 trait TStorage
@@ -29,6 +30,7 @@ trait TStorage
 
     /**
      * Delete form data in storage
+     * @throws StorageException
      */
     public function deleteStored(): void
     {

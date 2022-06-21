@@ -15,7 +15,7 @@ trait TControl
      * @param string $alias
      * @param string $label
      * @param string $value
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Input
      */
     public function addInput(string $type, string $alias, string $label = '', $value = null, $attributes = [])
@@ -31,7 +31,7 @@ trait TControl
      * @param string $alias
      * @param string $label
      * @param string $value
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Text
      */
     public function addText(string $alias, string $label = '', $value = null, $attributes = [])
@@ -47,7 +47,7 @@ trait TControl
      * @param string $alias
      * @param string $label
      * @param string $value
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Email
      */
     public function addEmail(string $alias, string $label = '', $value = null, $attributes = [])
@@ -62,7 +62,7 @@ trait TControl
      * Add input for password
      * @param string $alias
      * @param string $label
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Password
      */
     public function addPassword(string $alias, string $label = '', $attributes = [])
@@ -77,7 +77,7 @@ trait TControl
      * Add hidden form input
      * @param string $alias
      * @param mixed $value
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Hidden
      */
     public function addHidden(string $alias, ?string $value = null, $attributes = [])
@@ -93,7 +93,7 @@ trait TControl
      * @param string $alias
      * @param string|null $label
      * @param string|null $value
-     * @param string[] $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\DatePicker
      */
     public function addDatePicker(string $alias, string $label = '', $value = null, $attributes = [])
@@ -109,7 +109,7 @@ trait TControl
      * @param string $alias
      * @param string|null $label
      * @param string|null $value
-     * @param string[] $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\DateTimePicker
      */
     public function addDateTimePicker(string $alias, string $label = '', $value = null, $attributes = [])
@@ -125,7 +125,7 @@ trait TControl
      * @param string $alias
      * @param string|null $label
      * @param string|null $value
-     * @param string[] $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\DateRange
      */
     public function addDateRange(string $alias, string $label = '', $value = null, $attributes = [])
@@ -156,7 +156,7 @@ trait TControl
      * @param string $alias
      * @param string $label
      * @param string $value
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Html
      */
     public function addHtml(string $alias, string $label = '', $value = null, $attributes = [])
@@ -172,7 +172,7 @@ trait TControl
      * @param string $alias
      * @param string $label
      * @param string $value
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Textarea
      */
     public function addTextarea(string $alias, string $label = '', $value = null, $attributes = [])
@@ -189,7 +189,7 @@ trait TControl
      * @param string $label
      * @param string[]|string $value
      * @param array|string $children
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Select
      */
     public function addSelect(string $alias, string $label = '', $value = null, $children = [], $attributes = [])
@@ -205,7 +205,7 @@ trait TControl
      * @param string $alias
      * @param string $label
      * @param array|string $children
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\SelectList
      */
     public function addSelectList(string $alias, string $label = '', $children = [], $attributes = [])
@@ -222,7 +222,7 @@ trait TControl
      * @param string $label
      * @param string $value
      * @param array $children
-     * @param array $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\RadioSet
      */
     public function addRadios(string $alias, string $label = '', $value = null, $children = [], $attributes = [])
@@ -239,7 +239,7 @@ trait TControl
      * @param string $label
      * @param boolean $checked
      * @param string|int $value
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Checkbox
      */
     public function addCheckbox(string $alias, string $label = '', $checked = null, $value = '1', $attributes = [])
@@ -257,7 +257,7 @@ trait TControl
      * @param string $label
      * @param boolean $checked
      * @param string|int $value
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\CheckboxSwitch
      */
     public function addCheckboxSwitch(string $alias, string $label = '', $checked = null, $value = 1, $attributes = [])
@@ -275,7 +275,7 @@ trait TControl
      * @param array|string $label
      * @param array|string $checked
      * @param array $children
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Checkboxes
      */
     public function addCheckboxes(string $alias, string $label = '', $checked = [], array $children = [], $attributes = [])
@@ -290,7 +290,7 @@ trait TControl
      * Add input type file
      * @param string $alias
      * @param string $label
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\File
      */
     public function addFile(string $alias, string $label = '', $attributes = [])
@@ -307,7 +307,7 @@ trait TControl
      * @param string $alias
      * @param array|string $label
      * @param iterable $inputs
-     * @param string[]|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Files
      */
     public function addFiles(string $alias, string $label = '', iterable $inputs = [], $attributes = [])
@@ -323,7 +323,7 @@ trait TControl
      * Add input type Simple Button
      * @param string $alias
      * @param string $label
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Button
      */
     public function addButton(string $alias, string $label = '', $attributes = [])
@@ -338,7 +338,7 @@ trait TControl
      * Add input type Reset
      * @param string $alias
      * @param string $label
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Reset
      */
     public function addReset(string $alias, string $label = '', $attributes = [])
@@ -353,7 +353,7 @@ trait TControl
      * Add input type Submit
      * @param string $alias
      * @param string $label
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Submit
      */
     public function addSubmit(string $alias, string $label = '', $attributes = [])
@@ -369,7 +369,7 @@ trait TControl
      * @param string $alias
      * @param ArrayAccess $cookie
      * @param string $errorMessage
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Security\Csrf
      * @codeCoverageIgnore link adapter remote resource
      */
@@ -386,7 +386,7 @@ trait TControl
      * @param string $alias
      * @param ArrayAccess $cookie
      * @param string $errorMessage
-     * @param array|string $attributes
+     * @param array<string|int, string|array<string>>|string $attributes
      * @return Controls\Security\MultiSend
      */
     public function addMultiSend(string $alias, ArrayAccess &$cookie, string $errorMessage, $attributes = [])

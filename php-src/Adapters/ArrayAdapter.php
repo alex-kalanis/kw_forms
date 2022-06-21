@@ -12,9 +12,14 @@ use kalanis\kw_input\Interfaces\IEntry;
  */
 class ArrayAdapter extends AAdapter
 {
+    /** @var array<int|string, string|int|float|null> */
     protected $inputs = null;
+    /** @var string */
     protected $inputType = IEntry::SOURCE_GET;
 
+    /**
+     * @param array<int|string, string|int|float|null> $inputs
+     */
     public function __construct(array $inputs)
     {
         $this->inputs = $inputs;

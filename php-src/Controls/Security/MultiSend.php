@@ -30,6 +30,10 @@ class MultiSend extends Hidden
         return $this;
     }
 
+    /**
+     * @param string|int|float $incomingValue
+     * @return bool
+     */
     public function checkMulti($incomingValue): bool
     {
         return $this->removeExistingCheckFromStack(strval($incomingValue));
@@ -53,10 +57,13 @@ class MultiSend extends Hidden
         return false;
     }
 
-    protected function hashStack()
+    /**
+     * @return array<string, string>
+     */
+    protected function hashStack(): array
     {
         $hashStack = $this->cookie->offsetExists($this->getKey() . 'SubmitCheck')
-            ? json_decode($this->cookie->offsetGet($this->getKey() . 'SubmitCheck'), true)
+            ? strval(json_decode($this->cookie->offsetGet($this->getKey() . 'SubmitCheck'), true))
             : null ;
         if (is_null($hashStack)) {
             $hashStack = [];

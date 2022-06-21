@@ -48,12 +48,12 @@ class Token
 
     /**
      * @param $token
-     * @return array
+     * @return array<string, string>
      */
-    public static function decodeJWTToken($token): array
+    public static function decodeJWTToken(string $token): array
     {
         try {
-            $decoded = (array)\Firebase\JWT\JWT::decode($token, static::$privateKey, ['HS256']);
+            $decoded = (array) \Firebase\JWT\JWT::decode($token, static::$privateKey, ['HS256']);
             if (static::$domain != $decoded['iss']) {
                 throw new \Exception('Token was not issued for this site.');
             }

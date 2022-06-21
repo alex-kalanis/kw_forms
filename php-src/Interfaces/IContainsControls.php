@@ -22,10 +22,13 @@ interface IContainsControls extends IMultiValue
     public function getControl(string $key): ?AControl;
 
     /**
-     * @return string[]
+     * @return array<string, string>
      */
     public function getLabels(): array;
 
+    /**
+     * @param array<string, string> $array
+     */
     public function setLabels(array $array = []): void;
 
     /**

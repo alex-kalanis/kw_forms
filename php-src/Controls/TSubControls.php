@@ -15,7 +15,7 @@ use kalanis\kw_templates\Interfaces\IHtmlElement;
  */
 trait TSubControls
 {
-    /** @var AControl[] */
+    /** @var array<string, AControl> */
     protected $controls = [];
 
     public function addControl(string $key, AControl $control): void
@@ -39,7 +39,7 @@ trait TSubControls
 
     /**
      * Get values of all children
-     * @return string[]
+     * @return array<string, string|int|float|null>
      */
     public function getValues(): array
     {
@@ -62,7 +62,7 @@ trait TSubControls
      *  $form->setValues($this->context->post) // set values from Post
      *  $form->setValues($mapperObject) // set values from other source
      * </code>
-     * @param string[] $data
+     * @param array<string, string|int|float|null> $data
      */
     public function setValues(array $data = []): void
     {
@@ -80,7 +80,7 @@ trait TSubControls
 
     /**
      * Get labels of all children
-     * @return array
+     * @return array<string, string>
      */
     public function getLabels(): array
     {
@@ -97,7 +97,7 @@ trait TSubControls
 
     /**
      * Set labels to all children
-     * @param string[] $array
+     * @param array<string, string> $array
      * @return void
      */
     public function setLabels(array $array = []): void
@@ -112,10 +112,10 @@ trait TSubControls
     }
 
     /**
-     * @param string[] $passedErrors
+     * @param array<string, string> $passedErrors
      * @param string|string[]|IHtmlElement|IHtmlElement[] $wrappersError
-     * @return array
      * @throws RenderException
+     * @return array
      */
     public function getErrors(array $passedErrors, array $wrappersError): array
     {

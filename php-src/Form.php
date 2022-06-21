@@ -7,6 +7,7 @@ use kalanis\kw_forms\Adapters\AAdapter;
 use kalanis\kw_forms\Adapters\FilesAdapter;
 use kalanis\kw_input\Interfaces\IEntry;
 use kalanis\kw_rules\Validate;
+use kalanis\kw_storage\StorageException;
 use kalanis\kw_templates\Interfaces\IHtmlElement;
 use kalanis\kw_templates\HtmlElement\THtmlElement;
 
@@ -79,8 +80,8 @@ class Form implements IHtmlElement
     /**
      * @param AAdapter $entries
      * @param FilesAdapter|null $files
-     * @return $this
      * @throws Exceptions\FormsException
+     * @return $this
      */
     public function setInputs(AAdapter $entries, ?FilesAdapter $files = null): self
     {
@@ -266,6 +267,7 @@ class Form implements IHtmlElement
 
     /**
      * Save current form data in storage
+     * @throws StorageException
      */
     public function store(): void
     {
@@ -274,6 +276,7 @@ class Form implements IHtmlElement
 
     /**
      * Load data from storage into form
+     * @throws StorageException
      */
     public function loadStored(): void
     {
@@ -283,8 +286,8 @@ class Form implements IHtmlElement
     /**
      * Render whole form
      * @param string|string[] $attributes
-     * @return string
      * @throws Exceptions\RenderException
+     * @return string
      */
     public function render($attributes = []): string
     {
@@ -296,8 +299,8 @@ class Form implements IHtmlElement
 
     /**
      * Render all errors from controls
-     * @return string
      * @throws Exceptions\RenderException
+     * @return string
      */
     public function renderErrors(): string
     {
@@ -313,8 +316,8 @@ class Form implements IHtmlElement
 
     /**
      * Get all errors from controls and return them as indexed array
-     * @return string[]
      * @throws Exceptions\RenderException
+     * @return string[]
      */
     public function renderErrorsArray()
     {
@@ -323,8 +326,8 @@ class Form implements IHtmlElement
 
     /**
      * @param string $key
-     * @return string
      * @throws Exceptions\RenderException
+     * @return string
      */
     public function renderControlErrors(string $key): string
     {
@@ -337,8 +340,8 @@ class Form implements IHtmlElement
 
     /**
      * Render all form controls, add missing wrappers
-     * @return string
      * @throws Exceptions\RenderException
+     * @return string
      */
     public function renderChildren(): string
     {
@@ -406,8 +409,8 @@ class Form implements IHtmlElement
      * Render Start tag and hidden attributes
      * @param array $attributes
      * @param bool $noChildren
-     * @return string
      * @throws Exceptions\RenderException
+     * @return string
      */
     public function renderStart($attributes = [], bool $noChildren = false): string
     {
