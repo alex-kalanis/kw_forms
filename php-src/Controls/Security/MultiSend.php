@@ -63,7 +63,7 @@ class MultiSend extends Hidden
     protected function hashStack(): array
     {
         $hashStack = $this->cookie->offsetExists($this->getKey() . 'SubmitCheck')
-            ? strval(json_decode($this->cookie->offsetGet($this->getKey() . 'SubmitCheck'), true))
+            ? (array) json_decode($this->cookie->offsetGet($this->getKey() . 'SubmitCheck'), true)
             : null ;
         if (is_null($hashStack)) {
             $hashStack = [];

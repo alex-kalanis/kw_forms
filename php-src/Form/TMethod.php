@@ -30,7 +30,7 @@ trait TMethod
      */
     public function getMethod(): string
     {
-        return $this->getAttribute('method');
+        return strval($this->getAttribute('method'));
     }
 
     abstract public function setAttribute(string $name, string $value): void;
