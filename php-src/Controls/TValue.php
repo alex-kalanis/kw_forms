@@ -3,13 +3,17 @@
 namespace kalanis\kw_forms\Controls;
 
 
+/**
+ * Trait TValue
+ * @package kalanis\kw_forms\Controls
+ */
 trait TValue
 {
-    /** @var string|int|float|null */
+    /** @var string|int|float|bool|null */
     protected $value = '';
 
     /**
-     * @param string|int|float|null
+     * @param string|int|float|bool|null $value
      */
     public function setValue($value): void
     {
@@ -17,7 +21,7 @@ trait TValue
     }
 
     /**
-     * @return string|int|float|null
+     * @return string|int|float|bool|null
      */
     public function getValue()
     {

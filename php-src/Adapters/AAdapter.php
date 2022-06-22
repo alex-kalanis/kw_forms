@@ -14,7 +14,7 @@ abstract class AAdapter implements ArrayAccess, Countable, Iterator, IEntry
 {
     /** @var string|null */
     protected $key = null;
-    /** @var array<string, string|int|float|null> */
+    /** @var array<string, string|int|float|null|IEntry> */
     protected $vars = [];
 
     /**
@@ -25,7 +25,7 @@ abstract class AAdapter implements ArrayAccess, Countable, Iterator, IEntry
 
     public function getKey(): string
     {
-        return $this->key;
+        return strval($this->key);
     }
 
     /**
@@ -76,6 +76,10 @@ abstract class AAdapter implements ArrayAccess, Countable, Iterator, IEntry
         return $this->vars[$offset];
     }
 
+    /**
+     * @param string $offset
+     * @param mixed $value
+     */
     public function offsetSet($offset, $value): void
     {
         $this->vars[$offset] = $value;
@@ -91,7 +95,7 @@ abstract class AAdapter implements ArrayAccess, Countable, Iterator, IEntry
         return count($this->vars);
     }
 
-    protected function removeNullBytes($string, $nullTo = ''): string
+    protected function removeNullBytes(string $string, string $nullTo = ''): string
     {
         return strval(str_replace(chr(0), $nullTo, $string));
     }

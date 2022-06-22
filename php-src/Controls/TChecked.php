@@ -10,6 +10,9 @@ namespace kalanis\kw_forms\Controls;
  */
 trait TChecked
 {
+    /**
+     * @param string|int|float|bool|null $value
+     */
     public function setValue($value): void
     {
         $this->setChecked($value);
@@ -22,7 +25,7 @@ trait TChecked
 
     /**
      * Set if radio is checked
-     * @param string $value
+     * @param string|int|float|bool|null $value
      * @return $this
      */
     protected function setChecked($value): self

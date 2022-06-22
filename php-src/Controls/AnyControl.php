@@ -17,6 +17,7 @@ class AnyControl extends AControl implements IContainsControls
     use TSubControls;
     use TSubErrors;
 
+    /** @var bool */
     protected $needAll = false;
 
     protected $templateLabel = '';
@@ -61,7 +62,7 @@ class AnyControl extends AControl implements IContainsControls
                 $this->errors += $validate->getErrors();
             }
         }
-        return $validation;
+        return boolval($validation);
     }
 
     public function render(): string

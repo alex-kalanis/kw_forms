@@ -9,7 +9,7 @@ use kalanis\kw_storage\StorageException;
 
 trait TStorage
 {
-    /** @var Storage */
+    /** @var Storage|null */
     protected $storage = null;
 
     public function setStorage(?IStorage $storage = null): self

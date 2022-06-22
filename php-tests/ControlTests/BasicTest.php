@@ -171,6 +171,7 @@ class BasicTest extends CommonTestClass
 
         $this->assertEmpty($input->getLabel());
         $this->assertEmpty($input->renderLabel());
+        $this->assertEquals(0, $input->count());
 
         $input->setLabel('not to look');
         $this->assertEquals('<label for="">not to look</label>', $input->renderLabel());
@@ -296,12 +297,22 @@ class Wrappers implements Interfaces\IWrapper, IHtmlElement
     {
         return $this->wrapIt($string, $wrappers);
     }
+
+    public function count(): int
+    {
+        return 0;
+    }
 }
 
 
 class Html implements IHtmlElement
 {
     use THtmlElement;
+
+    public function count(): int
+    {
+        return 0;
+    }
 }
 
 

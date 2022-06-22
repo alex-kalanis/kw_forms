@@ -29,7 +29,7 @@ class ArrayAdapter extends AAdapter
     {
         $result = [];
         foreach ($this->inputs as $postedKey => &$posted) {
-            $result[$this->removeNullBytes($postedKey)] = $this->removeNullBytes($posted);
+            $result[$this->removeNullBytes(strval($postedKey))] = $this->removeNullBytes(strval($posted));
         }
         $this->vars = $result;
         $this->inputType = $inputType;

@@ -47,6 +47,10 @@ class Csrf extends Hidden
         return $this;
     }
 
+    /**
+     * @param mixed $incomingValue
+     * @return bool
+     */
     public function checkToken($incomingValue): bool
     {
         if ($this->csrf->checkToken(strval($incomingValue), $this->csrfTokenAlias)) {

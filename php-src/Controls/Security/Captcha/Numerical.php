@@ -34,6 +34,10 @@ class Numerical extends AGraphical
         // no additional rules applicable
     }
 
+    /**
+     * @param mixed $value
+     * @return bool
+     */
     public function checkFillCaptcha($value): bool
     {
         $formName = $this->getKey() . '_last';

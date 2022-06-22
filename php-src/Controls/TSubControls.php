@@ -5,6 +5,7 @@ namespace kalanis\kw_forms\Controls;
 
 use kalanis\kw_forms\Exceptions\RenderException;
 use kalanis\kw_forms\Interfaces;
+use kalanis\kw_rules\Exceptions\RuleException;
 use kalanis\kw_templates\Interfaces\IHtmlElement;
 
 
@@ -39,17 +40,17 @@ trait TSubControls
 
     /**
      * Get values of all children
-     * @return array<string, string|int|float|null>
+     * @return array<string, string|int|float|bool|null>
      */
     public function getValues(): array
     {
         $array = [];
-        foreach ($this->controls as $key => &$child) {
-            if ($child instanceof Interfaces\IMultiValue) {
-                $array += $child->getValues();
+        foreach ($this->controls as &$control) {
+            /** @var AControl $control */
+            if ($control instanceof Interfaces\IMultiValue) {
+                $array += $control->getValues();
             } else {
-                $_alias = ($child instanceof AControl) ? $child->getKey() : $key ;
-                $array[$_alias] = $child->getValue();
+                $array[$control->getKey()] = $control->getValue();
             }
         }
         return $array;
@@ -62,17 +63,17 @@ trait TSubControls
      *  $form->setValues($this->context->post) // set values from Post
      *  $form->setValues($mapperObject) // set values from other source
      * </code>
-     * @param array<string, string|int|float|null> $data
+     * @param array<string, string|int|float|bool|null> $data
      */
     public function setValues(array $data = []): void
     {
-        foreach ($this->controls as $key => &$child) {
-            if ($child instanceof Interfaces\IMultiValue) {
-                $child->setValues($data);
+        foreach ($this->controls as &$control) {
+            /** @var AControl $control */
+            if ($control instanceof Interfaces\IMultiValue) {
+                $control->setValues($data);
             } else {
-                $_alias = ($child instanceof AControl) ? $child->getKey() : $key ;
-                if (isset($data[$_alias])) {
-                    $child->setValue($data[$_alias]);
+                if (isset($data[$control->getKey()])) {
+                    $control->setValue($data[$control->getKey()]);
                 }
             }
         }
@@ -80,16 +81,17 @@ trait TSubControls
 
     /**
      * Get labels of all children
-     * @return array<string, string>
+     * @return array<string, string|null>
      */
     public function getLabels(): array
     {
         $array = [];
-        foreach ($this->controls as &$child) {
-            if ($child instanceof Interfaces\IContainsControls) {
-                $array += $child->getLabels();
+        foreach ($this->controls as &$control) {
+            /** @var AControl $control */
+            if ($control instanceof Interfaces\IContainsControls) {
+                $array += $control->getLabels();
             } else {
-                $array[$child->getKey()] = $child->getLabel();
+                $array[$control->getKey()] = $control->getLabel();
             }
         }
         return $array;
@@ -97,25 +99,25 @@ trait TSubControls
 
     /**
      * Set labels to all children
-     * @param array<string, string> $array
-     * @return void
+     * @param array<string, string|null> $array
      */
     public function setLabels(array $array = []): void
     {
-        foreach ($this->controls as &$child) {
-            if ($child instanceof Interfaces\IContainsControls) {
-                $child->setLabels($array);
-            } elseif (isset($array[$child->getKey()])) {
-                $child->setLabel($array[$child->getKey()]);
+        foreach ($this->controls as &$control) {
+            /** @var AControl $control */
+            if ($control instanceof Interfaces\IContainsControls) {
+                $control->setLabels($array);
+            } elseif (isset($array[$control->getKey()])) {
+                $control->setLabel($array[$control->getKey()]);
             }
         }
     }
 
     /**
-     * @param array<string, string> $passedErrors
-     * @param string|string[]|IHtmlElement|IHtmlElement[] $wrappersError
+     * @param array<string, array<int, RuleException>> $passedErrors
+     * @param array<string|IHtmlElement> $wrappersError
      * @throws RenderException
-     * @return array
+     * @return array<string, string>
      */
     public function getErrors(array $passedErrors, array $wrappersError): array
     {
@@ -134,5 +136,10 @@ trait TSubControls
         }
 
         return $returnErrors;
+    }
+
+    public function count(): int
+    {
+        return count($this->controls);
     }
 }

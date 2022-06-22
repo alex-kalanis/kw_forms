@@ -28,14 +28,17 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
     use TRules;
     use TWrappers;
 
-    /** @var string|null */
+    /** @var string|int|float|bool|null */
     protected $originalValue = null;
-
-    // 1 value, 2 attributes, 3 children
+    // sprintf: 1 value, 2 attributes, 3 children
+    /** @var string */
     protected $templateInput = '';
-
+    /** @var bool */
     protected static $escapeOutput = true;
 
+    /**
+     * @param string|int|bool|null $can
+     */
     public static function escapeOutput($can = null): void
     {
         static::$escapeOutput = !empty($can);
@@ -48,7 +51,7 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
 
     /**
      * @param string $key
-     * @param string|object|null $originalValue
+     * @param string|int|float|bool|null $originalValue
      * @param string $label
      * @return $this
      */
@@ -114,7 +117,7 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
 
     /**
      * Return errors over entry which happened
-     * @param RuleException[] $errors
+     * @param array<RuleException> $errors
      * @return string
      * @throws RenderException
      */
@@ -162,5 +165,10 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
     protected function escaped(string $content): string
     {
         return static::$escapeOutput ? htmlspecialchars($content, ENT_QUOTES | ENT_HTML5, 'UTF-8', false) : $content ;
+    }
+
+    public function count(): int
+    {
+        return count($this->children);
     }
 }

@@ -16,7 +16,10 @@ abstract class AGraphical extends ACaptcha
 {
     protected $templateLabel = '<img src="data:image/png;base64,%2$s" id="%1$s" alt="You need to solve this." />';
     protected $templateInput = '<input type="text" value=""%2$s />';
+    /** @var string */
     protected $font = '';
+    /** @var string */
+    protected $renderError = 'Cannot render captcha image!';
     /** @var ArrayAccess */
     protected $session = null;
 
@@ -32,7 +35,7 @@ abstract class AGraphical extends ACaptcha
 
     /**
      * Render label on form control
-     * @param string|array $attributes
+     * @param string|array<string, string> $attributes
      * @return string
      * @throws RenderException
      */
@@ -44,13 +47,25 @@ abstract class AGraphical extends ACaptcha
         return $this->wrapIt(sprintf($this->templateLabel, $this->getAttribute('id'), $this->getImage(strval($this->getLabel())), $this->renderAttributes($attributes)), $this->wrappersLabel);
     }
 
+    /**
+     * @param string $text
+     * @throws RenderException
+     * @return string
+     */
     protected function getImage(string $text): string
     {
         $im = imagecreatetruecolor(160, 25);
 
-        $white = imagecolorallocate($im, 255, 255, 255);
-        $grey = imagecolorallocate($im, 169, 169, 169);
-        $black = imagecolorallocate($im, 0, 0, 0);
+        if (false === $im) {
+            // @codeCoverageIgnoreStart
+            // problems with gd library
+            throw new RenderException($this->renderError);
+        }
+        // @codeCoverageIgnoreEnd
+
+        $white = intval(imagecolorallocate($im, 255, 255, 255));
+        $grey = intval(imagecolorallocate($im, 169, 169, 169));
+        $black = intval(imagecolorallocate($im, 0, 0, 0));
         imagefilledrectangle($im, 0, 0, 160, 25, $white);
 
         imagettftext($im, 20, 0, 9, 19, $black, $this->font, $text);
@@ -67,7 +82,7 @@ abstract class AGraphical extends ACaptcha
 
         ob_start();
         imagepng($im);
-        $img = ob_get_contents();
+        $img = strval(ob_get_contents());
         ob_end_clean();
 
         imagedestroy($im);

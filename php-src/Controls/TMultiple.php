@@ -34,7 +34,7 @@ trait TMultiple
      */
     public function setSize(int $value): void
     {
-        $this->setAttribute('size', $value);
+        $this->setAttribute('size', strval($value));
     }
 
     /**

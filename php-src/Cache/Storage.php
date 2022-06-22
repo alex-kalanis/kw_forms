@@ -9,12 +9,12 @@ use kalanis\kw_storage\StorageException;
 
 class Storage
 {
-    /** @var IStorage */
+    /** @var IStorage|null */
     protected $storage = null;
     /** @var Key */
     protected $key = null;
 
-    public function __construct(IStorage $storage = null)
+    public function __construct(?IStorage $storage = null)
     {
         $this->storage = $storage;
         $this->key = new Key();
@@ -39,7 +39,7 @@ class Storage
 
     /**
      * Save form data into storage
-     * @param array<string, int|string> $values
+     * @param array<string, string|int|float|bool|null> $values
      * @param int|null $timeout
      * @throws StorageException
      */
@@ -54,9 +54,9 @@ class Storage
     /**
      * Read data from storage
      * @throws StorageException
-     * @return array<string, int|string>
+     * @return array<string, string|int|float|bool|null>
      */
-    public function load(): ?array
+    public function load(): array
     {
         if (!$this->storage) {
             return [];

@@ -8,7 +8,6 @@ use kalanis\kw_forms\Controls;
 use kalanis\kw_forms\Exceptions\FormsException;
 use kalanis\kw_forms\Exceptions\RenderException;
 use kalanis\kw_forms\Form;
-use kalanis\kw_rules\Exceptions\RuleException;
 use kalanis\kw_rules\Interfaces\IRules;
 use kalanis\kw_rules\Validate;
 
@@ -46,9 +45,6 @@ class TreeTest extends CommonTestClass
         $this->assertTrue($form->isValid());
     }
 
-    /**
-     * @throws RuleException
-     */
     public function testChangingControls(): void
     {
         $con1 = new Controls\Text();
@@ -73,7 +69,6 @@ class TreeTest extends CommonTestClass
 
     /**
      * @throws FormsException
-     * @throws RuleException
      */
     public function testChangingControlsDeepNest(): void
     {
@@ -136,18 +131,21 @@ class TreeTest extends CommonTestClass
         $con3->addRule(IRules::IS_NOT_EMPTY, 'might be empty');
 
         $input = new Controls\AnyControl();
+        $this->assertEquals(0, $input->count());
         $this->assertFalse($input->hasControl('non'));
-        $this->assertEmpty($input->getControl('non'));
+        $this->assertNull($input->getControl('non'));
         $input->addControl('non', $con3);
+        $this->assertEquals(1, $input->count());
         $this->assertTrue($input->hasControl('non'));
-        $this->assertNotEmpty($input->getControl('non'));
+        $this->assertIsObject($input->getControl('non'));
         $input->removeControl('non');
+        $this->assertEquals(0, $input->count());
         $this->assertFalse($input->hasControl('non'));
+        $this->assertNull($input->getControl('non'));
     }
 
     /**
      * @throws FormsException
-     * @throws RuleException
      */
     public function testGettingControlsDeepNest(): void
     {
@@ -180,9 +178,9 @@ class TreeTest extends CommonTestClass
         $form->addControlDefaultKey($input);
         $form->setInputs($adapter);
 
-        $this->assertEmpty($input->getControl('non'));
-        $this->assertNotEmpty($input->getControl('foo'));
-        $this->assertNotEmpty($input->getControl('sgg'));
+        $this->assertNull($input->getControl('non'));
+        $this->assertIsObject($input->getControl('foo'));
+        $this->assertIsObject($input->getControl('sgg'));
         $this->assertEmpty($form->renderErrorsArray());
 
         $this->assertEquals(['foo' => '', 'bar' => '', 'bvt' => '', 'sgg' => '', ], $form->getLabels());
