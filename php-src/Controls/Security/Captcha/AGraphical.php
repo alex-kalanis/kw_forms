@@ -36,8 +36,8 @@ abstract class AGraphical extends ACaptcha
     /**
      * Render label on form control
      * @param string|array<string, string> $attributes
-     * @return string
      * @throws RenderException
+     * @return string
      */
     public function renderLabel($attributes = array()): string
     {
@@ -72,11 +72,11 @@ abstract class AGraphical extends ACaptcha
         imagettftext($im, 20, 0, 11, 21, $black, $this->font, $text);
         imagettftext($im, 20, 0, 10, 20, $black, $this->font, $text);
 
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; 3 > $i; $i++) {
             imageline($im, 0, $i * 10, 400, $i * 10, $grey);
         }
 
-        for ($i = 0; $i < 16; $i++) {
+        for ($i = 0; 16 > $i; $i++) {
             imageline($im, $i * 10, 0, $i * 10, 30, $grey);
         }
 

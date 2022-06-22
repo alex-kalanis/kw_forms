@@ -205,7 +205,7 @@ class BasicTest extends CommonTestClass
         $wrappers->addWrapperLabel('div');
         $wrappers->addWrapperInput('div');
         $wrappers->addWrapperChild('span');
-        $wrappers->addWrapperChildren(new Html());
+        $wrappers->addWrapperChildren(new Html(), ['class' => 'wat']);
         $wrappers->addWrapperError(['span', 'span']);
         $wrappers->addWrapperErrors('div');
 

@@ -126,8 +126,8 @@ class Checkboxes extends AControl implements IMultiValue
 
     /**
      * Render all children, add missing prefixes
-     * @return string
      * @throws RenderException
+     * @return string
      */
     public function renderChildren(): string
     {

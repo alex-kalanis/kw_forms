@@ -34,7 +34,7 @@ trait TSelected
      */
     protected function setSelected($value): self
     {
-        if (!empty($value) && (strval($value) !== 'none')) {
+        if (!empty($value) && ('none' !== strval($value))) {
             $this->setAttribute('selected', 'selected');
         } else {
             $this->removeAttribute('selected');

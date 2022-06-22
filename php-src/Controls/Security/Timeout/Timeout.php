@@ -40,7 +40,7 @@ class Timeout implements ITimeout
 
     public function isRunning(): bool
     {
-        return ($this->timeLeft() > 0);
+        return (0 < $this->timeLeft());
     }
 
     public function timeLeft(): int

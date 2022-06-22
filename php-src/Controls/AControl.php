@@ -75,8 +75,8 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
     }
 
     /**
-     * @return string
      * @throws RenderException
+     * @return string
      */
     public function render(): string
     {
@@ -86,8 +86,8 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
     /**
      * Render label on form control
      * @param string|string[] $attributes
-     * @return string
      * @throws RenderException
+     * @return string
      */
     public function renderLabel($attributes = []): string
     {
@@ -100,8 +100,8 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
     /**
      * Return input entry in HTML
      * @param string|string[]|array|null $attributes
-     * @return string
      * @throws RenderException
+     * @return string
      */
     public function renderInput($attributes = null): string
     {
@@ -118,8 +118,8 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
     /**
      * Return errors over entry which happened
      * @param array<RuleException> $errors
-     * @return string
      * @throws RenderException
+     * @return string
      */
     public function renderErrors($errors): string
     {

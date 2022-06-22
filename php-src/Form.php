@@ -390,7 +390,7 @@ class Form implements IHtmlElement
      */
     public function setLayout(string $layoutName = '')
     {
-        if (($layoutName == 'inlineTable') || ($layoutName == 'tableInline')) {
+        if (('inlineTable' == $layoutName) || ('tableInline' == $layoutName)) {
             $this->resetWrappers();
             $this->addWrapperChildren('tr');
             $this->addWrapperChildren('table', ['class' => 'form']);
@@ -398,7 +398,7 @@ class Form implements IHtmlElement
             $this->addWrapperInput('td');
             $this->addWrapperErrors('div', ['class' => 'errors']);
             $this->addWrapperError('div');
-        } elseif ($layoutName == 'table') {
+        } elseif ('table' == $layoutName) {
             $this->resetWrappers();
             $this->addWrapperChildren('table', ['class' => 'form']);
             $this->addWrapperChild('tr');

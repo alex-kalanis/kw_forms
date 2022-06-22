@@ -74,7 +74,7 @@ trait TWrappers
         } else {
             if (!($wrapper instanceof IHtmlElement)) {
                 $wrapper = HtmlElement::init($wrapper, $attributes);
-            } else if ($attributes !== null) {
+            } elseif (!empty($attributes)) {
                 $wrapper->setAttributes($attributes);
             }
             if (!in_array($wrapper, $stack)) {

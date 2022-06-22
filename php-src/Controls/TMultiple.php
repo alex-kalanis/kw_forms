@@ -16,7 +16,7 @@ trait TMultiple
      */
     public function setMultiple($value): void
     {
-        if (!empty($value) && (strval($value) !== 'none')) {
+        if (!empty($value) && ('none' !== strval($value))) {
             $this->setAttribute('multiple', 'multiple');
             if (!$this->getAttribute('size')) {
                 $this->setSize(count($this->children));

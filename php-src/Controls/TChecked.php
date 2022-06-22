@@ -30,7 +30,7 @@ trait TChecked
      */
     protected function setChecked($value): self
     {
-        if (!empty($value) && (strval($value) !== 'none')) {
+        if (!empty($value) && ('none' !== strval($value))) {
             $this->setAttribute('checked', 'checked');
         } else {
             $this->removeAttribute('checked');

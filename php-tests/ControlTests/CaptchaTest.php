@@ -6,12 +6,16 @@ namespace ControlTests;
 use ArrayAccess;
 use CommonTestClass;
 use kalanis\kw_forms\Controls;
+use kalanis\kw_forms\Exceptions\RenderException;
 use kalanis\kw_rules\Interfaces\IRules;
 use kalanis\kw_rules\Validate;
 
 
 class CaptchaTest extends CommonTestClass
 {
+    /**
+     * @throws RenderException
+     */
     public function testCaptcha(): void
     {
         $captcha = new Captcha();
@@ -41,6 +45,10 @@ class CaptchaTest extends CommonTestClass
         $this->assertEmpty($captcha->getRules());
     }
 
+    /**
+     * @throws RenderException
+     * @requires function imagettftext
+     */
     public function testGraphical(): void
     {
         $session = new \MockArray();
@@ -58,6 +66,9 @@ class CaptchaTest extends CommonTestClass
         $this->assertNotEmpty($captcha->renderLabel());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testDisabled(): void
     {
         $captcha = new Controls\Security\Captcha\Disabled();
@@ -91,6 +102,10 @@ class CaptchaTest extends CommonTestClass
         $this->assertNotEmpty($validate->getErrors());
     }
 
+    /**
+     * @throws RenderException
+     * @requires function imagettftext
+     */
     public function testNumerical(): void
     {
         $session = new \MockArray();
@@ -114,6 +129,10 @@ class CaptchaTest extends CommonTestClass
         $this->assertNotEmpty($validate->getErrors());
     }
 
+    /**
+     * @throws RenderException
+     * @requires function imagettfbbox
+     */
     public function testColourful(): void
     {
         $session = new \MockArray();
