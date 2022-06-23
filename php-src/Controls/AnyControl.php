@@ -45,13 +45,13 @@ class AnyControl extends AControl implements IContainsControls
         $validation = true;
         foreach ($this->controls as &$child) {
             if ($child instanceof IContainsControls) {
-                $result = $child->validateControls($validate);
+                $result = $child->/** @scrutinizer ignore-call */validateControls($validate);
                 if ($result && !$this->needAll) {
                     $this->errors = [];
                     return true;
                 }
                 $validation &= $result;
-                $this->errors += $child->getValidatedErrors();
+                $this->errors += $child->/** @scrutinizer ignore-call */getValidatedErrors();
             } elseif ($child instanceof AControl) {
                 $result = $validate->validate($child);
                 if ($result && !$this->needAll) {

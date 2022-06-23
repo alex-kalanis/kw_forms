@@ -15,7 +15,7 @@ use kalanis\kw_rules\Interfaces\IRules;
  */
 class ColourfulText extends AGraphical
 {
-    public function set(string $alias, ArrayAccess &$session, string $errorMessage, string $font = '/usr/share/fonts/truetype/freefont/freesans.ttf'): parent
+    public function set(string $alias, ArrayAccess &$session, string $errorMessage, string $font = '/usr/share/fonts/truetype/freefont/freesans.ttf'): AGraphical
     {
         $this->font = $font;
         $text = $this->generateRandomString(6);

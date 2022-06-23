@@ -27,8 +27,8 @@ trait TSubControls
     public function getControl(string $key): ?AControl
     {
         foreach ($this->controls as &$control) {
-            if ($control instanceof Interfaces\IContainsControls && $control->hasControl($key)) {
-                return $control->getControl($key);
+            if ($control instanceof Interfaces\IContainsControls && $control->/** @scrutinizer ignore-call */hasControl($key)) {
+                return $control->/** @scrutinizer ignore-call */getControl($key);
             } elseif ($control instanceof AControl) {
                 if ($control->getKey() == $key) {
                     return $control;
@@ -48,9 +48,9 @@ trait TSubControls
         foreach ($this->controls as &$control) {
             /** @var AControl $control */
             if ($control instanceof Interfaces\IMultiValue) {
-                $array += $control->getValues();
+                $array += $control->/** @scrutinizer ignore-call */getValues();
             } else {
-                $array[$control->getKey()] = $control->getValue();
+                $array[$control->/** @scrutinizer ignore-call */getKey()] = $control->/** @scrutinizer ignore-call */getValue();
             }
         }
         return $array;
@@ -70,7 +70,7 @@ trait TSubControls
         foreach ($this->controls as &$control) {
             /** @var AControl $control */
             if ($control instanceof Interfaces\IMultiValue) {
-                $control->setValues($data);
+                $control->/** @scrutinizer ignore-call */setValues($data);
             } else {
                 if (isset($data[$control->getKey()])) {
                     $control->setValue($data[$control->getKey()]);
@@ -89,7 +89,7 @@ trait TSubControls
         foreach ($this->controls as &$control) {
             /** @var AControl $control */
             if ($control instanceof Interfaces\IContainsControls) {
-                $array += $control->getLabels();
+                $array += $control->/** @scrutinizer ignore-call */getLabels();
             } else {
                 $array[$control->getKey()] = $control->getLabel();
             }
@@ -106,7 +106,7 @@ trait TSubControls
         foreach ($this->controls as &$control) {
             /** @var AControl $control */
             if ($control instanceof Interfaces\IContainsControls) {
-                $control->setLabels($array);
+                $control->/** @scrutinizer ignore-call */setLabels($array);
             } elseif (isset($array[$control->getKey()])) {
                 $control->setLabel($array[$control->getKey()]);
             }
@@ -124,7 +124,7 @@ trait TSubControls
         $returnErrors = [];
         foreach ($this->controls as &$child) {
             if ($child instanceof Interfaces\IContainsControls) {
-                $returnErrors += $child->getErrors($passedErrors, $wrappersError);
+                $returnErrors += $child->/** @scrutinizer ignore-call */getErrors($passedErrors, $wrappersError);
             } elseif ($child instanceof AControl) {
                 if (isset($passedErrors[$child->getKey()])) {
                     if (!$child->wrappersErrors()) {

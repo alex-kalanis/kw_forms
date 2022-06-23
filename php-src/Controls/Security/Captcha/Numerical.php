@@ -14,7 +14,7 @@ use kalanis\kw_rules\Interfaces\IRules;
  */
 class Numerical extends AGraphical
 {
-    public function set(string $alias, ArrayAccess &$session, string $errorMessage, string $font = '/usr/share/fonts/truetype/freefont/FreeMono.ttf'): parent
+    public function set(string $alias, ArrayAccess &$session, string $errorMessage, string $font = '/usr/share/fonts/truetype/freefont/FreeMono.ttf'): AGraphical
     {
         $this->font = $font;
 

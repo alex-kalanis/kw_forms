@@ -20,7 +20,7 @@ class MultiSend extends Hidden
     /** @var ArrayAccess */
     protected $cookie = null;
 
-    public function setHidden(string $alias, ArrayAccess &$cookie, string $errorMessage): parent
+    public function setHidden(string $alias, ArrayAccess &$cookie, string $errorMessage): self
     {
         $this->cookie = $cookie;
         $this->setEntry($alias);

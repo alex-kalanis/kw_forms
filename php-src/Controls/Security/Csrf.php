@@ -37,7 +37,7 @@ class Csrf extends Hidden
         return new Csrf\JWT();
     }
 
-    public function setHidden(string $alias, ArrayAccess &$cookie, string $errorMessage): parent
+    public function setHidden(string $alias, ArrayAccess &$cookie, string $errorMessage): self
     {
         $this->csrf->init($cookie);
         $this->setEntry($alias);

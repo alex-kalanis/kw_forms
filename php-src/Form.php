@@ -254,8 +254,8 @@ class Form implements IHtmlElement
         $validation = true;
         foreach ($this->controls as &$child) {
             if ($child instanceof Interfaces\IContainsControls) {
-                $validation &= $child->validateControls($this->validate);
-                $this->errors += $child->getValidatedErrors();
+                $validation &= $child->/** @scrutinizer ignore-call */validateControls($this->validate);
+                $this->errors += $child->/** @scrutinizer ignore-call */getValidatedErrors();
             } elseif ($child instanceof Controls\AControl) {
                 $validation &= $this->validate->validate($child);
                 $this->errors += $this->validate->getErrors();

@@ -60,7 +60,7 @@ class File extends AControl implements Interfaces\IValidateFile
     public function getValue()
     {
         $this->checkFile();
-        return $this->entry->getValue();
+        return $this->entry->/** @scrutinizer ignore-call */getValue();
     }
 
     /**
@@ -70,7 +70,7 @@ class File extends AControl implements Interfaces\IValidateFile
     public function getMimeType(): string
     {
         $this->checkFile();
-        return $this->entry->getMimeType();
+        return $this->entry->/** @scrutinizer ignore-call */getMimeType();
     }
 
     /**
@@ -80,7 +80,7 @@ class File extends AControl implements Interfaces\IValidateFile
     public function getTempName(): string
     {
         $this->checkFile();
-        return $this->entry->getTempName();
+        return $this->entry->/** @scrutinizer ignore-call */getTempName();
     }
 
     /**
@@ -90,7 +90,7 @@ class File extends AControl implements Interfaces\IValidateFile
     public function getError(): int
     {
         $this->checkFile();
-        return $this->entry->getError();
+        return $this->entry->/** @scrutinizer ignore-call */getError();
     }
 
     /**
@@ -100,7 +100,7 @@ class File extends AControl implements Interfaces\IValidateFile
     public function getSize(): int
     {
         $this->checkFile();
-        return $this->entry->getSize();
+        return $this->entry->/** @scrutinizer ignore-call */getSize();
     }
 
     /**
