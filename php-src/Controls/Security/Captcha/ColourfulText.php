@@ -27,7 +27,7 @@ class ColourfulText extends AGraphical
         return $this;
     }
 
-    public function addRule(string $ruleName, string $errorText, ...$args): void
+    public function addRule(/** @scrutinizer ignore-unused */ string $ruleName, /** @scrutinizer ignore-unused */ string $errorText, /** @scrutinizer ignore-unused */ ...$args): void
     {
         // no additional rules applicable
     }
@@ -57,7 +57,7 @@ class ColourfulText extends AGraphical
         # Set the background and the text color of the CAPTCHA image using the imagecolorallocate PHP function:
         # set the captcha image  -  text will be white rendered on black
         # we don't random here to be sure that the text is visible
-        $bg_color = intval(imagecolorallocate($image, 255, 255, 255));
+//        $bg_color = intval(imagecolorallocate($image, 255, 255, 255));
         $captcha_color = intval(imagecolorallocate($image, 150, 0, 150));
         # The resulting CAPTCHA image will include some generated lines, dots, and rectangles.
         # But before that, you generate random colors for it, using the imagecolorallocate function:

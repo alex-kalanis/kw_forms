@@ -71,12 +71,12 @@ class MultiSend extends Hidden
         return $hashStack;
     }
 
-    public function addRule(string $ruleName, string $errorText, ...$args): void
+    public function addRule(/** @scrutinizer ignore-unused */ string $ruleName, /** @scrutinizer ignore-unused */ string $errorText, /** @scrutinizer ignore-unused */ ...$args): void
     {
         // no additional rules applicable
     }
 
-    public function addRules(iterable $rules = []): void
+    public function addRules(/** @scrutinizer ignore-unused */ iterable $rules = []): void
     {
         // no rules add applicable
     }

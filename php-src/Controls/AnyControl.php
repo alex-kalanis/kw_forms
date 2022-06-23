@@ -85,7 +85,7 @@ class AnyControl extends AControl implements IContainsControls
         return '';
     }
 
-    public function setLabel(?string $value): void
+    public function setLabel(/** @scrutinizer ignore-unused */?string $value): void
     {
     }
 
@@ -94,7 +94,7 @@ class AnyControl extends AControl implements IContainsControls
         return null;
     }
 
-    public function setValue($value): void
+    public function setValue(/** @scrutinizer ignore-unused */$value): void
     {
     }
 
