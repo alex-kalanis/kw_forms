@@ -5,10 +5,14 @@ namespace ControlTests;
 
 use CommonTestClass;
 use kalanis\kw_forms\Controls;
+use kalanis\kw_forms\Exceptions\RenderException;
 
 
 class SelectTest extends CommonTestClass
 {
+    /**
+     * @throws RenderException
+     */
     public function testOption(): void
     {
         $input = new Controls\SelectOption();
@@ -23,6 +27,9 @@ class SelectTest extends CommonTestClass
         $this->assertEquals('<option value="original">check me</option>', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testGrouping(): void
     {
         $extra = new Controls\SelectOption();
@@ -48,6 +55,9 @@ class SelectTest extends CommonTestClass
         $this->assertEmpty($input->getValue());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testSimpleSelect(): void
     {
         $extra = new Controls\SelectOption();
@@ -100,6 +110,9 @@ class SelectTest extends CommonTestClass
 . ' <option value="srr">last</option> </select>', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testListSelect(): void
     {
         $extra = new Controls\SelectOption();

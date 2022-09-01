@@ -4,12 +4,18 @@ namespace BasicTests;
 
 
 use CommonTestClass;
+use kalanis\kw_forms\Exceptions\FormsException;
+use kalanis\kw_forms\Exceptions\RenderException;
 use kalanis\kw_forms\Form;
 use kalanis\kw_rules\Interfaces\IRules;
+use kalanis\kw_storage\StorageException;
 
 
 class FormTest extends CommonTestClass
 {
+    /**
+     * @throws FormsException
+     */
     public function testFormInit(): void
     {
         $files = new \Files();
@@ -24,6 +30,10 @@ class FormTest extends CommonTestClass
         $this->assertEmpty($form->getControl('baz'));
     }
 
+    /**
+     * @throws FormsException
+     * @throws StorageException
+     */
     public function testStorage(): void
     {
         $files = new \Files();
@@ -52,6 +62,9 @@ class FormTest extends CommonTestClass
         $form->setValue('baz', 'here');
     }
 
+    /**
+     * @throws FormsException
+     */
     public function testLabels(): void
     {
         $form = new Form('test');
@@ -79,6 +92,10 @@ class FormTest extends CommonTestClass
         $this->assertEquals('our form', $form->getLabel());
     }
 
+    /**
+     * @throws FormsException
+     * @throws RenderException
+     */
     public function testProcessing(): void
     {
         $form = new Form('test');
@@ -107,6 +124,10 @@ class FormTest extends CommonTestClass
         $this->assertNotEmpty($form->renderEnd());
     }
 
+    /**
+     * @throws FormsException
+     * @throws RenderException
+     */
     public function testLayout(): void
     {
         $form = new Form('test');

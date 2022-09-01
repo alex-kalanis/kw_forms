@@ -5,10 +5,14 @@ namespace ControlTests;
 
 use CommonTestClass;
 use kalanis\kw_forms\Controls;
+use kalanis\kw_forms\Exceptions\RenderException;
 
 
 class DateTest extends CommonTestClass
 {
+    /**
+     * @throws RenderException
+     */
     public function testDate(): void
     {
         $input = new Controls\DatePicker();
@@ -21,6 +25,9 @@ class DateTest extends CommonTestClass
         $this->assertEquals('<input type="text" value="2010-08-18 22:33" class="datepicker" id="commit" name="commit" />', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testRange(): void
     {
         $input = new Range();

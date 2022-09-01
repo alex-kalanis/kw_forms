@@ -6,11 +6,16 @@ namespace ControlTests;
 use CommonTestClass;
 use kalanis\kw_forms\Controls;
 use kalanis\kw_forms\Exceptions\EntryException;
+use kalanis\kw_forms\Exceptions\FormsException;
+use kalanis\kw_forms\Exceptions\RenderException;
 use kalanis\kw_rules\Interfaces\IRules;
 
 
 class FilesTest extends CommonTestClass
 {
+    /**
+     * @throws RenderException
+     */
     public function testFile(): void
     {
         $input = new Controls\File();
@@ -20,6 +25,9 @@ class FilesTest extends CommonTestClass
         $this->assertEquals('<input type="file" id="myown" name="myown" />', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testFiles(): void
     {
         $input = new Controls\Files();
@@ -29,6 +37,9 @@ class FilesTest extends CommonTestClass
 . '<label for="myown_1">two</label> <input type="file" id="myown_1" name="myown[]" /> ' . PHP_EOL, $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testFiles2(): void
     {
         $input = new Controls\Files();
@@ -38,6 +49,11 @@ class FilesTest extends CommonTestClass
 . '<label for="myown_1">two</label> <input type="file" id="myown_1" name="myown[bar]" /> ' . PHP_EOL, $input->renderInput());
     }
 
+    /**
+     * @throws EntryException
+     * @throws FormsException
+     * @throws RenderException
+     */
     public function testFiles3(): void
     {
         $adapter = new \Files();
@@ -54,6 +70,10 @@ class FilesTest extends CommonTestClass
 . '<label for="download_1">two</label> <input type="file" id="download_1" name="download[file2]" /> ' . PHP_EOL, $input->renderInput());
     }
 
+    /**
+     * @throws FormsException
+     * @throws RenderException
+     */
     public function testFiles4(): void
     {
         $adapter = new \Files();
@@ -69,6 +89,9 @@ class FilesTest extends CommonTestClass
 . '<label for="numbered_1">two</label> <input type="file" id="numbered_1" name="numbered[]" /> ' . PHP_EOL, $input->renderInput());
     }
 
+    /**
+     * @throws EntryException
+     */
     public function testFileUnknown(): void
     {
         $input = new Controls\File();
@@ -78,6 +101,11 @@ class FilesTest extends CommonTestClass
         $input->getFile();
     }
 
+    /**
+     * @throws EntryException
+     * @throws FormsException
+     * @throws RenderException
+     */
     public function testFileInput(): void
     {
         $adapter = new \Files();

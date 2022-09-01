@@ -5,10 +5,14 @@ namespace BasicTests;
 
 use CommonTestClass;
 use kalanis\kw_forms\Cache\Storage;
+use kalanis\kw_storage\StorageException;
 
 
 class CacheTest extends CommonTestClass
 {
+    /**
+     * @throws StorageException
+     */
     public function testStorageTrait(): void
     {
         $storagePart = new \StorageTrait();
@@ -19,6 +23,9 @@ class CacheTest extends CommonTestClass
         $this->assertFalse($storagePart->isStored());
     }
 
+    /**
+     * @throws StorageException
+     */
     public function testStorage(): void
     {
         $storage = new Storage(new \StorageMock());
@@ -31,6 +38,9 @@ class CacheTest extends CommonTestClass
         $this->assertFalse($storage->isStored());
     }
 
+    /**
+     * @throws StorageException
+     */
     public function testStorageNothing(): void
     {
         $storage = new Storage();
@@ -43,6 +53,9 @@ class CacheTest extends CommonTestClass
         $this->assertFalse($storage->isStored());
     }
 
+    /**
+     * @throws StorageException
+     */
     public function testStorageFailedData(): void
     {
         $mock = new \StorageMock();

@@ -5,12 +5,16 @@ namespace ControlTests;
 
 use CommonTestClass;
 use kalanis\kw_forms\Controls;
+use kalanis\kw_forms\Exceptions\RenderException;
 use kalanis\kw_forms\Interfaces\ICsrf;
 use kalanis\kw_rules\Validate;
 
 
 class SecurityTest extends CommonTestClass
 {
+    /**
+     * @throws RenderException
+     */
     public function testMultiSend(): void
     {
         $cookie = new \MockArray();
@@ -32,6 +36,9 @@ class SecurityTest extends CommonTestClass
         $this->assertNotEmpty($valid->getErrors());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testCsrf(): void
     {
         $session = new \MockArray();

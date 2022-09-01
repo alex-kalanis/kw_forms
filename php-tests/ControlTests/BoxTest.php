@@ -5,10 +5,14 @@ namespace ControlTests;
 
 use CommonTestClass;
 use kalanis\kw_forms\Controls;
+use kalanis\kw_forms\Exceptions\RenderException;
 
 
 class BoxTest extends CommonTestClass
 {
+    /**
+     * @throws RenderException
+     */
     public function testBox(): void
     {
         $input = new Controls\Checkbox();
@@ -21,6 +25,9 @@ class BoxTest extends CommonTestClass
         $this->assertEquals('<input type="checkbox" value="original" id="' . $id . '" name="myown" checked="checked" />', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testBoxes(): void
     {
         $extra = new Controls\Checkbox();
@@ -45,6 +52,9 @@ class BoxTest extends CommonTestClass
 . '<input type="checkbox" value="1" id="myown_edd" name="edd" /> <label for="myown_edd">fourth</label>' . PHP_EOL, $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testRadio(): void
     {
         $input = new Controls\Radio();
@@ -57,6 +67,9 @@ class BoxTest extends CommonTestClass
         $this->assertNotEmpty($input->render());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testRadioSet(): void
     {
         $extra = new Controls\Radio();

@@ -5,10 +5,14 @@ namespace ControlTests;
 
 use CommonTestClass;
 use kalanis\kw_forms\Controls;
+use kalanis\kw_forms\Exceptions\RenderException;
 
 
 class TextTest extends CommonTestClass
 {
+    /**
+     * @throws RenderException
+     */
     public function testInput(): void
     {
         $input = new Controls\Input();
@@ -18,6 +22,9 @@ class TextTest extends CommonTestClass
         $this->assertEquals('<input value="jhgfd" type="text" id="myown" name="myown" />', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testText(): void
     {
         $input = new Controls\Text();
@@ -27,6 +34,9 @@ class TextTest extends CommonTestClass
         $this->assertEquals('<input type="text" value="jhgfd" id="myown" name="myown" />', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testTextarea(): void
     {
         $input = new Controls\Textarea();
@@ -36,6 +46,9 @@ class TextTest extends CommonTestClass
         $this->assertEquals('<textarea id="myown" name="myown">jhgfd</textarea>', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testEmail(): void
     {
         $input = new Controls\Email();
@@ -45,6 +58,9 @@ class TextTest extends CommonTestClass
         $this->assertEquals('<input type="email" value="jhgfd" id="myown" name="myown" />', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testPassword(): void
     {
         $input = new Controls\Password();
@@ -54,6 +70,9 @@ class TextTest extends CommonTestClass
         $this->assertEquals('<input type="password" value="" id="myown" name="myown" />', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testPhone(): void
     {
         $input = new Controls\Telephone();

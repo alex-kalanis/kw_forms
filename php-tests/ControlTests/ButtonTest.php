@@ -5,10 +5,14 @@ namespace ControlTests;
 
 use CommonTestClass;
 use kalanis\kw_forms\Controls;
+use kalanis\kw_forms\Exceptions\RenderException;
 
 
 class ButtonTest extends CommonTestClass
 {
+    /**
+     * @throws RenderException
+     */
     public function testButton(): void
     {
         $input = new Controls\Button();
@@ -18,6 +22,9 @@ class ButtonTest extends CommonTestClass
         $this->assertEquals('<input type="button" value="jhgfd" id="commit" name="commit" />', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testButton2(): void
     {
         $input = new Controls\Button();
@@ -27,6 +34,9 @@ class ButtonTest extends CommonTestClass
         $this->assertEquals('<input type="button" value="myown" id="myown" name="myown" />', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testSubmit(): void
     {
         $input = new Controls\Submit();
@@ -43,6 +53,9 @@ class ButtonTest extends CommonTestClass
         $this->assertEquals('<input type="submit" value="jhgfd" id="myown" name="myown" />', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testReset(): void
     {
         $input = new Controls\Reset();

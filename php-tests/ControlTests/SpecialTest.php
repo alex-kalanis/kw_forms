@@ -5,10 +5,14 @@ namespace ControlTests;
 
 use CommonTestClass;
 use kalanis\kw_forms\Controls;
+use kalanis\kw_forms\Exceptions\RenderException;
 
 
 class SpecialTest extends CommonTestClass
 {
+    /**
+     * @throws RenderException
+     */
     public function testControlEscape(): void
     {
         Controls\Hidden::escapeOutput(false); // it affects both outputs
@@ -28,6 +32,9 @@ class SpecialTest extends CommonTestClass
         $this->assertEquals(' <input type="text" value="&lt;?php =eval(&quot;echo evil code&quot;)" id="myown" name="myown" /> ', $input2->render());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testHidden(): void
     {
         $input = new Controls\Hidden();
@@ -37,6 +44,9 @@ class SpecialTest extends CommonTestClass
         $this->assertEquals('<input type="hidden" value="jhgfd" name="myown" />', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testDescription(): void
     {
         $input = new Controls\Description();
@@ -46,6 +56,9 @@ class SpecialTest extends CommonTestClass
         $this->assertEquals('jhgfd ', $input->renderInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testHtml(): void
     {
         $input = new Controls\Html();

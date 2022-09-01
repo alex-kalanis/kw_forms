@@ -162,6 +162,9 @@ class BasicTest extends CommonTestClass
         $this->assertFalse($multiple->getMultiple());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testControl(): void
     {
         $validate = new Validate();
@@ -189,6 +192,9 @@ class BasicTest extends CommonTestClass
         $this->assertEmpty($input->renderErrors($validate->getErrors())); // no errors
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testWrapperInherit(): void
     {
         $wrappers = new Control();
@@ -215,6 +221,9 @@ class BasicTest extends CommonTestClass
         $sub->wrapping('div', $sub->wrappersInput());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testWrapperObject(): void
     {
         $wrappers = new Wrappers();
@@ -224,6 +233,9 @@ class BasicTest extends CommonTestClass
         $wrappers->wrapping('div', new Html());
     }
 
+    /**
+     * @throws RenderException
+     */
     public function testWrapperDie(): void
     {
         $wrappers = new Wrappers();
@@ -293,6 +305,12 @@ class Wrappers implements Interfaces\IWrapper, IHtmlElement
     use THtmlElement;
     use Controls\TWrappers;
 
+    /**
+     * @param string $string
+     * @param mixed $wrappers
+     * @throws RenderException
+     * @return string
+     */
     public function wrapping(string $string, $wrappers): string
     {
         return $this->wrapIt($string, $wrappers);

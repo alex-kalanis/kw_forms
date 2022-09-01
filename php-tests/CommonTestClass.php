@@ -3,7 +3,7 @@
 use kalanis\kw_forms\Adapters\AAdapter;
 use kalanis\kw_forms\Adapters\FilesAdapter;
 use kalanis\kw_forms\Cache\TStorage;
-use kalanis\kw_storage\Interfaces\IStorage;
+use kalanis\kw_storage\Interfaces\ITarget;
 use PHPUnit\Framework\TestCase;
 
 
@@ -23,7 +23,7 @@ class StorageTrait
 }
 
 
-class StorageMock implements IStorage
+class StorageMock implements ITarget
 {
     protected $content = null;
 
