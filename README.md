@@ -17,7 +17,7 @@ use either get and cli or server and env params as same source.
 ```
 {
     "require": {
-        "alex-kalanis/kw_forms": "2.0"
+        "alex-kalanis/kw_forms": "2.4"
     }
 }
 ```

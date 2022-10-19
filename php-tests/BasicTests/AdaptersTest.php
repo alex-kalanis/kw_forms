@@ -6,7 +6,7 @@ namespace BasicTests;
 use CommonTestClass;
 use kalanis\kw_forms\Adapters;
 use kalanis\kw_forms\Exceptions\FormsException;
-use kalanis\kw_input\Filtered\SimpleArrays;
+use kalanis\kw_input\Filtered;
 use kalanis\kw_input\Interfaces\IEntry;
 
 
@@ -74,6 +74,9 @@ class AdaptersTest extends CommonTestClass
             [new Adapters\VarsAdapter(), IEntry::SOURCE_POST, false, false, false, true ],
             [new Adapters\SessionAdapter(), '', false, false, false, true ],
             [new \Files(), '', false, false, false, false ],
+            [new Adapters\InputVarsAdapter(new Filtered\Json(
+                '{"foo":"aff","bar":"poa","baz":"cdd","sgg":"arr","sd#,\'srs":"ggsd<$=","dsr.!>sd":"zfd?-\"","dg-[]":"dc^&#~\\\u20ac`~\u00b0","dg[]":"<?php =!@#dc^&#~","xggxgx":"free"}'
+            )), IEntry::SOURCE_JSON, true, true, true, true ],
         ];
     }
 
@@ -120,7 +123,7 @@ class AdaptersTest extends CommonTestClass
     public function testInputVarsAdapter(): void
     {
         $this->testAdapter(
-            new Adapters\InputVarsAdapter(new SimpleArrays([
+            new Adapters\InputVarsAdapter(new Filtered\SimpleArrays([
                 'foo' => 'aff',
                 'bar' => 'poa',
                 'baz' => 'cdd',
@@ -144,7 +147,7 @@ class AdaptersTest extends CommonTestClass
      */
     public function testInputVarsAdapterPassInputs(): void
     {
-        $adapter = new Adapters\InputVarsAdapter(new SimpleArrays([
+        $adapter = new Adapters\InputVarsAdapter(new Filtered\SimpleArrays([
             'foo' => 'aff',
         ], IEntry::SOURCE_CLI));
         // input type there does not matter, because simple arrays have no information about source - there is no source
@@ -154,6 +157,8 @@ class AdaptersTest extends CommonTestClass
         $this->assertEquals(1, $adapter->count());
         $adapter->loadEntries(IEntry::SOURCE_POST);
         $this->assertEquals(1, $adapter->count());
+        $adapter->loadEntries(IEntry::SOURCE_JSON);
+        $this->assertEquals(1, $adapter->count());
     }
 
     /**
@@ -161,7 +166,7 @@ class AdaptersTest extends CommonTestClass
      */
     public function testInputVarsAdapterDieBadInput(): void
     {
-        $adapter = new Adapters\InputVarsAdapter(new SimpleArrays([
+        $adapter = new Adapters\InputVarsAdapter(new Filtered\SimpleArrays([
             'foo' => 'aff',
         ]));
         // session is not available as data source
@@ -174,7 +179,7 @@ class AdaptersTest extends CommonTestClass
      */
     public function testInputVarsAdapterDieOutOfRange(): void
     {
-        $adapter = new Adapters\InputVarsAdapter(new SimpleArrays([
+        $adapter = new Adapters\InputVarsAdapter(new Filtered\SimpleArrays([
             'foo' => 'aff',
         ]));
         $adapter->rewind();
@@ -213,7 +218,7 @@ class AdaptersTest extends CommonTestClass
      */
     public function testInputFilesAdapterProcess(): void
     {
-        $adapter = new Adapters\InputFilesAdapter(new SimpleArrays([
+        $adapter = new Adapters\InputFilesAdapter(new Filtered\SimpleArrays([
             'foo' => 'aff',
         ], IEntry::SOURCE_FILES));
         // input type there does not matter, because simple arrays have no information about source - there is no source
