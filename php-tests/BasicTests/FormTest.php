@@ -4,6 +4,7 @@ namespace BasicTests;
 
 
 use CommonTestClass;
+use kalanis\kw_forms\Controls;
 use kalanis\kw_forms\Exceptions\FormsException;
 use kalanis\kw_forms\Exceptions\RenderException;
 use kalanis\kw_forms\Form;
@@ -25,7 +26,7 @@ class FormTest extends CommonTestClass
         $form = new Form('test');
         $form->setInputs($inputs, $files);
 
-        $this->assertInstanceOf('\kalanis\kw_forms\Controls\Factory', $form->getControlFactory());
+        $this->assertInstanceOf(Controls\Factory::class, $form->getControlFactory());
         $form->addControlDefaultKey($form->getControlFactory()->getControl('html')->setEntry('html', 'testing input'));
         $this->assertEmpty($form->getControl('baz'));
     }

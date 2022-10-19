@@ -179,12 +179,12 @@ class CaptchaTest extends CommonTestClass
     public function factoryProvider(): array
     {
         return [
-            [Controls\Security\Captcha\Factory::TYPE_DISABLED,  '\kalanis\kw_forms\Controls\Security\Captcha\Disabled'],
-            [Controls\Security\Captcha\Factory::TYPE_TEXT,      '\kalanis\kw_forms\Controls\Security\Captcha\Text'],
-            [Controls\Security\Captcha\Factory::TYPE_MATH,      '\kalanis\kw_forms\Controls\Security\Captcha\Numerical'],
-            [Controls\Security\Captcha\Factory::TYPE_COLOUR,    '\kalanis\kw_forms\Controls\Security\Captcha\ColourfulText'],
-            [Controls\Security\Captcha\Factory::TYPE_NOCAPTCHA, '\kalanis\kw_forms\Controls\Security\Captcha\Nocaptcha'],
-            [123,                                               '\kalanis\kw_forms\Controls\Security\Captcha\Text'],
+            [Controls\Security\Captcha\Factory::TYPE_DISABLED,  Controls\Security\Captcha\Disabled::class],
+            [Controls\Security\Captcha\Factory::TYPE_TEXT,      Controls\Security\Captcha\Text::class],
+            [Controls\Security\Captcha\Factory::TYPE_MATH,      Controls\Security\Captcha\Numerical::class],
+            [Controls\Security\Captcha\Factory::TYPE_COLOUR,    Controls\Security\Captcha\ColourfulText::class],
+            [Controls\Security\Captcha\Factory::TYPE_NOCAPTCHA, Controls\Security\Captcha\Nocaptcha::class],
+            [123,                                               Controls\Security\Captcha\Text::class],
         ];
     }
 }

@@ -70,7 +70,7 @@ class CacheTest extends CommonTestClass
         $this->assertFalse($storage->isStored());
     }
 
-    protected function contentStructure()
+    protected function contentStructure(): array
     {
         return ['6g8a7' => 'dfh4dg364sd6g', 'hzsdfgh' => 35.4534, 'sfkg' => false, 'hdhg' => 'sdfh5433'];
     }
