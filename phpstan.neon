@@ -29,4 +29,4 @@ parameters:
 			path: 'php-src/Controls/TSubControls.php'
 			# return IFileEntry which is usually not possible to store
 		# solved by tests - storage is storage
-		- '#Parameter \#1 \$var of function strval expects#'
+		- '#Parameter \#1 \$va[rl]u?e? of function strval expects#'
