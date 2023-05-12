@@ -1,7 +1,7 @@
 kw_forms
 ================
 
-[![Build Status](https://travis-ci.org/alex-kalanis/kw_forms.svg?branch=master)](https://travis-ci.org/alex-kalanis/kw_forms)
+[![Build Status](https://app.travis-ci.com/alex-kalanis/kw_forms.svg?branch=master)](https://app.travis-ci.com/github/alex-kalanis/kw_forms)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/alex-kalanis/kw_forms/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/alex-kalanis/kw_forms/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/alex-kalanis/kw_forms/v/stable.svg?v=1)](https://packagist.org/packages/alex-kalanis/kw_forms)
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.3-8892BF.svg)](https://php.net/)
