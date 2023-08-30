@@ -2,77 +2,11 @@
 
 use kalanis\kw_forms\Adapters\AAdapter;
 use kalanis\kw_forms\Adapters\FilesAdapter;
-use kalanis\kw_forms\Cache\TStorage;
-use kalanis\kw_storage\Interfaces\ITarget;
 use PHPUnit\Framework\TestCase;
 
 
 class CommonTestClass extends TestCase
 {
-}
-
-
-class StorageTrait
-{
-    use TStorage;
-
-    public function getAlias(): ?string
-    {
-        return 'OurAlias';
-    }
-}
-
-
-class StorageMock implements ITarget
-{
-    protected $content = null;
-
-    public function check(string $key): bool
-    {
-        return true;
-    }
-
-    public function exists(string $key): bool
-    {
-        return isset($this->content[$key]);
-    }
-
-    public function load(string $key)
-    {
-        return isset($this->content[$key]) ? $this->content[$key] : null ;
-    }
-
-    public function save(string $key, $data, ?int $timeout = null): bool
-    {
-        $this->content[$key] = $data;
-        return empty($timeout);
-    }
-
-    public function remove(string $key): bool
-    {
-        if (isset($this->content[$key])) unset($this->content[$key]);
-        return true;
-    }
-
-    public function lookup(string $key): Traversable
-    {
-        yield from $this->content;
-    }
-
-    public function increment(string $key): bool
-    {
-        return true;
-    }
-
-    public function decrement(string $key): bool
-    {
-        return false;
-    }
-
-    public function removeMulti(array $keys): array
-    {
-        return [];
-    }
 }
 
 

@@ -9,6 +9,7 @@ use kalanis\kw_forms\Exceptions\FormsException;
 use kalanis\kw_forms\Exceptions\RenderException;
 use kalanis\kw_forms\Form;
 use kalanis\kw_rules\Interfaces\IRules;
+use kalanis\kw_storage\Storage\Target\Memory;
 use kalanis\kw_storage\StorageException;
 
 
@@ -42,7 +43,7 @@ class FormTest extends CommonTestClass
 
         $form = new Form('test');
         $form->setInputs(new \Adapter(), $files);
-        $form->setStorage(new \StorageMock());
+        $form->setStorage(new Memory());
         $form->addText('foo', 'first');
         $form->addText('bar', 'second');
         $form->addText('baz', 'third');
