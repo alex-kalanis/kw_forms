@@ -93,6 +93,26 @@ class BasicTest extends CommonTestClass
         ];
     }
 
+    /**
+     * @throws FormsException
+     */
+    public function testShittySettingInstance(): void
+    {
+        $factory = new XFactory();
+        $this->expectException(FormsException::class);
+        $factory->getControl('not_instance');
+    }
+
+    /**
+     * @throws FormsException
+     */
+    public function testShittySettingClass(): void
+    {
+        $factory = new XFactory();
+        $this->expectException(FormsException::class);
+        $factory->getControl('not_class');
+    }
+
     public function testKey(): void
     {
         $key = new Key();
@@ -336,4 +356,15 @@ class Html implements IHtmlElement
 
 class Control extends Controls\AControl
 {
+}
+
+
+class XFactory extends Controls\Factory
+{
+    /** @var array<string, string> */
+    protected static $map = [
+        'text' => Controls\Text::class,
+        'not_instance' => \stdClass::class,
+        'not_class'    => 'this_is_not_a_class',
+    ];
 }

@@ -13,10 +13,10 @@
     "ext-gd": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "alex-kalanis/kw_input": ">=3.0",
-    "alex-kalanis/kw_rules": ">=2.0",
-    "alex-kalanis/kw_storage": ">=3.0",
-    "alex-kalanis/kw_templates": ">=2.0",
+    "alex-kalanis/kw_input": ">=3.0 <4",
+    "alex-kalanis/kw_rules": ">=2.0 <3",
+    "alex-kalanis/kw_storage": ">=4.0 <5",
+    "alex-kalanis/kw_templates": ">=2.0 <3",
     "php": ">=7.3.0"
   },
   "suggest": {
