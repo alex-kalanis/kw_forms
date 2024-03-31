@@ -362,7 +362,7 @@ class Control extends Controls\AControl
 class XFactory extends Controls\Factory
 {
     /** @var array<string, string> */
-    protected static $map = [
+    protected static array $map = [
         'text' => Controls\Text::class,
         'not_instance' => \stdClass::class,
         'not_class'    => 'this_is_not_a_class',

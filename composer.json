@@ -13,21 +13,22 @@
     "ext-gd": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "alex-kalanis/kw_input": ">=2.0 <3",
-    "alex-kalanis/kw_rules": ">=2.0 <3",
-    "alex-kalanis/kw_storage": ">=4.0 <5",
-    "alex-kalanis/kw_templates": ">=2.0 <3",
-    "php": ">=7.3.0"
+    "alex-kalanis/kw_input": ">=3.0 <4",
+    "alex-kalanis/kw_rules": ">=3.0 <4",
+    "alex-kalanis/kw_storage": ">=5.0 <6",
+    "alex-kalanis/kw_templates": ">=3.0 <4",
+    "php": ">=7.4.0"
   },
   "suggest": {
     "firebase/php-jwt": "PHP package for JWT"
   },
   "require-dev": {
+    "shipmonk/composer-dependency-analyser": "^1.4",
     "phpstan/phpstan": "^1.0",
     "phpstan/phpstan-phpunit": "^1.0",
     "friendsofphp/php-cs-fixer": "^3.0",
-    "firebase/php-jwt": "~6.2",
-    "phpunit/phpunit": ">=7.2 <=9"
+    "firebase/php-jwt": "~6.10",
+    "phpunit/phpunit": ">=8.0 <=9"
   },
   "autoload": {
     "psr-4": {

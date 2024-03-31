@@ -123,7 +123,7 @@ class AdaptersTest extends CommonTestClass
     public function testInputVarsAdapter(): void
     {
         $this->testAdapter(
-            new Adapters\InputVarsAdapter(new Filtered\SimpleArrays([
+            new Adapters\InputVarsAdapter(new Filtered\SimpleFromArrays([
                 'foo' => 'aff',
                 'bar' => 'poa',
                 'baz' => 'cdd',
@@ -147,7 +147,7 @@ class AdaptersTest extends CommonTestClass
      */
     public function testInputVarsAdapterPassInputs(): void
     {
-        $adapter = new Adapters\InputVarsAdapter(new Filtered\SimpleArrays([
+        $adapter = new Adapters\InputVarsAdapter(new Filtered\SimpleFromArrays([
             'foo' => 'aff',
         ], IEntry::SOURCE_CLI));
         // input type there does not matter, because simple arrays have no information about source - there is no source
@@ -166,7 +166,7 @@ class AdaptersTest extends CommonTestClass
      */
     public function testInputVarsAdapterDieBadInput(): void
     {
-        $adapter = new Adapters\InputVarsAdapter(new Filtered\SimpleArrays([
+        $adapter = new Adapters\InputVarsAdapter(new Filtered\SimpleFromArrays([
             'foo' => 'aff',
         ]));
         // session is not available as data source
@@ -179,7 +179,7 @@ class AdaptersTest extends CommonTestClass
      */
     public function testInputVarsAdapterDieOutOfRange(): void
     {
-        $adapter = new Adapters\InputVarsAdapter(new Filtered\SimpleArrays([
+        $adapter = new Adapters\InputVarsAdapter(new Filtered\SimpleFromArrays([
             'foo' => 'aff',
         ]));
         $adapter->rewind();
@@ -218,7 +218,7 @@ class AdaptersTest extends CommonTestClass
      */
     public function testInputFilesAdapterProcess(): void
     {
-        $adapter = new Adapters\InputFilesAdapter(new Filtered\SimpleArrays([
+        $adapter = new Adapters\InputFilesAdapter(new Filtered\SimpleFromArrays([
             'foo' => 'aff',
         ], IEntry::SOURCE_FILES));
         // input type there does not matter, because simple arrays have no information about source - there is no source

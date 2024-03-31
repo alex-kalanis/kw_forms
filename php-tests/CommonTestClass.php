@@ -81,7 +81,7 @@ class MockArray implements ArrayAccess, Countable, Iterator
 
 class Adapter extends AAdapter
 {
-    protected $vars = [
+    protected array $vars = [
         'foo' => 'aff',
         'bar' => 'poa',
         'baz' => 'cdd',
