@@ -23,11 +23,11 @@
     "firebase/php-jwt": "PHP package for JWT"
   },
   "require-dev": {
+    "firebase/php-jwt": "~6.10",
     "shipmonk/composer-dependency-analyser": "^1.4",
     "phpstan/phpstan": "^1.0",
     "phpstan/phpstan-phpunit": "^1.0",
     "friendsofphp/php-cs-fixer": "^3.0",
-    "firebase/php-jwt": "~6.10",
     "phpunit/phpunit": ">=8.0 <=9"
   },
   "autoload": {
