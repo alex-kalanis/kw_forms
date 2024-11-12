@@ -24,7 +24,7 @@ class Checkbox extends AControl implements IOriginalValue
      * @param string $label
      * @return $this
      */
-    public function set(string $alias, $value = null, string $label = '')
+    public function set(string $alias, $value = null, string $label = ''): self
     {
         $this->setEntry($alias, $value, $label);
         $this->setAttribute('id', sprintf('%s_%s', $this->getKey(), self::$uniqid));

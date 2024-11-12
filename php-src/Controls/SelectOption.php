@@ -33,7 +33,7 @@ class SelectOption extends AControl implements IOriginalValue
         return $this->wrapIt(sprintf($this->templateInput, $this->escaped(strval($this->originalValue)), $this->renderAttributes(), $this->escaped(strval($this->getLabel()))), $this->wrappersInput);
     }
 
-    public function renderErrors($errors): string
+    public function renderErrors(array $errors): string
     {
         return '';
     }

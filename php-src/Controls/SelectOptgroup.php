@@ -21,7 +21,7 @@ class SelectOptgroup extends AControl
      * @param iterable<string|int, string|SelectOption> $children
      * @return $this
      */
-    public function set(string $alias, string $label = '', iterable $children = [])
+    public function set(string $alias, string $label = '', iterable $children = []): self
     {
         $this->setEntry(sprintf('%s_%s', $alias, self::$uniqid), '', $label);
         foreach ($children as $childAlias => $child) {
@@ -75,7 +75,7 @@ class SelectOptgroup extends AControl
         return $this->wrapIt(sprintf($this->templateInput, $this->escaped(strval($this->getLabel())), $this->renderAttributes(), $this->renderChildren()), $this->wrappersInput);
     }
 
-    public function renderErrors($errors): string
+    public function renderErrors(array $errors): string
     {
         return '';
     }

@@ -22,10 +22,10 @@ class SelectList extends AControl implements IMultiValue
      * @param string $alias
      * @param string $label
      * @param iterable<string, string|SelectOption> $children
-     * @param int $size
+     * @param int|null $size
      * @return $this
      */
-    public function set(string $alias, string $label = '', iterable $children = [], ?int $size = null)
+    public function set(string $alias, string $label = '', iterable $children = [], ?int $size = null): self
     {
         foreach ($children as $childAlias => $child) {
             if ($child instanceof SelectOption) {
@@ -45,11 +45,11 @@ class SelectList extends AControl implements IMultiValue
     /**
      * Add simple option into select
      * @param string $alias
-     * @param string $value
+     * @param string|int|float|bool|null $value
      * @param string $label
      * @return SelectOption
      */
-    public function addOption(string $alias, $value, string $label = '')
+    public function addOption(string $alias, $value, string $label = ''): SelectOption
     {
         $option = new SelectOption();
         $option->setEntry($alias, $value, $label);
@@ -90,14 +90,14 @@ class SelectList extends AControl implements IMultiValue
         return $result;
     }
 
-    public function setValues(array $values): void
+    public function setValues(array $data): void
     {
         foreach ($this->children as $child) {
             if ($child instanceof SelectOption) {
                 $child->setValue('');
             }
         }
-        foreach ($values as $value) {
+        foreach ($data as $value) {
             foreach ($this->children as $child) {
                 if ($child instanceof SelectOption) {
                     if ($child->getOriginalValue() == $value) {

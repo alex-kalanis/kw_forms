@@ -9,7 +9,7 @@ kw_forms
 [![License](https://poser.pugx.org/alex-kalanis/kw_forms/license.svg?v=1)](https://packagist.org/packages/alex-kalanis/kw_forms)
 [![Code Coverage](https://scrutinizer-ci.com/g/alex-kalanis/kw_forms/badges/coverage.png?b=master&v=1)](https://scrutinizer-ci.com/g/alex-kalanis/kw_forms/?branch=master)
 
-Contains simplification of form inputs from the whole bunch of sources. Allow you
+Contains simplification of form inputs from the whole bunch of sources. Allow you to
 use either get and cli or server and env params as same source. See examples for more.
 
 # PHP Installation

@@ -43,7 +43,7 @@ class Checkboxes extends AControl implements IMultiValue
      * @param iterable<string, string|Checkbox> $children
      * @return $this
      */
-    public function set(string $alias, array $value = [], ?string $label = null, iterable $children = array())
+    public function set(string $alias, array $value = [], ?string $label = null, iterable $children = array()): self
     {
         $this->alias = $alias;
         $this->setLabel($label);
@@ -66,15 +66,15 @@ class Checkboxes extends AControl implements IMultiValue
      * Create single Checkbox element
      * @param string $alias
      * @param string $label
-     * @param string $value
+     * @param string|int|float|null $value
      * @param boolean $checked
      * @return Checkbox
      */
-    public function addCheckbox(string $alias, string $label, $value, $checked = null)
+    public function addCheckbox(string $alias, string $label, $value, ?bool $checked = null): Checkbox
     {
         $checkbox = new Checkbox();
         $checkbox->set($alias, $value, $label);
-        $checkbox->setValue(strval($checked));
+        $checkbox->setValue(strval(intval($checked)));
         $this->addChild($checkbox);
         return $checkbox;
     }
@@ -97,22 +97,16 @@ class Checkboxes extends AControl implements IMultiValue
     /**
      * Set values to all children
      * !! UNDEFINED values will be SET too !!
-     * @param array<string, string|int|float|bool|null> $array
+     * @param array<string, string|int|float|bool|null> $data
      */
-    public function setValues(array $array = []): void
+    public function setValues(array $data = []): void
     {
         foreach ($this->children as $child) {
             if ($child instanceof Checkbox) {
                 $shortKey = $this->shorterKey($child->getKey());
                 $child->setValue(
-                isset($array[$shortKey])
-                    ? $array[$shortKey]
-                    : (
-                    isset($array[$child->getKey()])
-                        // @codeCoverageIgnoreStart
-                        ? $array[$child->getKey()] // dunno how to test now, probably directly with "foo[bar]" variable
-                        // @codeCoverageIgnoreEnd
-                        : ''
+                    $data[$shortKey] ?? (
+                        $data[$child->getKey()] ?? ''
                     )
                 );
             }

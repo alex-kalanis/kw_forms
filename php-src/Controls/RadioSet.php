@@ -34,7 +34,7 @@ class RadioSet extends AControl
      * @param iterable<string, string|int|Radio> $children
      * @return $this
      */
-    public function set(string $key, $value = null, string $label = '', iterable $children = [])
+    public function set(string $key, $value = null, string $label = '', iterable $children = []): self
     {
         $this->setEntry($key, '', $label);
         foreach ($children as $alias => $child) {
@@ -51,12 +51,12 @@ class RadioSet extends AControl
     /**
      * Add radio option into current set
      * @param string $alias
-     * @param string $value
+     * @param string|int|float|null $value
      * @param string $label
      * @param string $selected
      * @return $this
      */
-    public function addOption(string $alias, $value, string $label = '', string $selected = '')
+    public function addOption(string $alias, $value, string $label = '', string $selected = ''): self
     {
         $radio = new Radio();
         $this->addChild($radio->set($alias, $value, $label, $selected));

@@ -25,7 +25,7 @@ abstract class ACaptcha extends AControl
     public function getRules(): array
     {
         $ruleset = $this->canPass() ? [] : $this->rules;
-        if (($this->libTimeout instanceof ITimeout) && !empty($ruleset)) {
+        if ($this->libTimeout && !empty($ruleset)) {
             $this->libTimeout->updateExpire();
         }
         return $ruleset;
@@ -46,14 +46,14 @@ abstract class ACaptcha extends AControl
         return $this->canPass() ? '' : parent::renderInput($attributes);
     }
 
-    public function renderErrors($errors): string
+    public function renderErrors(array $errors): string
     {
         return $this->canPass() ? '' : parent::renderErrors($errors);
     }
 
     protected function canPass(): bool
     {
-        return ($this->libTimeout instanceof ITimeout && $this->libTimeout->isRunning());
+        return ($this->libTimeout && $this->libTimeout->isRunning());
     }
 
     public function setTimeout(?ITimeout $libTimeout = null): self

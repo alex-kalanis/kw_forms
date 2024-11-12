@@ -52,7 +52,7 @@ class File extends AControl implements Interfaces\IValidateFile
 
     /**
      * @throws EntryException
-     * @return bool|float|int|mixed|string|null
+     * @return string|null
      */
     public function getValue()
     {

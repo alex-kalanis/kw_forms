@@ -36,33 +36,33 @@ class Form implements IHtmlElement
 
     /**
      * Main Form template
-     * @var string
+     * @-var string
      * params: %1 attributes, %2 errors, %3 controls
      */
 
     /** @var string Template for error output */
-    protected $templateErrors = '<div class="errors">%s</div>';
+    protected string $templateErrors = '<div class="errors">%s</div>';
     /**
      * Start tag template - for rendering just inside something
      * @var string
      * params: %1 attributes
      */
-    protected $templateStart = '<form %1$s>';
+    protected string $templateStart = '<form %1$s>';
     /**
      * End tag template
      * @var string
      */
-    protected $templateEnd = '</form>';
+    protected string $templateEnd = '</form>';
 
     /**
      * @var string
      * params: %1 labelText, %2 content
      */
-    protected $templateLabel = '<fieldset><legend>%1$s</legend>%2$s</fieldset>';
+    protected string $templateLabel = '<fieldset><legend>%1$s</legend>%2$s</fieldset>';
 
     public function __construct(string $alias = '', ?IHtmlElement $parent = null)
     {
-        $this->alias = strval($alias);
+        $this->alias = $alias;
         $this->setAttribute('name', $this->alias);
         $this->setMethod(IEntry::SOURCE_POST);
         $this->setTemplate('%2$s<form %1$s>%3$s</form>');
@@ -140,10 +140,10 @@ class Form implements IHtmlElement
 
     /**
      * Get object or child label
-     * @param string $key
+     * @param string|null $key
      * @return string|null
      */
-    public function getLabel(?string $key = null)
+    public function getLabel(?string $key = null): ?string
     {
         if (is_null($key)) {
             return $this->label;
@@ -158,11 +158,11 @@ class Form implements IHtmlElement
 
     /**
      * Set object or child label
-     * @param string $value
-     * @param string $key
+     * @param string|null $value
+     * @param string|null $key
      * @return $this
      */
-    public function setLabel(?string $value = null, ?string $key = null)
+    public function setLabel(?string $value = null, ?string $key = null): self
     {
         if (is_null($key)) {
             $this->label = strval($value);
@@ -320,7 +320,7 @@ class Form implements IHtmlElement
      * @throws Exceptions\RenderException
      * @return array<string, string>
      */
-    public function renderErrorsArray()
+    public function renderErrorsArray(): array
     {
         return $this->getErrors($this->errors, $this->wrappersError);
     }
@@ -384,7 +384,7 @@ class Form implements IHtmlElement
      * @param string $layoutName
      * @return $this
      */
-    public function setLayout(string $layoutName = '')
+    public function setLayout(string $layoutName = ''): self
     {
         if (('inlineTable' == $layoutName) || ('tableInline' == $layoutName)) {
             $this->resetWrappers();

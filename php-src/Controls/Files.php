@@ -73,22 +73,16 @@ class Files extends AControl implements IMultiValue
     }
 
     /**
-     * @param array<string, string|int|float|IFileEntry|null> $array
+     * @param array<string, string|int|float|IFileEntry|null> $data
      */
-    public function setValues(array $array = []): void
+    public function setValues(array $data = []): void
     {
         foreach ($this->children as $child) {
             if ($child instanceof File) {
                 $shortKey = $this->shorterKey($child->getKey());
                 $child->setValue(
-                    isset($array[$shortKey])
-                        // @codeCoverageIgnoreStart
-                        ? $array[$shortKey] // should not happen - set prevents this
-                        // @codeCoverageIgnoreEnd
-                        : (
-                    isset($array[$child->getKey()])
-                        ? $array[$child->getKey()]
-                        : ''
+                    $data[$shortKey] ?? (
+                        $data[$child->getKey()] ?? ''
                     )
                 );
             }

@@ -6,6 +6,7 @@ namespace kalanis\kw_forms\Controls\Security;
 use ArrayAccess;
 use kalanis\kw_forms\Controls\Hidden;
 use kalanis\kw_rules\Interfaces\IRules;
+use LogicException;
 
 
 /**
@@ -17,8 +18,7 @@ use kalanis\kw_rules\Interfaces\IRules;
  */
 class MultiSend extends Hidden
 {
-    /** @var ArrayAccess */
-    protected $cookie = null;
+    protected ?ArrayAccess $cookie = null;
 
     public function setHidden(string $alias, ArrayAccess &$cookie, string $errorMessage): self
     {
@@ -43,7 +43,7 @@ class MultiSend extends Hidden
     {
         $hashStack = $this->hashStack();
         $hashStack[$value] = 'FORM_SENDED';
-        $this->cookie->offsetSet($this->getKey() . 'SubmitCheck', json_encode($hashStack));
+        $this->getCookie()->offsetSet($this->getKey() . 'SubmitCheck', json_encode($hashStack));
     }
 
     protected function removeExistingCheckFromStack(string $value): bool
@@ -51,7 +51,7 @@ class MultiSend extends Hidden
         $hashStack = $this->hashStack();
         if (isset($hashStack[$value])) {
             unset($hashStack[$value]);
-            $this->cookie->offsetSet($this->getKey() . 'SubmitCheck', json_encode($hashStack));
+            $this->getCookie()->offsetSet($this->getKey() . 'SubmitCheck', json_encode($hashStack));
             return true;
         }
         return false;
@@ -62,13 +62,21 @@ class MultiSend extends Hidden
      */
     protected function hashStack(): array
     {
-        $hashStack = $this->cookie->offsetExists($this->getKey() . 'SubmitCheck')
-            ? (array) json_decode($this->cookie->offsetGet($this->getKey() . 'SubmitCheck'), true)
+        $hashStack = $this->getCookie()->offsetExists($this->getKey() . 'SubmitCheck')
+            ? (array) json_decode($this->getCookie()->offsetGet($this->getKey() . 'SubmitCheck'), true)
             : null ;
         if (is_null($hashStack)) {
             $hashStack = [];
         }
         return $hashStack;
+    }
+
+    protected function getCookie(): ArrayAccess
+    {
+        if (empty($this->cookie)) {
+            throw new LogicException('Initialize the element first!');
+        }
+        return $this->cookie;
     }
 
     public function addRule(/** @scrutinizer ignore-unused */ string $ruleName, /** @scrutinizer ignore-unused */ string $errorText, /** @scrutinizer ignore-unused */ ...$args): void

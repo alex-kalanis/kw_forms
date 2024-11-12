@@ -14,11 +14,11 @@ trait TControl
      * @param string $type
      * @param string $alias
      * @param string $label
-     * @param string $value
+     * @param string|null $value
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Input
      */
-    public function addInput(string $type, string $alias, string $label = '', $value = null, $attributes = [])
+    public function addInput(string $type, string $alias, string $label = '', ?string $value = null, $attributes = []): Controls\Input
     {
         $input = new Controls\Input();
         $input->set($type, $alias, $value, $label)->addAttributes($attributes);
@@ -30,11 +30,11 @@ trait TControl
      * Add input for text
      * @param string $alias
      * @param string $label
-     * @param string $value
+     * @param string|int|float|null $value
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Text
      */
-    public function addText(string $alias, string $label = '', $value = null, $attributes = [])
+    public function addText(string $alias, string $label = '', $value = null, $attributes = []): Controls\Text
     {
         $text = new Controls\Text();
         $text->set($alias, $value, $label)->addAttributes($attributes);
@@ -46,11 +46,11 @@ trait TControl
      * Add input for email
      * @param string $alias
      * @param string $label
-     * @param string $value
+     * @param string|int|float|null $value
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Email
      */
-    public function addEmail(string $alias, string $label = '', $value = null, $attributes = [])
+    public function addEmail(string $alias, string $label = '', $value = null, $attributes = []): Controls\Email
     {
         $mail = new Controls\Email();
         $mail->set($alias, $value, $label)->addAttributes($attributes);
@@ -65,7 +65,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Password
      */
-    public function addPassword(string $alias, string $label = '', $attributes = [])
+    public function addPassword(string $alias, string $label = '', $attributes = []): Controls\Password
     {
         $pass = new Controls\Password();
         $pass->set($alias, $label)->addAttributes($attributes);
@@ -80,7 +80,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Hidden
      */
-    public function addHidden(string $alias, ?string $value = null, $attributes = [])
+    public function addHidden(string $alias, ?string $value = null, $attributes = []): Controls\Hidden
     {
         $hidden = new Controls\Hidden();
         $hidden->set($alias, $value)->addAttributes($attributes);
@@ -96,7 +96,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\DatePicker
      */
-    public function addDatePicker(string $alias, string $label = '', $value = null, $attributes = [])
+    public function addDatePicker(string $alias, string $label = '', ?string $value = null, $attributes = []): Controls\DatePicker
     {
         $date = new Controls\DatePicker();
         $date->set($alias, $value, $label)->addAttributes($attributes);
@@ -112,7 +112,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\DateTimePicker
      */
-    public function addDateTimePicker(string $alias, string $label = '', $value = null, $attributes = [])
+    public function addDateTimePicker(string $alias, string $label = '', ?string $value = null, $attributes = []): Controls\DateTimePicker
     {
         $date = new Controls\DateTimePicker();
         $date->set($alias, $value, $label)->addAttributes($attributes);
@@ -128,7 +128,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\DateRange
      */
-    public function addDateRange(string $alias, string $label = '', $value = null, $attributes = [])
+    public function addDateRange(string $alias, string $label = '', ?string $value = null, $attributes = []): Controls\DateRange
     {
         $date = new Controls\DateRange();
         $date->set($alias, $value, $label)->addAttributes($attributes);
@@ -140,10 +140,10 @@ trait TControl
      * Add description as control
      * @param string $alias
      * @param string $label
-     * @param string|null $value
+     * @param string|int|float|bool|null $value
      * @return Controls\Description
      */
-    public function addDescription(string $alias, string $label = '', $value = null)
+    public function addDescription(string $alias, string $label = '', $value = null): Controls\Description
     {
         $desc = new Controls\Description();
         $desc->setEntry($alias, $value, $label);
@@ -155,11 +155,11 @@ trait TControl
      * Add html code as control
      * @param string $alias
      * @param string $label
-     * @param string|null $value
+     * @param string|int|float|bool|null $value
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Html
      */
-    public function addHtml(string $alias, string $label = '', $value = null, $attributes = [])
+    public function addHtml(string $alias, string $label = '', $value = null, $attributes = []): Controls\Html
     {
         $html = new Controls\Html();
         $html->setEntry($alias, $value, $label)->addAttributes($attributes);
@@ -175,7 +175,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Textarea
      */
-    public function addTextarea(string $alias, string $label = '', $value = null, $attributes = [])
+    public function addTextarea(string $alias, string $label = '', $value = null, $attributes = []): Controls\Textarea
     {
         $text = new Controls\Textarea();
         $text->set($alias, $value, $label)->addAttributes($attributes);
@@ -192,7 +192,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Select
      */
-    public function addSelect(string $alias, string $label = '', $value = null, iterable $children = [], $attributes = [])
+    public function addSelect(string $alias, string $label = '', $value = null, iterable $children = [], $attributes = []): Controls\Select
     {
         $select = new Controls\Select();
         $select->set($alias, $value, $label, $children)->addAttributes($attributes);
@@ -208,7 +208,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\SelectList
      */
-    public function addSelectList(string $alias, string $label = '', iterable $children = [], $attributes = [])
+    public function addSelectList(string $alias, string $label = '', iterable $children = [], $attributes = []): Controls\SelectList
     {
         $select = new Controls\SelectList();
         $select->set($alias, $label, $children)->addAttributes($attributes);
@@ -217,7 +217,7 @@ trait TControl
     }
 
     /**
-     * Add bunch of radios
+     * Add a bunch of radios
      * @param string $alias
      * @param string $label
      * @param string|int|float|null $value
@@ -225,7 +225,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\RadioSet
      */
-    public function addRadios(string $alias, string $label = '', $value = null, iterable $children = [], $attributes = [])
+    public function addRadios(string $alias, string $label = '', $value = null, iterable $children = [], $attributes = []): Controls\RadioSet
     {
         $radio = new Controls\RadioSet();
         $radio->set($alias, $value, $label, $children)->addAttributes($attributes);
@@ -237,16 +237,16 @@ trait TControl
      * Add input type checkbox
      * @param string $alias
      * @param string $label
-     * @param boolean $checked
+     * @param string|boolean|null $checked
      * @param string|int|float|null $value
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Checkbox
      */
-    public function addCheckbox(string $alias, string $label = '', $checked = null, $value = '1', $attributes = [])
+    public function addCheckbox(string $alias, string $label = '', $checked = null, $value = '1', $attributes = []): Controls\Checkbox
     {
         $check = new Controls\Checkbox();
         $check->set($alias, $value, $label)->addAttributes($attributes);
-        $check->setValue(strval($checked));
+        $check->setValue($checked);
         $this->addControlDefaultKey($check);
         return $check;
     }
@@ -255,12 +255,12 @@ trait TControl
      * Add input type checkbox switch
      * @param string $alias
      * @param string $label
-     * @param boolean $checked
+     * @param string|boolean|null $checked
      * @param string|int|float|null $value
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\CheckboxSwitch
      */
-    public function addCheckboxSwitch(string $alias, string $label = '', $checked = null, $value = 1, $attributes = [])
+    public function addCheckboxSwitch(string $alias, string $label = '', $checked = null, $value = 1, $attributes = []): Controls\CheckboxSwitch
     {
         $switch = new Controls\CheckboxSwitch();
         $switch->set($alias, $value, $label)->addAttributes($attributes);
@@ -278,7 +278,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Checkboxes
      */
-    public function addCheckboxes(string $alias, string $label = '', array $checked = [], iterable $children = [], $attributes = [])
+    public function addCheckboxes(string $alias, string $label = '', array $checked = [], iterable $children = [], $attributes = []): Controls\Checkboxes
     {
         $check = new Controls\Checkboxes();
         $check->set($alias, $checked, $label, $children)->addAttributes($attributes);
@@ -293,7 +293,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\File
      */
-    public function addFile(string $alias, string $label = '', $attributes = [])
+    public function addFile(string $alias, string $label = '', $attributes = []): Controls\File
     {
         $file = new Controls\File();
         $file->set($alias, $label)->addAttributes($attributes);
@@ -310,7 +310,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Files
      */
-    public function addFiles(string $alias, string $label = '', iterable $inputs = [], $attributes = [])
+    public function addFiles(string $alias, string $label = '', iterable $inputs = [], $attributes = []): Controls\Files
     {
         $file = new Controls\Files();
         $file->set($alias, $inputs, $label, $attributes);
@@ -326,7 +326,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Button
      */
-    public function addButton(string $alias, string $label = '', $attributes = [])
+    public function addButton(string $alias, string $label = '', $attributes = []): Controls\Button
     {
         $button = new Controls\Button();
         $button->set($alias, $label)->addAttributes($attributes);
@@ -341,7 +341,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Reset
      */
-    public function addReset(string $alias, string $label = '', $attributes = [])
+    public function addReset(string $alias, string $label = '', $attributes = []): Controls\Reset
     {
         $reset = new Controls\Reset();
         $reset->set($alias, $label)->addAttributes($attributes);
@@ -356,7 +356,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Submit
      */
-    public function addSubmit(string $alias, string $label = '', $attributes = [])
+    public function addSubmit(string $alias, string $label = '', $attributes = []): Controls\Submit
     {
         $submit = new Controls\Submit();
         $submit->set($alias, $label)->addAttributes($attributes);
@@ -373,7 +373,7 @@ trait TControl
      * @return Controls\Security\Csrf
      * @codeCoverageIgnore link adapter remote resource
      */
-    public function addCsrf(string $alias, ArrayAccess &$cookie, string $errorMessage, $attributes = [])
+    public function addCsrf(string $alias, ArrayAccess &$cookie, string $errorMessage, $attributes = []): Controls\Security\Csrf
     {
         $csrf = new Controls\Security\Csrf();
         $csrf->setHidden($alias, $cookie, $errorMessage)->addAttributes($attributes);
@@ -389,7 +389,7 @@ trait TControl
      * @param array<string, string|array<string>>|string $attributes
      * @return Controls\Security\MultiSend
      */
-    public function addMultiSend(string $alias, ArrayAccess &$cookie, string $errorMessage, $attributes = [])
+    public function addMultiSend(string $alias, ArrayAccess &$cookie, string $errorMessage, $attributes = []): Controls\Security\MultiSend
     {
         $csrf = new Controls\Security\MultiSend();
         $csrf->setHidden($alias, $cookie, $errorMessage)->addAttributes($attributes);
@@ -402,7 +402,7 @@ trait TControl
      * @param string $alias
      * @return Controls\Security\Captcha\Disabled
      */
-    public function addCaptchaDisabled(string $alias)
+    public function addCaptchaDisabled(string $alias): Controls\Security\Captcha\Disabled
     {
         $captcha = new Controls\Security\Captcha\Disabled();
         $captcha->setEntry($alias);
@@ -417,7 +417,7 @@ trait TControl
      * @param string $errorMessage
      * @return Controls\Security\Captcha\Text
      */
-    public function addCaptchaText(string $alias, ArrayAccess &$session, string $errorMessage = 'Captcha mismatch')
+    public function addCaptchaText(string $alias, ArrayAccess &$session, string $errorMessage = 'Captcha mismatch'): Controls\Security\Captcha\Text
     {
         $captcha = new Controls\Security\Captcha\Text();
         $captcha->set($alias, $session, $errorMessage);
@@ -432,7 +432,7 @@ trait TControl
      * @param string $errorMessage
      * @return Controls\Security\Captcha\Numerical
      */
-    public function addCaptchaMath(string $alias, ArrayAccess &$session, string $errorMessage = 'Captcha mismatch')
+    public function addCaptchaMath(string $alias, ArrayAccess &$session, string $errorMessage = 'Captcha mismatch'): Controls\Security\Captcha\Numerical
     {
         $captcha = new Controls\Security\Captcha\Numerical();
         $captcha->set($alias, $session, $errorMessage);
@@ -447,7 +447,7 @@ trait TControl
      * @param string $errorMessage
      * @return Controls\Security\Captcha\ColourfulText
      */
-    public function addCaptchaColour(string $alias, ArrayAccess &$session, string $errorMessage = 'Captcha mismatch')
+    public function addCaptchaColour(string $alias, ArrayAccess &$session, string $errorMessage = 'Captcha mismatch'): Controls\Security\Captcha\ColourfulText
     {
         $captcha = new Controls\Security\Captcha\ColourfulText();
         $captcha->set($alias, $session, $errorMessage);
@@ -461,7 +461,7 @@ trait TControl
      * @param string $errorMessage
      * @return Controls\Security\Captcha\NoCaptcha
      */
-    public function addNocaptcha(string $alias, string $errorMessage = 'The NoCAPTCHA wasn\'t entered correctly. Please try it again.')
+    public function addNocaptcha(string $alias, string $errorMessage = 'The NoCAPTCHA has not been entered correctly. Please try it again.'): Controls\Security\Captcha\NoCaptcha
     {
         $recaptcha = new Controls\Security\Captcha\NoCaptcha();
         $recaptcha->set($alias, $errorMessage);

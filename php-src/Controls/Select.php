@@ -20,7 +20,7 @@ class Select extends AControl
      * @param iterable<string, string|int|float|SelectOptgroup|SelectOption|iterable<string, string|SelectOption>> $children
      * @return $this
      */
-    public function set(string $alias, $value = null, string $label = '', iterable $children = [])
+    public function set(string $alias, $value = null, string $label = '', iterable $children = []): self
     {
         // transfer child values arrays to option group or single entries into options
         foreach ($children as $childAlias => $child) {

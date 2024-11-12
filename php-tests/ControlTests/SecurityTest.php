@@ -39,10 +39,58 @@ class SecurityTest extends CommonTestClass
     /**
      * @throws RenderException
      */
+    public function testMultiSendNoInit(): void
+    {
+        $send = new Controls\Security\MultiSend();
+        // no init called
+
+        // obligatory call for usually unused methods
+        $send->addRule('', '');
+        $send->addRules();
+        $send->removeRules();
+        $this->assertEmpty($send->renderErrors([]));
+
+        // time to crash the fun
+        $this->expectException(\LogicException::class);
+        $send->checkMulti('foo');
+    }
+
+    /**
+     * @throws RenderException
+     */
     public function testCsrf(): void
     {
         $session = new \MockArray();
         $csrf = new Csrf();
+        $csrf->setHidden('sender', $session, 'died');
+
+        // obligatory call for usually unused methods
+        $csrf->addRule('', '');
+        $csrf->addRules();
+        $csrf->removeRules();
+        $this->assertEmpty($csrf->renderErrors([]));
+        $this->assertNotEmpty($csrf->getLib()->getExpire());
+
+        $valid = new Validate();
+        // check - first round
+        $this->assertTrue($valid->validate($csrf));
+        $this->assertEmpty($valid->getErrors());
+        // second round - did not fail there - set new values
+        $this->assertTrue($valid->validate($csrf));
+        $this->assertEmpty($valid->getErrors());
+        // third round - set bad value, this fails
+        $csrf->setValue('kljhgfdsa');
+        $this->assertFalse($valid->validate($csrf));
+        $this->assertNotEmpty($valid->getErrors());
+    }
+
+    /**
+     * @throws RenderException
+     */
+    public function testCsrf2(): void
+    {
+        $session = new \MockArray();
+        $csrf = new Csrf2();
         $csrf->setHidden('sender', $session, 'died');
 
         // obligatory call for usually unused methods
@@ -98,6 +146,20 @@ class Csrf extends Controls\Security\Csrf
     protected function getCsrfLib(): ICsrf
     {
         return new Controls\Security\Csrf\Simple();
+    }
+
+    public function getLib(): ICsrf
+    {
+        return $this->csrf;
+    }
+}
+
+
+class Csrf2 extends Controls\Security\Csrf
+{
+    protected function getCsrfLib(): ICsrf
+    {
+        return new Controls\Security\Csrf\Simple2();
     }
 
     public function getLib(): ICsrf

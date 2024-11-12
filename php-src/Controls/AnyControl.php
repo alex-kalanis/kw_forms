@@ -78,7 +78,7 @@ class AnyControl extends AControl implements IContainsControls
         return '';
     }
 
-    public function renderErrors($errors): string
+    public function renderErrors(array $errors): string
     {
         return '';
     }

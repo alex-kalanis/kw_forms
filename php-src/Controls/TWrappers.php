@@ -64,7 +64,7 @@ trait TWrappers
      * @param IHtmlElement|IHtmlElement[]|string|string[] $wrapper
      * @param array<string, string> $attributes
      */
-    protected function addWrapperToStack(&$stack, $wrapper, array $attributes = []): void
+    protected function addWrapperToStack(array &$stack, $wrapper, array $attributes = []): void
     {
         if (is_array($wrapper)) {
             foreach ($wrapper as $_wrapper) {

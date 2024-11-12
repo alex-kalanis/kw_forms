@@ -3,6 +3,8 @@
 namespace kalanis\kw_forms\JWT;
 
 
+use Exception;
+use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 
@@ -43,7 +45,7 @@ class Token
         $tokenData['iat'] = $time;
         $tokenData['exp'] = $time + $ttl;
 
-        return \Firebase\JWT\JWT::encode($tokenData, static::$privateKey, 'HS256');
+        return JWT::encode($tokenData, static::$privateKey, 'HS256');
     }
 
     /**
@@ -53,11 +55,11 @@ class Token
     public static function decodeJWTToken(string $token): array
     {
         try {
-            $decoded = (array) \Firebase\JWT\JWT::decode($token, new Key(static::$privateKey, 'HS256'));
+            $decoded = (array) JWT::decode($token, new Key(static::$privateKey, 'HS256'));
             if (static::$domain != $decoded['iss']) {
-                throw new \Exception('Token was not issued for this site.');
+                throw new Exception('Token was not issued for this site.');
             }
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             static::$lastError = 'Token Error: ' . $ex->getMessage();
             $decoded = [];
         }
@@ -68,7 +70,7 @@ class Token
     /**
      * @return string
      */
-    public static function getLastError()
+    public static function getLastError(): string
     {
         return static::$lastError;
     }

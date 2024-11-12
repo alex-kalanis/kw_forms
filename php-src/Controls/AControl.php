@@ -119,7 +119,7 @@ abstract class AControl implements Interfaces\IValidate, IHtmlElement, IWrapper
      * @throws RenderException
      * @return string
      */
-    public function renderErrors($errors): string
+    public function renderErrors(array $errors): string
     {
         $return = '';
         foreach ($errors as $error) {

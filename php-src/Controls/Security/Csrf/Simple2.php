@@ -8,11 +8,11 @@ use kalanis\kw_forms\Interfaces\ICsrf;
 
 
 /**
- * Class Simple
+ * Class Simple2
  * Secure forms by simple tokens
  * @package kalanis\kw_forms\Controls\Security\Csrf
  */
-class Simple implements ICsrf
+class Simple2 implements ICsrf
 {
     protected ?ArrayAccess $session = null;
     protected int $expire = 3600;
@@ -33,7 +33,7 @@ class Simple implements ICsrf
     public function getToken(string $codeName): string
     {
         if (!$this->getSession()->offsetExists($codeName)) {
-            $this->getSession()->offsetSet($codeName, uniqid('csrf', true));
+            $this->getSession()->offsetSet($codeName, bin2hex(random_bytes(64)));
             $this->getSession()->offsetSet($codeName . '_timer', time() + $this->expire);
         }
         return strval($this->getSession()->offsetGet($codeName));
